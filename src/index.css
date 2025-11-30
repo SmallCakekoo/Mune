@@ -1,95 +1,13 @@
 @import "tailwindcss";
 
-@font-face {
-  font-family: 'Outfit';
-  src: url('./assets/fonts/Outfit-Variable.ttf') format('truetype-variations');
-  font-weight: 100 900;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Pally';
-  src: url('./assets/fonts/Pally-Regular.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Pally';
-  src: url('./assets/fonts/Pally-Medium.otf') format('opentype');
-  font-weight: 500;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Pally';
-  src: url('./assets/fonts/Pally-Bold.otf') format('opentype');
-  font-weight: 700;
-  font-style: normal;
-}
-
-@theme {
-  --font-sans: 'Outfit', sans-serif;
-  --font-display: 'Pally', sans-serif;
-
-  --color-primary-100: #ddebffff;
-  --color-primary-200: #b4d3ffff;
-  --color-primary-300: #8cbbffff;
-  --color-primary-400: #63a3ffff;
-  --color-primary-500: #3a8bffff;
-
-  --color-secondary-cyan-100: #ffffffff;
-  --color-secondary-cyan-200: #ecfafeff;
-  --color-secondary-cyan-300: #c5f0fcff;
-  --color-secondary-cyan-400: #9fe6f9ff;
-  --color-secondary-cyan-500: #78dcf7ff;
-
-  --color-tertiary-100: #e7e4fcff;
-  --color-tertiary-200: #c6bff9ff;
-  --color-tertiary-300: #a599f5ff;
-  --color-tertiary-400: #8474f2ff;
-  --color-tertiary-500: #634feeff;
-
-  --color-background-100: #235cb0ff;
-  --color-background-200: #1c4b8eff;
-  --color-background-300: #16396cff;
-  --color-background-400: #0f274aff;
-  --color-background-500: #081528ff;
-
-  --color-neutral-5: #e4e4e4ff;
-  --color-neutral-100: #525252ff;
-  --color-neutral-200: #3d3d3dff;
-  --color-neutral-300: #292929ff;
-  --color-neutral-400: #141414ff;
-  --color-neutral-500: #000000ff;
-
-  --color-success-100: #d0fae1ff;
-  --color-success-200: #7df1abff;
-  --color-success-300: #58ee94ff;
-  --color-success-400: #33ea7cff;
-  --color-success-500: #17dd66ff;
-
-  --color-error-100: #fcdadaff;
-  --color-error-200: #f9b5b5ff;
-  --color-error-300: #f58f8fff;
-  --color-error-400: #f26a6aff;
-  --color-error-500: #ef4444ff;
-
-  --color-warning-100: #fff8e3ff;
-  --color-warning-200: #ffedbaff;
-  --color-warning-300: #ffe292ff;
-  --color-warning-400: #ffd769ff;
-  --color-warning-500: #ffcc40ff;
-}
-
 :root {
-  font-family: var(--font-sans);
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: dark;
-  color: var(--color-neutral-5);
-  background-color: var(--color-background-500);
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -97,35 +15,56 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
 body {
   margin: 0;
   display: flex;
-  flex-direction: column;
+  place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  background-color: var(--color-background-500);
-  overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: 700;
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
 }
 
-::-webkit-scrollbar-track {
-  background: var(--color-background-400);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-background-200);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-background-100);
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
 }
