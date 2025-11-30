@@ -3,7 +3,11 @@ import { Link } from 'react-router-dom';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import MuneLogo from '../../assets/images/MuneExpanded.svg';
 
-const Header = () => {
+interface HeaderProps {
+    showNavLinks?: boolean;
+}
+
+const Header = ({ showNavLinks = true }: HeaderProps) => {
     const [isScrolled, setIsScrolled] = useState(false);
     const { scrollY } = useScroll();
 
@@ -24,17 +28,19 @@ const Header = () => {
                     <img src={MuneLogo} alt="Mune" className="h-8 w-auto" />
                 </Link>
 
-                <nav className="hidden md:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
-                    {['Features', 'About'].map((item) => (
-                        <a
-                            key={item}
-                            href={`#${item.toLowerCase()}`}
-                            className="text-neutral-5 hover:text-white font-medium transition-colors"
-                        >
-                            {item}
-                        </a>
-                    ))}
-                </nav>
+                {showNavLinks && (
+                    <nav className="hidden md:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
+                        {['Features', 'About'].map((item) => (
+                            <a
+                                key={item}
+                                href={`#${item.toLowerCase()}`}
+                                className="text-neutral-5 hover:text-white font-medium transition-colors"
+                            >
+                                {item}
+                            </a>
+                        ))}
+                    </nav>
+                )}
 
                 <div className="flex items-center gap-4">
                     <Link
