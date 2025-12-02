@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { IconArrowRight, IconPlayerPlay } from '@tabler/icons-react';
 
 const Hero = () => {
@@ -44,14 +45,16 @@ const Hero = () => {
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="group bg-primary-500 hover:bg-primary-400 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all shadow-[0_0_30px_rgba(58,139,255,0.4)] flex items-center gap-2"
-                        >
-                            Get Started
-                            <IconArrowRight className="group-hover:translate-x-1 transition-transform" />
-                        </motion.button>
+                        <Link to="/signup">
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="group bg-primary-500 hover:bg-primary-400 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all shadow-[0_0_30px_rgba(58,139,255,0.4)] flex items-center gap-2"
+                            >
+                                Get Started
+                                <IconArrowRight className="group-hover:translate-x-1 transition-transform" />
+                            </motion.button>
+                        </Link>
 
                         <motion.button
                             whileHover={{ scale: 1.05 }}

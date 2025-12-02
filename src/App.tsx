@@ -1,5 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Landing from './pages/Landing';
+import Login from './pages/Auth/Login';
+import Signup from './pages/Auth/Signup';
+import ForgotPassword from './pages/Auth/ForgotPassword';
+import AuthLayout from './components/layout/AuthLayout';
 import PrivacyPolicy from './pages/Legal/PrivacyPolicy';
 import TermsOfService from './pages/Legal/TermsOfService';
 import CookiePolicy from './pages/Legal/CookiePolicy';
@@ -13,8 +17,16 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Landing />} /> {/* Placeholder for now */}
-        <Route path="/signup" element={<Landing />} /> {/* Placeholder for now */}
+
+        {/* Auth Routes */}
+        <Route element={<AuthLayout reverse />}>
+          <Route path="/login" element={<Login />} />
+        </Route>
+        <Route element={<AuthLayout />}>
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+        </Route>
+
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/cookie-policy" element={<CookiePolicy />} />
