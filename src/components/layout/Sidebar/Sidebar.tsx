@@ -120,7 +120,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom, userAvatar }) => {
                 exit={{ opacity: 0, scale: 0.8 }}
                 className="w-10 h-10 flex items-center justify-center"
               >
-                
+
               </motion.div>
             ) : (
               <motion.div
@@ -161,7 +161,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom, userAvatar }) => {
               whileHover={{ x: 4 }}
               whileTap={{ scale: 0.98 }}
               className={cn(
-                'w-full flex items-center gap-3 px-4 py-3 rounded-xl',
+                'w-full flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer',
                 'text-neutral-5 hover:text-white transition-colors',
                 'hover:bg-white/10',
                 item.isActive &&

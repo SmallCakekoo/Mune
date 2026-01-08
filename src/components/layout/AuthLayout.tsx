@@ -2,7 +2,11 @@ import { Outlet, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import MuneLogo from '../../assets/images/MuneCollapsed.svg';
 
-const AuthLayout = () => {
+interface AuthLayoutProps {
+    reverse?: boolean;
+}
+
+const AuthLayout: React.FC<AuthLayoutProps> = ({ reverse }) => {
     return (
         <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 md:p-8 bg-background-500 relative overflow-hidden">
             {/* Background Elements - Similar to Landing */}

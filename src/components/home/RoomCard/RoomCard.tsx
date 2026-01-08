@@ -22,6 +22,12 @@ interface RoomCardProps {
   onEdit?: (room: Room) => void;
   onRemove?: (room: Room) => void;
   onEnter?: (room: Room) => void;
+  extraOptions?: {
+    label: string,
+    icon: React.ReactNode,
+    onClick: (room: Room) => void,
+    variant?: 'default' | 'danger'
+  }[];
 }
 
 const RoomCard: React.FC<RoomCardProps> = ({
@@ -31,6 +37,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
   onEdit,
   onRemove,
   onEnter,
+  extraOptions
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -104,14 +111,14 @@ const RoomCard: React.FC<RoomCardProps> = ({
     return `/src/assets/images/cats/Cat (${catNumber}).png`;
   };
 
-  // Gradient colors for cards (similar to the design reference)
+  // Gradient colors for cards - Using theme variables
+  const gradientIndex = room.id?.charCodeAt(0) % 4 || 0;
   const gradients = [
-    'from-primary-500/20 to-primary-700/20',
-    'from-secondary-cyan-500/20 to-secondary-cyan-700/20',
-    'from-tertiary-500/20 to-tertiary-700/20',
-    'from-purple-500/20 to-purple-700/20',
+    'from-primary-500/20 to-primary-600/20',
+    'from-secondary-cyan-500/20 to-primary-500/20',
+    'from-primary-600/20 to-secondary-cyan-500/20',
+    'from-primary-500/30 to-background-400',
   ];
-  const gradientIndex = room.id?.charCodeAt(0) % gradients.length || 0;
   const gradient = gradients[gradientIndex];
 
   return (
@@ -123,13 +130,13 @@ const RoomCard: React.FC<RoomCardProps> = ({
         'relative rounded-2xl p-6 border border-white/10',
         'bg-background-400/50 backdrop-blur-xl',
         'hover:border-primary-500/30 transition-all cursor-pointer',
-        'overflow-hidden group'
+        'group'
       )}
     >
       {/* Background Gradient */}
       <div
         className={cn(
-          'absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity',
+          'absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl',
           gradient
         )}
       />
@@ -163,7 +170,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                 e.stopPropagation();
                 setIsMenuOpen(!isMenuOpen);
               }}
-              className="p-2 rounded-lg text-neutral-5 hover:text-white hover:bg-white/10 transition-colors"
+              className="p-2 rounded-lg text-neutral-5 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
               aria-label="Room options"
             >
               <IconDots size={20} />
@@ -201,6 +208,19 @@ const RoomCard: React.FC<RoomCardProps> = ({
                     <IconTrash size={18} />
                     <span>Remove from recent</span>
                   </button>
+                  {extraOptions?.map((option, idx) => (
+                    <button
+                      key={idx}
+                      onClick={(e) => { e.stopPropagation(); setIsMenuOpen(false); option.onClick(room); }}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-4 py-3 text-left transition-colors",
+                        option.variant === 'danger' ? "text-error-400 hover:text-error-300 hover:bg-error-500/10" : "text-neutral-5 hover:text-white hover:bg-white/10"
+                      )}
+                    >
+                      {option.icon}
+                      <span>{option.label}</span>
+                    </button>
+                  ))}
                 </motion.div>
               )}
             </AnimatePresence>
