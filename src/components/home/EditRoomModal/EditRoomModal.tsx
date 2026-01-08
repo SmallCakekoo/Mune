@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Modal from '../../common/Modal/Modal';
 import { Input } from '../../common/Input/Input';
 import { Button } from '../../common/Button/Button';
+import type { Room } from '../../../types/room.types';
 import { IconLock, IconWorld } from '@tabler/icons-react';
 
-const createRoomSchema = z.object({
+const editRoomSchema = z.object({
   name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres').max(50, 'El nombre no puede exceder 50 caracteres'),
   description: z.string().max(200, 'La descripción no puede exceder 200 caracteres').optional(),
   privacy: z.enum(['public', 'private']),
@@ -22,17 +23,19 @@ const createRoomSchema = z.object({
   path: ['password'],
 });
 
-type CreateRoomFormData = z.infer<typeof createRoomSchema>;
+type EditRoomFormData = z.infer<typeof editRoomSchema>;
 
-interface CreateRoomModalProps {
+interface EditRoomModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: CreateRoomFormData) => void | Promise<void>;
+  room: Room | null;
+  onSubmit: (data: EditRoomFormData) => void | Promise<void>;
 }
 
-const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
+const EditRoomModal: React.FC<EditRoomModalProps> = ({
   isOpen,
   onClose,
+  room,
   onSubmit,
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,8 +46,8 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
     watch,
     reset,
     setValue,
-  } = useForm<CreateRoomFormData>({
-    resolver: zodResolver(createRoomSchema),
+  } = useForm<EditRoomFormData>({
+    resolver: zodResolver(editRoomSchema),
     defaultValues: {
       name: '',
       description: '',
@@ -55,14 +58,30 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
 
   const privacy = watch('privacy');
 
-  const handleFormSubmit = async (data: CreateRoomFormData) => {
+  useEffect(() => {
+    if (room) {
+      reset({
+        name: room.name,
+        description: room.description || '',
+        privacy: room.privacy,
+        password: room.password ? '••••••••' : '',
+      });
+    }
+  }, [room, reset]);
+
+  const handleFormSubmit = async (data: EditRoomFormData) => {
     setIsSubmitting(true);
     try {
-      await onSubmit(data);
-      reset();
+      // Don't send password if it's the placeholder
+      if (data.password === '••••••••') {
+        const { ...rest } = data;
+        await onSubmit(rest as EditRoomFormData);
+      } else {
+        await onSubmit(data);
+      }
       onClose();
     } catch (error) {
-      console.error('Error creating room:', error);
+      console.error('Error editing room:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -75,11 +94,13 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
     }
   };
 
+  if (!room) return null;
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Create New Room"
+      title="Edit Room"
       size="md"
     >
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
@@ -111,11 +132,10 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
             <button
               type="button"
               onClick={() => setValue('privacy', 'public')}
-              className={`flex items-center gap-2 p-4 rounded-xl border-2 transition-all ${
-                privacy === 'public'
+              className={`flex items-center gap-2 p-4 rounded-xl border-2 transition-all ${privacy === 'public'
                   ? 'border-primary-500 bg-primary-500/20 text-white'
                   : 'border-white/20 bg-white/5 text-neutral-5 hover:border-white/30 hover:bg-white/10'
-              }`}
+                }`}
               disabled={isSubmitting}
             >
               <IconWorld size={20} />
@@ -124,11 +144,10 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
             <button
               type="button"
               onClick={() => setValue('privacy', 'private')}
-              className={`flex items-center gap-2 p-4 rounded-xl border-2 transition-all ${
-                privacy === 'private'
+              className={`flex items-center gap-2 p-4 rounded-xl border-2 transition-all ${privacy === 'private'
                   ? 'border-primary-500 bg-primary-500/20 text-white'
                   : 'border-white/20 bg-white/5 text-neutral-5 hover:border-white/30 hover:bg-white/10'
-              }`}
+                }`}
               disabled={isSubmitting}
             >
               <IconLock size={20} />
@@ -144,9 +163,9 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
             {...register('password')}
             type="password"
             label="Password"
-            placeholder="Enter the room password"
+            placeholder={room.password ? 'Enter new password or leave blank' : 'Enter the room password'}
             error={errors.password?.message}
-            helperText="Required for private rooms"
+            helperText={room.password ? 'Leave empty to keep the current password' : 'Required for private rooms'}
             disabled={isSubmitting}
           />
         )}
@@ -167,7 +186,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
             isLoading={isSubmitting}
             className="flex-1"
           >
-            Create Room
+            Save Changes
           </Button>
         </div>
       </form>
@@ -175,4 +194,4 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
   );
 };
 
-export default CreateRoomModal;
+export default EditRoomModal;
