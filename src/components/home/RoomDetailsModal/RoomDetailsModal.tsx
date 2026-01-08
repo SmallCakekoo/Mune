@@ -2,10 +2,11 @@ import React from 'react';
 import Modal from '../../common/Modal/Modal';
 import { Button } from '../../common/Button/Button';
 import type { Room } from '../../../types/room.types';
-import { IconLock, IconWorld, IconUsers, IconMusic, IconCalendar, IconUser } from '@tabler/icons-react';
+import { IconLock, IconWorld, IconUsers, IconMusic, IconCalendar, IconUser, IconChevronRight } from '@tabler/icons-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { enUS } from 'date-fns/locale/en-US';
 import { cn } from '../../../utils/cn';
+import { useNavigate } from 'react-router-dom';
 
 interface RoomDetailsModalProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
   room,
   onEnter,
 }) => {
+  const navigate = useNavigate();
   if (!room) return null;
 
   const formatDate = (date: Date | string) => {
@@ -159,25 +161,32 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
             <h4 className="text-sm font-semibold text-neutral-5 mb-3">
               Members ({room.members.length})
             </h4>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-1 gap-2">
               {room.members.map((member) => {
-                const memberAvatar = member.avatar || `/src/assets/images/cats/Cat (${(member.id?.charCodeAt(0) || 0) % 40 + 1}).png`;
                 return (
-                  <div
+                  <button
                     key={member.id}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10"
+                    onClick={() => {
+                      onClose();
+                      navigate(`/user/${member.id}`);
+                    }}
+                    className="w-full flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary-500/30 transition-all group"
                   >
-                    <img
-                      src={memberAvatar}
-                      alt={member.name}
-                      className="w-6 h-6 rounded-full object-cover"
-                      onError={(e) => {
-                        const catNumber = ((member.id?.charCodeAt(0) || 0) % 40) + 1;
-                        e.currentTarget.src = `/src/assets/images/cats/Cat (${catNumber}).png`;
-                      }}
-                    />
-                    <span className="text-sm text-white">{member.name}</span>
-                  </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10">
+                        <img
+                          src={member.avatar || '/src/assets/images/cats/Cat (1).png'}
+                          alt={member.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-white font-bold text-sm">{member.name}</p>
+                        <p className="text-neutral-5 text-xs">Member</p>
+                      </div>
+                    </div>
+                    <IconChevronRight size={18} className="text-neutral-5 group-hover:text-primary-400 group-hover:translate-x-1 transition-all" />
+                  </button>
                 );
               })}
             </div>

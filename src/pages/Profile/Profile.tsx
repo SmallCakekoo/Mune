@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/layout/Sidebar/Sidebar';
 import ProfileHeader from '../../components/profile/ProfileHeader/ProfileHeader';
+import FavoriteSongCard from '../../components/profile/FavoriteSongCard/FavoriteSongCard';
+import FavoriteSongSelectionModal from '../../components/profile/FavoriteSongSelectionModal/FavoriteSongSelectionModal';
 import RoomGrid from '../../components/profile/RoomGrid/RoomGrid';
 import { useAuth } from '../../context/AuthContext';
 import type { Room } from '../../types/room.types';
@@ -10,7 +12,7 @@ import { Loader } from '../../components/common/Loader/Loader';
 import EditRoomModal from '../../components/home/EditRoomModal/EditRoomModal';
 import RoomDetailsModal from '../../components/home/RoomDetailsModal/RoomDetailsModal';
 import toast from 'react-hot-toast';
-import { IconPlus, IconTrash, IconEdit, IconFolderPlus } from '@tabler/icons-react';
+import { IconPlus, IconEdit, IconTrash, IconFolderPlus, IconMusic } from '@tabler/icons-react';
 import { Button } from '../../components/common/Button/Button';
 import CreateRoomModal from '../../components/home/CreateRoomModal/CreateRoomModal';
 import AddRoomToCategoryModal from '../../components/profile/AddRoomToCategoryModal/AddRoomToCategoryModal';
@@ -59,15 +61,7 @@ const mockRooms: Room[] = [
 ];
 
 const Profile: React.FC = () => {
-    const {
-        user,
-        isLoading,
-        addCategory,
-        removeCategory,
-        updateCategory,
-        addRoomToCategory,
-        removeRoomFromCategory
-    } = useAuth();
+    const { user, addCategory, removeCategory, updateCategory, addRoomToCategory, removeRoomFromCategory, updateFavoriteSongs, isLoading } = useAuth();
     const navigate = useNavigate();
 
     // Modal States
@@ -91,6 +85,7 @@ const Profile: React.FC = () => {
     const [newCategoryName, setNewCategoryName] = useState('');
 
     const [rooms, setRooms] = useState<Room[]>(mockRooms);
+    const [isFavModalOpen, setIsFavModalOpen] = useState(false);
 
     // Group Rooms Logic
     const categorizedRooms = useMemo(() => {
@@ -216,7 +211,7 @@ const Profile: React.FC = () => {
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="mb-12"
+                        className="mb-8"
                     >
                         <ProfileHeader
                             user={user}
@@ -224,16 +219,55 @@ const Profile: React.FC = () => {
                         />
                     </motion.div>
 
+                    {/* Favorite Songs Section */}
+                    <div className="mb-12">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                                <IconMusic className="text-primary-400" size={24} />
+                                Favorite Tracks
+                            </h2>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setIsFavModalOpen(true)}
+                                className="border-white/10 hover:bg-white/5"
+                            >
+                                <IconEdit size={16} />
+                                Edit Favorites
+                            </Button>
+                        </div>
+
+                        {user.favoriteSongs && user.favoriteSongs.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {user.favoriteSongs.map((song, index) => (
+                                    <FavoriteSongCard key={index} song={song} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="p-8 rounded-2xl bg-white/5 border border-white/10 border-dashed text-center">
+                                <p className="text-neutral-500 italic">No favorite tracks selected yet.</p>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setIsFavModalOpen(true)}
+                                    className="mt-2 text-primary-400"
+                                >
+                                    Select Songs
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+
                     {/* Collections Header */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                         <div>
-                            <h2 className="text-3xl font-bold text-white">Your Collections</h2>
-                            <p className="text-neutral-5">Organize and manage your favorite rooms</p>
+                            <h2 className="text-2xl font-bold text-white">Your Collections</h2>
+                            <p className="text-sm text-neutral-5">Organize and manage your favorite rooms</p>
                         </div>
                         <div className="flex gap-3">
-                            <Button onClick={() => setIsCreateModalOpen(true)}>
+                            <Button size="sm" onClick={() => setIsCreateModalOpen(true)}>
                                 <IconPlus size={18} />
-                                Create New Room
+                                Create Room
                             </Button>
                             {isAddingCategory ? (
                                 <div className="flex items-center gap-2">
@@ -243,28 +277,28 @@ const Profile: React.FC = () => {
                                         value={newCategoryName}
                                         onChange={(e) => setNewCategoryName(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleAddCategory()}
-                                        placeholder="Category Name..."
-                                        className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-primary-500 transition-colors"
+                                        placeholder="Name..."
+                                        className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:border-primary-500"
                                     />
                                     <Button size="sm" onClick={handleAddCategory}>Add</Button>
-                                    <Button size="sm" variant="ghost" onClick={() => setIsAddingCategory(false)}>Cancel</Button>
+                                    <Button size="sm" variant="ghost" onClick={() => setIsAddingCategory(false)}>✕</Button>
                                 </div>
                             ) : (
-                                <Button variant="outline" onClick={() => setIsAddingCategory(true)} className="border-white/10 hover:bg-white/5">
-                                    <IconPlus size={20} />
-                                    New Category
+                                <Button size="sm" variant="outline" onClick={() => setIsAddingCategory(true)} className="border-white/10">
+                                    <IconPlus size={18} />
+                                    Category
                                 </Button>
                             )}
                         </div>
                     </div>
 
                     {/* Rooms Sections */}
-                    <div className="space-y-16">
+                    <div className="space-y-10">
                         {/* Categorized Rooms */}
                         {categorizedRooms.map(cat => (
                             <div key={cat.id} className="relative group/cat space-y-4">
-                                <div className="flex items-center justify-between pb-2">
-                                    <div className="flex items-center gap-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
                                         {editingCategoryId === cat.id ? (
                                             <div className="flex items-center gap-2">
                                                 <input
@@ -276,45 +310,26 @@ const Profile: React.FC = () => {
                                                     className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-lg font-bold"
                                                 />
                                                 <Button size="sm" onClick={handleUpdateCategory}>Save</Button>
-                                                <Button size="sm" variant="ghost" onClick={() => setEditingCategoryId(null)}>Cancel</Button>
                                             </div>
                                         ) : (
                                             <>
-                                                <h3 className="text-2xl font-bold text-white">{cat.name}</h3>
+                                                <h3 className="text-xl font-bold text-white">{cat.name}</h3>
                                                 <div className="flex items-center gap-1 opacity-0 group-hover/cat:opacity-100 transition-opacity">
-                                                    <button
-                                                        onClick={() => { setEditingCategoryId(cat.id); setEditCategoryName(cat.name); }}
-                                                        className="p-1.5 rounded-lg hover:bg-white/5 text-neutral-5 hover:text-white transition-all"
-                                                        title="Edit Category Name"
-                                                    >
-                                                        <IconEdit size={16} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => {
-                                                            setConfirmAction({
-                                                                title: 'Delete Category',
-                                                                message: `Are you sure you want to delete "${cat.name}"? The rooms will not be deleted.`,
-                                                                onConfirm: () => { removeCategory(cat.id); setIsConfirmDialogOpen(false); }
-                                                            });
-                                                            setIsConfirmDialogOpen(true);
-                                                        }}
-                                                        className="p-1.5 rounded-lg hover:bg-white/5 text-error-400 hover:text-error-300 transition-all"
-                                                        title="Delete Category"
-                                                    >
-                                                        <IconTrash size={16} />
-                                                    </button>
+                                                    <button onClick={() => { setEditingCategoryId(cat.id); setEditCategoryName(cat.name); }} className="p-1 text-neutral-5 hover:text-white"><IconEdit size={14} /></button>
+                                                    <button onClick={() => {
+                                                        setConfirmAction({
+                                                            title: 'Delete Category',
+                                                            message: `Delete "${cat.name}"?`,
+                                                            onConfirm: () => { removeCategory(cat.id); setIsConfirmDialogOpen(false); }
+                                                        });
+                                                        setIsConfirmDialogOpen(true);
+                                                    }} className="p-1 text-error-400"><IconTrash size={14} /></button>
                                                 </div>
                                             </>
                                         )}
                                     </div>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="text-primary-400 hover:text-primary-300"
-                                        onClick={() => setIsAddingRoomToCategoryId(cat.id)}
-                                    >
-                                        <IconFolderPlus size={18} />
-                                        Add Room
+                                    <Button variant="ghost" size="sm" className="text-primary-400 h-8 text-xs" onClick={() => setIsAddingRoomToCategoryId(cat.id)}>
+                                        <IconFolderPlus size={14} /> Add Room
                                     </Button>
                                 </div>
                                 <RoomGrid
@@ -325,82 +340,38 @@ const Profile: React.FC = () => {
                                     onViewDetails={handleViewDetails}
                                     onEdit={handleEdit}
                                     onEnter={handleEnterRoom}
-                                    extraOptions={cat.id ? [
-                                        {
-                                            label: 'Remove from category',
-                                            icon: <IconTrash size={16} />,
-                                            onClick: (room: Room) => handleRemoveFromCategory(cat.id, room.id),
-                                            variant: 'danger'
-                                        },
-                                        {
-                                            label: 'Add to another category',
-                                            icon: <IconFolderPlus size={16} />,
-                                            onClick: (room: Room) => {
-                                                setSelectedRoom(room);
-                                                setIsAddingRoomToCategoryId(cat.id); // Reusing this but maybe needs a separate state if it's "another"
-                                                // Actually let's just keep it simple: Add to category is best from the category header 
-                                                // or from a global list. 
-                                            }
-                                        }
-                                    ] : []}
+                                    extraOptions={[{ label: 'Remove', icon: <IconTrash size={16} />, onClick: (room: Room) => handleRemoveFromCategory(cat.id, room.id), variant: 'danger' }]}
                                 />
                             </div>
                         ))}
 
-                        {/* Uncategorized Rooms */}
-                        <div className="relative space-y-4">
-                            <div className="flex items-center justify-between pb-2">
-                                <h3 className="text-2xl font-bold text-white">Shared Rooms / Other</h3>
-                            </div>
+                        {/* Uncategorized & Joined */}
+                        <div className="space-y-4">
+                            <h3 className="text-xl font-bold text-white">Others</h3>
                             <RoomGrid
-                                rooms={uncategorizedRooms}
+                                rooms={[...uncategorizedRooms, ...joinedRooms]}
                                 currentUserId={user.id}
                                 viewMode={viewMode}
                                 onViewModeChange={setViewMode}
                                 onViewDetails={handleViewDetails}
                                 onEdit={handleEdit}
                                 onEnter={handleEnterRoom}
-                                emptyMessage="All your owned rooms are categorized."
-                                extraOptions={user.categories?.map(c => ({
-                                    label: `Add to ${c.name}`,
-                                    icon: <IconPlus size={16} />,
-                                    onClick: (room: Room) => addRoomToCategory(c.id, room.id)
-                                }))}
-                            />
-                        </div>
-
-                        {/* Joined Rooms */}
-                        <div className="relative space-y-4">
-                            <div className="flex items-center justify-between pb-2">
-                                <h3 className="text-2xl font-bold text-white">Joined Rooms</h3>
-                            </div>
-                            <RoomGrid
-                                rooms={joinedRooms}
-                                currentUserId={user.id}
-                                viewMode={viewMode}
-                                onViewModeChange={setViewMode}
-                                onViewDetails={handleViewDetails}
-                                onEdit={handleEdit}
-                                onEnter={handleEnterRoom}
-                                emptyMessage="You haven't joined any rooms yet."
-                                extraOptions={user.categories?.map(c => ({
-                                    label: `Add to ${c.name}`,
-                                    icon: <IconPlus size={16} />,
-                                    onClick: (room: Room) => addRoomToCategory(c.id, room.id)
-                                }))}
                             />
                         </div>
                     </div>
                 </div>
             </main>
 
-            {/* Modals */}
+            <FavoriteSongSelectionModal
+                isOpen={isFavModalOpen}
+                onClose={() => setIsFavModalOpen(false)}
+                currentFavorites={user.favoriteSongs || []}
+                onSave={updateFavoriteSongs}
+            />
+
             <EditRoomModal
                 isOpen={isEditModalOpen}
-                onClose={() => {
-                    setIsEditModalOpen(false);
-                    setSelectedRoom(null);
-                }}
+                onClose={() => { setIsEditModalOpen(false); setSelectedRoom(null); }}
                 room={selectedRoom}
                 onSubmit={handleUpdateRoom}
             />
@@ -413,10 +384,7 @@ const Profile: React.FC = () => {
 
             <RoomDetailsModal
                 isOpen={isDetailsModalOpen}
-                onClose={() => {
-                    setIsDetailsModalOpen(false);
-                    setSelectedRoom(null);
-                }}
+                onClose={() => { setIsDetailsModalOpen(false); setSelectedRoom(null); }}
                 room={selectedRoom}
                 onEnter={handleEnterRoom}
             />

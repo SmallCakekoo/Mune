@@ -11,6 +11,7 @@ import CookiePolicy from './pages/Legal/CookiePolicy';
 import NotFound from './pages/NotFound';
 import Search from './pages/Search';
 import Profile from './pages/Profile/Profile';
+import UserProfile from './pages/Profile/UserProfile';
 import Settings from './pages/Profile/Settings';
 import ScrollToTop from './components/layout/ScrollToTop';
 import { Toaster } from 'react-hot-toast';
@@ -34,6 +35,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/search" element={<Search />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/user/:id" element={<UserProfile />} />
         <Route path="/settings" element={<Settings />} />
 
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />

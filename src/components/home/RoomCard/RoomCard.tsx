@@ -251,24 +251,29 @@ const RoomCard: React.FC<RoomCardProps> = ({
             {room.members && room.members.length > 0 ? (
               <>
                 <div className="flex -space-x-2">
-                  {room.members.slice(0, 5).map((member, index) => {
-                    const memberAvatar = member.avatar || `/src/assets/images/cats/Cat (${((member.id?.charCodeAt(0) || 0) % 40) + 1}).png`;
-                    return (
+                  {room.members?.slice(0, 5).map((member, i) => (
+                    <button
+                      key={member.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/user/${member.id}`);
+                      }}
+                      className="w-8 h-8 rounded-full border-2 border-background-400 overflow-hidden hover:scale-110 hover:z-10 transition-transform relative z-0"
+                      title={member.name}
+                    >
                       <img
-                        key={member.id || index}
-                        src={memberAvatar}
+                        src={member.avatar || '/src/assets/images/cats/Cat (1).png'}
                         alt={member.name}
-                        className="w-8 h-8 rounded-full object-cover border-2 border-background-400"
-                        title={member.name}
+                        className="w-full h-full object-cover"
                         onError={(e) => {
                           const catNumber = ((member.id?.charCodeAt(0) || 0) % 40) + 1;
                           e.currentTarget.src = `/src/assets/images/cats/Cat (${catNumber}).png`;
                         }}
                       />
-                    );
-                  })}
+                    </button>
+                  ))}
                   {room.members.length > 5 && (
-                    <div className="w-8 h-8 rounded-full border-2 border-background-400 bg-primary-500/20 flex items-center justify-center text-xs font-semibold text-white">
+                    <div className="w-8 h-8 rounded-full border-2 border-background-400 bg-primary-500/20 flex items-center justify-center text-xs font-semibold text-white relative z-0 -ml-2">
                       +{room.members.length - 5}
                     </div>
                   )}
