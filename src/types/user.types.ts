@@ -4,6 +4,12 @@ export interface Category {
   roomIds: string[];
 }
 
+export interface FavoriteSong {
+  title: string;
+  artist: string;
+  albumCover: string;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -11,6 +17,7 @@ export interface User {
   username: string;
   bio?: string;
   avatar?: string;
+  favoriteSongs?: FavoriteSong[];
   socialLinks?: {
     discord?: string;
     github?: string;

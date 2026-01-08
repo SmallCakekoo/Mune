@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { User, Category } from '../types/user.types';
+import type { User, Category, FavoriteSong } from '../types/user.types';
 
 interface AuthContextType {
     user: User | null;
@@ -11,6 +11,7 @@ interface AuthContextType {
     updateCategory: (id: string, name: string) => Promise<void>;
     addRoomToCategory: (categoryId: string, roomId: string) => Promise<void>;
     removeRoomFromCategory: (categoryId: string, roomId: string) => Promise<void>;
+    updateFavoriteSongs: (songs: FavoriteSong[]) => Promise<void>;
     logout: () => Promise<void>;
     deleteAccount: () => Promise<void>;
 }
@@ -25,6 +26,18 @@ const mockUser: User = {
     email: 'snow@mune.com',
     bio: "I'm a beatiful butterfly",
     avatar: '/src/assets/images/cats/Cat (9).png',
+    favoriteSongs: [
+        {
+            title: 'mice on venus',
+            artist: 'c418',
+            albumCover: '/src/assets/images/album/mice on venus - c418.jpg.jpg'
+        },
+        {
+            title: 'moog city',
+            artist: 'c418',
+            albumCover: '/src/assets/images/album/moog city - c418.jpg'
+        }
+    ],
     socialLinks: {
         discord: '@snowcat777nyan',
         github: '@snowcatreact',
@@ -104,6 +117,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } : null);
     };
 
+    const updateFavoriteSongs = async (songs: FavoriteSong[]) => {
+        return new Promise<void>((resolve) => {
+            setTimeout(() => {
+                setUser((prev) => (prev ? { ...prev, favoriteSongs: songs } : null));
+                resolve();
+            }, 500);
+        });
+    };
+
     const logout = async () => {
         return new Promise<void>((resolve) => {
             setTimeout(() => {
@@ -134,6 +156,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 updateCategory,
                 addRoomToCategory,
                 removeRoomFromCategory,
+                updateFavoriteSongs,
                 logout,
                 deleteAccount,
             }}
