@@ -119,7 +119,7 @@ const NotFound = () => {
         if (audio) {
             // eslint-disable-next-line react-hooks/immutability
             audio.currentTime = 0;
-            // eslint-disable-next-line react-hooks/immutability
+             
             audio.volume = 0.5;
             audio.play();
 

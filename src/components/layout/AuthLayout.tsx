@@ -2,17 +2,13 @@ import { Outlet, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import MuneLogo from '../../assets/images/MuneCollapsed.svg';
 
-interface AuthLayoutProps {
-    reverse?: boolean;
-}
-
-const AuthLayout = ({ reverse = false }: AuthLayoutProps) => {
+const AuthLayout = () => {
     return (
         <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 md:p-8 bg-background-500 relative overflow-hidden">
             {/* Background Elements - Similar to Landing */}
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary-500/10 via-background-500 to-background-500 z-0" />
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 z-0 mix-blend-overlay" />
-            
+
             {/* Animated Grid Background */}
             <div className="absolute inset-0 z-0 opacity-10"
                 style={{
