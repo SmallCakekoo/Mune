@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { Input } from '../../common/Input/Input';
 import { Button } from '../../common/Button/Button';
 import { SocialLoginButton } from '../../common/Button/SocialLoginButton';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
 const signupSchema = z.object({
     firstName: z.string().min(2, 'First name is required'),
@@ -24,12 +24,20 @@ const SignupForm = () => {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
+        watch,
     } = useForm<SignupFormData>({
         resolver: zodResolver(signupSchema),
     });
 
+    const password = watch('password');
+
+    const passwordRequirements = [
+        { label: 'At least 8 characters', met: password ? password.length >= 8 : false },
+        { label: 'Include numbers', met: password ? /\d/.test(password) : false },
+        { label: 'Include letters', met: password ? /[a-zA-Z]/.test(password) : false },
+    ];
+
     const onSubmit = async (data: SignupFormData) => {
-        // Simulate API call
         console.log(data);
         await new Promise((resolve) => setTimeout(resolve, 1000));
         navigate('/home');
@@ -37,114 +45,147 @@ const SignupForm = () => {
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
             className="w-full"
         >
-            <div className="mb-8 sm:mb-10">
+            {/* Header */}
+            <div className="mb-8">
                 <motion.h2
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1, duration: 0.5 }}
-                    className="text-3xl sm:text-4xl font-bold text-neutral-600 mb-3 font-display"
+                    className="text-3xl sm:text-4xl font-bold text-white mb-2 font-display"
                 >
-                    Let's Create Your Vibe
+                    Create Account
                 </motion.h2>
                 <motion.p
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.15, duration: 0.5 }}
-                    className="text-neutral-400 text-base sm:text-lg"
+                    className="text-neutral-5 text-base"
                 >
-                    Your room awaits, where ideas meet the perfect playlist
-                </motion.p>
-                <motion.p
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2, duration: 0.5 }}
-                    className="mt-4 text-sm text-neutral-400"
-                >
-                    Been here before? Welcome Back.{' '}
-                    <Link
-                        to="/login"
-                        className="text-primary-600 font-semibold hover:text-primary-700 hover:underline underline-offset-2 transition-all duration-200 inline-flex items-center gap-1 group"
-                    >
-                        Log In
-                        <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                    </Link>
+                    Join the community and start creating
                 </motion.p>
             </div>
 
+            {/* Form */}
             <motion.form
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.25, duration: 0.5 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
                 onSubmit={handleSubmit(onSubmit)}
-                className="space-y-4"
+                className="space-y-6"
             >
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                        <label className="text-xs font-semibold text-neutral-5 uppercase tracking-wider">
+                            First Name
+                        </label>
+                        <Input
+                            placeholder="John"
+                            error={errors.firstName?.message}
+                            {...register('firstName')}
+                        />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-xs font-semibold text-neutral-5 uppercase tracking-wider">
+                            Last Name
+                        </label>
+                        <Input
+                            placeholder="Doe"
+                            error={errors.lastName?.message}
+                            {...register('lastName')}
+                        />
+                    </div>
+                </div>
+
+                <div className="space-y-1">
+                    <label className="text-xs font-semibold text-neutral-5 uppercase tracking-wider">
+                        Email Address
+                    </label>
                     <Input
-                        label="First Name"
-                        placeholder="John"
-                        error={errors.firstName?.message}
-                        {...register('firstName')}
-                    />
-                    <Input
-                        label="Last Name"
-                        placeholder="Doe"
-                        error={errors.lastName?.message}
-                        {...register('lastName')}
+                        type="email"
+                        placeholder="hello@example.com"
+                        error={errors.email?.message}
+                        {...register('email')}
                     />
                 </div>
 
-                <Input
-                    label="Email"
-                    type="email"
-                    placeholder="your.email@example.com"
-                    error={errors.email?.message}
-                    {...register('email')}
-                />
-
-                <Input
-                    label="Password"
-                    type="password"
-                    placeholder="Create a strong password"
-                    helperText="Must be at least 8 characters"
-                    error={errors.password?.message}
-                    {...register('password')}
-                />
+                <div className="space-y-1">
+                    <label className="text-xs font-semibold text-neutral-5 uppercase tracking-wider">
+                        Password
+                    </label>
+                    <Input
+                        type="password"
+                        placeholder="Create a strong password"
+                        error={errors.password?.message}
+                        {...register('password')}
+                    />
+                    
+                    {password && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            className="space-y-2 p-3 bg-white/5 rounded-lg border border-white/10 mt-2"
+                        >
+                            {passwordRequirements.map((req, index) => (
+                                <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: index * 0.1 }}
+                                    className="flex items-center gap-2"
+                                >
+                                    <CheckCircle2
+                                        className={`w-3.5 h-3.5 ${req.met ? 'text-success-400' : 'text-neutral-5/30'}`}
+                                    />
+                                    <span
+                                        className={`text-sm ${req.met ? 'text-success-400 font-medium' : 'text-neutral-5/60'}`}
+                                    >
+                                        {req.label}
+                                    </span>
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    )}
+                </div>
 
                 <div className="pt-2">
                     <label className="flex items-start gap-3 cursor-pointer group">
                         <input
                             type="checkbox"
                             id="terms"
-                            className="mt-0.5 w-4 h-4 rounded-full border-2 border-blue-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-0 transition-all duration-200 cursor-pointer checked:bg-blue-600 checked:border-blue-600"
+                            className="mt-0.5 w-4 h-4 rounded border-2 border-white/20 bg-transparent text-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:ring-offset-0 transition-all duration-200 cursor-pointer checked:bg-primary-500 checked:border-primary-500"
                             {...register('terms')}
                         />
-                        <span className="text-sm text-neutral-500 group-hover:text-neutral-600 transition-colors leading-relaxed select-none">
+                        <span className="text-sm text-neutral-5 group-hover:text-white transition-colors leading-relaxed select-none">
                             I agree to the{' '}
                             <Link
                                 to="/terms-of-service"
-                                className="text-primary-600 font-medium hover:text-primary-700 underline underline-offset-2 cursor-pointer"
+                                className="text-primary-400 hover:text-primary-300 font-semibold underline underline-offset-2 cursor-pointer"
                             >
                                 Terms & Conditions
                             </Link>
                             {' '}and{' '}
                             <Link
                                 to="/privacy-policy"
-                                className="text-primary-600 font-medium hover:text-primary-700 underline underline-offset-2 cursor-pointer"
+                                className="text-primary-400 hover:text-primary-300 font-semibold underline underline-offset-2 cursor-pointer"
                             >
                                 Privacy Policy
                             </Link>
                         </span>
                     </label>
                     {errors.terms && (
-                        <p className="mt-2 text-xs text-error-500 font-medium animate-in slide-in-from-top-1 fade-in-0 flex items-center gap-1.5">
-                            <span className="w-1 h-1 rounded-full bg-error-500" />
+                        <motion.p
+                            initial={{ opacity: 0, y: -5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-2 text-xs text-error-400 font-medium flex items-center gap-1.5"
+                        >
+                            <span className="w-1 h-1 rounded-full bg-error-400" />
                             {errors.terms.message}
-                        </p>
+                        </motion.p>
                     )}
                 </div>
 
@@ -153,39 +194,59 @@ const SignupForm = () => {
                     fullWidth
                     size="lg"
                     isLoading={isSubmitting}
-                    className="mt-6 shadow-lg shadow-primary-500/20 hover:shadow-xl hover:shadow-primary-500/30 transition-all duration-300"
+                    className="mt-6 bg-white text-background-500 hover:bg-neutral-5 shadow-lg hover:shadow-xl transition-all duration-300 h-12 font-semibold"
                 >
-                    {isSubmitting ? 'Creating Account...' : 'Sign Up'}
+                    {isSubmitting ? 'Creating account...' : 'Sign Up'}
                 </Button>
             </motion.form>
 
+            {/* Sign in link */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
+                className="mt-6 text-center"
+            >
+                <p className="text-sm text-neutral-5">
+                    Already have an account?{' '}
+                    <Link
+                        to="/login"
+                        className="text-primary-400 hover:text-primary-300 font-semibold transition-colors inline-flex items-center gap-1.5 group"
+                    >
+                        Log In
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                    </Link>
+                </p>
+            </motion.div>
+
+            {/* Social Login */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
                 className="mt-8"
             >
-                <div className="relative">
+                <div className="relative mb-6">
                     <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t border-neutral-200" />
+                        <div className="w-full border-t border-white/10"></div>
                     </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-white px-4 text-neutral-400 font-medium tracking-wider">
+                    <div className="relative flex justify-center text-sm">
+                        <span className="bg-background-400/50 px-4 text-neutral-5 font-medium uppercase tracking-wider">
                             Or continue with
                         </span>
                     </div>
                 </div>
 
-                <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4">
+                <div className="grid grid-cols-2 gap-3">
                     <SocialLoginButton
                         provider="github"
                         onClick={() => console.log('Github signup')}
-                        className="hover:scale-[1.02] transition-transform duration-200"
+                        className="bg-white/5 hover:bg-white/10 border border-white/10 text-white hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                     />
                     <SocialLoginButton
                         provider="google"
                         onClick={() => console.log('Google signup')}
-                        className="hover:scale-[1.02] transition-transform duration-200"
+                        className="bg-white/5 hover:bg-white/10 border border-white/10 text-white hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                     />
                 </div>
             </motion.div>
