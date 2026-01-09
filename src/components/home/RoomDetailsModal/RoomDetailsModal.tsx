@@ -24,12 +24,13 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
   const navigate = useNavigate();
   if (!room) return null;
 
-  const formatDate = (date: Date | string) => {
+  const formatDate = (date?: Date | string) => {
+    if (!date) return 'Unknown';
     try {
       const d = typeof date === 'string' ? new Date(date) : date;
       return format(d, 'MMMM dd, yyyy', { locale: enUS });
     } catch {
-      return '';
+      return 'Unknown';
     }
   };
 
@@ -59,7 +60,7 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
       title="Room Details"
       size="lg"
     >
-      <div className="space-y-6">
+      <div className="space-y-6 max-h-[65vh] overflow-y-auto pr-2 custom-scrollbar">
         {/* Header */}
         <div>
           <div className="flex items-center gap-3 mb-4">

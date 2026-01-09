@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -10,6 +10,7 @@ import {
   IconMenu2,
   IconX,
 } from '@tabler/icons-react';
+import { useSidebar } from '../../../context/SidebarContext';
 import { cn } from '../../../utils/cn';
 // Import SVGs as React components or URLs
 // const MuneLogoCollapsed = new URL('../../../assets/images/MuneCollapsed.svg', import.meta.url).href;
@@ -30,7 +31,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom, userAvatar }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const { isCollapsed, setIsCollapsed, toggleSidebar } = useSidebar();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -144,7 +145,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom, userAvatar }) => {
           </AnimatePresence>
 
           <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={toggleSidebar}
             className="p-2 rounded-lg text-neutral-5 hover:text-white hover:bg-white/10 transition-colors"
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
@@ -221,7 +222,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom, userAvatar }) => {
 
       {/* Mobile Menu Button */}
       <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
+        onClick={toggleSidebar}
         className={cn(
           'fixed top-4 left-4 z-50 p-3 rounded-xl',
           'bg-background-400/80 backdrop-blur-xl border border-white/10',

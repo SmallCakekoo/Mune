@@ -139,6 +139,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
           'absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl',
           gradient
         )}
+        onClick={handleEnter}
       />
 
       {/* Content */}
@@ -251,7 +252,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
             {room.members && room.members.length > 0 ? (
               <>
                 <div className="flex -space-x-2">
-                  {room.members?.slice(0, 5).map((member, i) => (
+                  {room.members?.slice(0, 5).map((member) => (
                     <button
                       key={member.id}
                       onClick={(e) => {

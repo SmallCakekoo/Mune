@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/layout/Sidebar/Sidebar';
 import RoomCard from '../../components/home/RoomCard/RoomCard';
 import CreateRoomModal from '../../components/home/CreateRoomModal/CreateRoomModal';
@@ -8,6 +9,8 @@ import RoomDetailsModal from '../../components/home/RoomDetailsModal/RoomDetails
 import ConfirmationDialog from '../../components/common/ConfirmationDialog/ConfirmationDialog';
 import TodoList from '../../components/home/TodoList/TodoList';
 import { Button } from '../../components/common/Button/Button';
+import { useSidebar } from '../../context/SidebarContext';
+import { cn } from '../../utils/cn';
 import type { Room, RoomPrivacy } from '../../types/room.types';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
 import toast from 'react-hot-toast';
@@ -157,6 +160,8 @@ const mockRooms: Room[] = [
 ];
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
+  const { isCollapsed } = useSidebar();
   const [rooms, setRooms] = useState<Room[]>(mockRooms);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -269,8 +274,8 @@ const Home: React.FC = () => {
 
   // Handle enter room
   const handleEnterRoom = (room: Room) => {
-    // In production this would navigate to /room/:id
     toast.success(`Entering ${room.name}...`);
+    navigate(`/room/${room.id}`);
   };
 
   return (
@@ -294,7 +299,10 @@ const Home: React.FC = () => {
       />
 
       {/* Main Content */}
-      <main className="ml-0 md:ml-[80px] lg:ml-[280px] min-h-screen relative z-10 transition-all duration-300">
+      <main className={cn(
+        "min-h-screen relative z-10 transition-all duration-300",
+        isCollapsed ? "ml-0 md:ml-[80px]" : "ml-0 md:ml-[280px]"
+      )}>
         <div className="container mx-auto px-6 py-8 md:py-8 pt-20 md:pt-8">
           {/* Header */}
           <motion.div
