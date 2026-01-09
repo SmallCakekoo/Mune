@@ -8,7 +8,7 @@ const PrivacyPolicy = () => {
             <main className="container mx-auto px-6 pt-32 pb-20 max-w-4xl">
                 <h1 className="text-4xl md:text-5xl font-bold mb-8">Privacy Policy</h1>
                 <div className="prose prose-invert prose-lg space-y-6">
-                    <p className="text-neutral-5/80 mb-6">Last updated: November 29, 2025</p>
+                    <p className="text-neutral-5/80 mb-6">Last updated: November 29, 2026</p>
 
                     <p className="text-neutral-5/80">
                         At Mune, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our application. Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the application.

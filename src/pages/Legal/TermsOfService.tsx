@@ -8,7 +8,7 @@ const TermsOfService = () => {
             <main className="container mx-auto px-6 pt-32 pb-20 max-w-4xl">
                 <h1 className="text-4xl md:text-5xl font-bold mb-8">Terms of Service</h1>
                 <div className="prose prose-invert prose-lg space-y-6">
-                    <p className="text-neutral-5/80 mb-6">Last updated: November 29, 2025</p>
+                    <p className="text-neutral-5/80 mb-6">Last updated: November 29, 2026</p>
 
                     <p className="text-neutral-5/80">
                         Please read these Terms of Service ("Terms", "Terms of Service") carefully before using the Mune website and application (the "Service") operated by Mune ("us", "we", or "our").
