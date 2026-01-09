@@ -8,7 +8,7 @@ const CookiePolicy = () => {
             <main className="container mx-auto px-6 pt-32 pb-20 max-w-4xl">
                 <h1 className="text-4xl md:text-5xl font-bold mb-8">Cookie Policy</h1>
                 <div className="prose prose-invert prose-lg space-y-6">
-                    <p className="text-neutral-5/80 mb-6">Last updated: November 29, 2025</p>
+                    <p className="text-neutral-5/80 mb-6">Last updated: November 29, 2026</p>
 
                     <p className="text-neutral-5/80">
                         This Cookie Policy explains what cookies are and how we use them on Mune. You should read this policy so you can understand what type of cookies we use, the information we collect using cookies, and how that information is used.

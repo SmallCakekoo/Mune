@@ -14,6 +14,7 @@ import Profile from './pages/Profile/Profile';
 import UserProfile from './pages/Profile/UserProfile';
 import Room from './pages/Room/Room';
 import Settings from './pages/Profile/Settings';
+import DesignSystem from './pages/DesignSystem/DesignSystem';
 import ScrollToTop from './components/layout/ScrollToTop';
 import { SidebarProvider } from './context/SidebarContext';
 import { Toaster } from 'react-hot-toast';
@@ -45,6 +46,7 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
+          <Route path="/design-system" element={<DesignSystem />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster position="bottom-right" />

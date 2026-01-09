@@ -59,7 +59,7 @@ const Footer = () => {
 
                 <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
                     <p className="text-white text-sm">
-                        © 2025 Mune. All rights reserved.
+                        © 2026 Mune. All rights reserved.
                     </p>
 
                     <div className="flex items-center gap-6">
