@@ -250,7 +250,7 @@ const NotFound = () => {
                 >
                     <Link
                         to="/"
-                        className="group inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-400 text-white px-8 py-4 rounded-full font-medium transition-all hover:shadow-[0_0_30px_rgba(58,139,255,0.4)] hover:scale-105"
+                        className="group inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-400 text-white px-8 py-4 rounded-xl font-medium transition-all hover:shadow-[0_0_30px_rgba(58,139,255,0.4)] hover:scale-105"
                     >
                         <IconHome size={20} />
                         Back to Home
