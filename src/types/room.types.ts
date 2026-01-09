@@ -17,6 +17,8 @@ export interface Note {
     x: number;
     y: number;
     color: string;
+    width?: number;
+    height?: number;
     authorId: string;
     createdAt: Date | string;
     lastModified?: Date | string;

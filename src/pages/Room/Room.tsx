@@ -10,7 +10,7 @@ import RoomMusicPlayer from '../../components/room/RoomMusicPlayer/RoomMusicPlay
 import ActiveUsers from '../../components/room/ActiveUsers/ActiveUsers';
 import RoomSettingsOverlay from '../../components/room/RoomSettingsOverlay/RoomSettingsOverlay';
 import { MOCK_USERS } from '../../data/mockUsers';
-import type { Note, RoomPresence } from '../../types/room.types';
+import type { Note, RoomPresence, TodoItem } from '../../types/room.types';
 import { cn } from '../../utils/cn';
 import toast from 'react-hot-toast';
 
@@ -62,15 +62,17 @@ const RoomPage: React.FC = () => {
     const [_scale, setScale] = useState(1);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-    const handleAddNote = (type: 'text' | 'todo', x: number, y: number) => {
+    const handleAddNote = (type: 'text' | 'todo' | 'image', x: number, y: number, content?: string | TodoItem[], width?: number, height?: number) => {
         const newNote: Note = {
             id: Date.now().toString(),
             type,
-            title: type === 'text' ? 'New Note' : 'New List',
-            content: type === 'text' ? '' : [],
+            title: type === 'text' ? 'New Note' : type === 'todo' ? 'New List' : 'New Image',
+            content: content || (type === 'text' ? '' : type === 'todo' ? [] : ''),
             x,
             y,
-            color: '#ffffff',
+            width: width || (type === 'image' ? 300 : 280),
+            height: height || (type === 'image' ? undefined : 180),
+            color: type === 'image' ? '#ffffff' : '#FEF9C3',
             authorId: currentUser?.id || 'anonymous',
             createdAt: new Date().toISOString()
         };
@@ -150,7 +152,11 @@ const RoomPage: React.FC = () => {
                             <RoomMusicPlayer />
                         </div>
                         <div className="pointer-events-auto">
-                            <ActiveUsers members={activeMembers} />
+                            <ActiveUsers
+                                members={activeMembers}
+                                isOwner={true}
+                                currentUserId={currentUser?.id}
+                            />
                         </div>
                     </div>
 

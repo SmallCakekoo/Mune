@@ -9,6 +9,7 @@ import {
 import Sidebar from '../../components/layout/Sidebar/Sidebar';
 import ProfileSettings from '../../components/profile/ProfileSettings/ProfileSettings';
 import ThemeSettings from '../../components/profile/ThemeSettings/ThemeSettings';
+import CreateRoomModal from '../../components/home/CreateRoomModal/CreateRoomModal';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/common/Button/Button';
 import ConfirmationDialog from '../../components/common/ConfirmationDialog/ConfirmationDialog';
@@ -21,6 +22,7 @@ const Settings: React.FC = () => {
 
     const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     const handleLogout = async () => {
         try {
@@ -56,7 +58,10 @@ const Settings: React.FC = () => {
             <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary-500/10 via-background-500 to-background-500 z-0" />
             <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 z-0 mix-blend-overlay" />
 
-            <Sidebar userAvatar={user.avatar} />
+            <Sidebar
+                userAvatar={user.avatar}
+                onCreateRoom={() => setIsCreateModalOpen(true)}
+            />
 
             <main className="ml-0 md:ml-[80px] lg:ml-[280px] min-h-screen relative z-10 transition-all duration-300">
                 <div className="container mx-auto px-6 py-8 pt-24 md:pt-12 max-w-4xl">
@@ -147,6 +152,16 @@ const Settings: React.FC = () => {
                 message="This action cannot be undone. All your rooms, playlists, and profile data will be permanently erased. Are you absolutely sure?"
                 confirmText="Yes, delete everything"
                 variant="danger"
+            />
+
+            <CreateRoomModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onSubmit={(data) => {
+                    toast.success(`Room "${data.name}" created! Redirecting to home...`);
+                    setIsCreateModalOpen(false);
+                    navigate('/home');
+                }}
             />
         </div>
     );
