@@ -28,7 +28,7 @@ function App() {
           <Route path="/" element={<Landing />} />
 
           {/* Auth Routes */}
-          <Route element={<AuthLayout reverse />}>
+          <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
           </Route>
           <Route element={<AuthLayout />}>
