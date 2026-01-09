@@ -58,6 +58,24 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
         });
     };
 
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+    const handleAvatarClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData({ ...formData, avatar: reader.result as string });
+                toast.success('Photo preview updated! Save to confirm.');
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -75,17 +93,24 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
                     <div className="flex flex-col md:flex-row gap-8">
                         {/* Avatar Preview */}
                         <div className="flex flex-col items-center gap-4">
-                            <div className="relative group">
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                            />
+                            <div className="relative group" onClick={handleAvatarClick}>
                                 <img
                                     src={formData.avatar || '/src/assets/images/cats/Cat (9).png'}
                                     alt="Profile Preview"
-                                    className="w-32 h-32 rounded-2xl object-cover border-2 border-primary-500/30 group-hover:border-primary-500 transition-all"
+                                    className="w-32 h-32 rounded-2xl object-cover border-2 border-primary-500/30 group-hover:border-primary-500 transition-all cursor-pointer"
                                 />
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity cursor-pointer">
                                     <IconCamera size={24} className="text-white" />
                                 </div>
                             </div>
-                            <p className="text-xs text-neutral-5 italic">Click to change (simulated)</p>
+                            <p className="text-xs text-neutral-5 italic">Click to change photo</p>
                         </div>
 
                         <div className="flex-1 space-y-4">

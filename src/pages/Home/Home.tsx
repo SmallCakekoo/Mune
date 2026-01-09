@@ -338,7 +338,7 @@ const Home: React.FC = () => {
             <div className="flex gap-3">
               <Button onClick={() => setIsCreateModalOpen(true)}>
                 <IconPlus size={18} />
-                Create New Room
+                Create Room
               </Button>
             </div>
           </div>

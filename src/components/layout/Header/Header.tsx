@@ -45,7 +45,7 @@ const Header = ({ showNavLinks = true }: HeaderProps) => {
                 <div className="flex items-center gap-4">
                     <Link
                         to="/login"
-                        className="text-white hover:text-neutral-200 font-medium transition-colors px-4 py-2"
+                        className="text-white hover:text-white font-medium transition-colors px-4 py-2"
                     >
                         Log In
                     </Link>

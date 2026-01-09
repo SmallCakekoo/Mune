@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import type { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import type { Note } from '../../../types/room.types';
@@ -8,7 +9,7 @@ import toast from 'react-hot-toast';
 
 interface CanvasProps {
     notes: Note[];
-    onAddNote: (type: 'text' | 'todo', x: number, y: number) => void;
+    onAddNote: (type: 'text' | 'todo' | 'image', x: number, y: number, content?: string, width?: number, height?: number) => void;
     onUpdateNote: (id: string, updates: Partial<Note>) => void;
     onDeleteNote: (id: string) => void;
     onDuplicateNote: (id: string) => void;
@@ -19,16 +20,73 @@ interface CanvasProps {
 const Canvas: React.FC<CanvasProps> = ({ notes, onAddNote, onUpdateNote, onDeleteNote, onDuplicateNote, onClearCanvas, onScaleChange }) => {
     const [contextMenu, setContextMenu] = useState<{ x: number, y: number, canvasX: number, canvasY: number } | null>(null);
     const canvasRef = useRef<HTMLDivElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const uploadPosRef = useRef<{ x: number, y: number } | null>(null);
+    const transformRef = useRef<ReactZoomPanPinchRef>(null);
 
     const handleContextMenu = (e: React.MouseEvent) => {
         e.preventDefault();
         const { clientX, clientY } = e;
+
+        let canvasX = clientX;
+        let canvasY = clientY;
+
+        if (transformRef.current && canvasRef.current) {
+            const { positionX, positionY, scale } = transformRef.current.instance.transformState;
+            const rect = canvasRef.current.getBoundingClientRect();
+            canvasX = (clientX - rect.left - positionX) / scale;
+            canvasY = (clientY - rect.top - positionY) / scale;
+        }
+
         setContextMenu({
             x: clientX,
             y: clientY,
-            canvasX: clientX - 100, // Approximate for now
-            canvasY: clientY - 100
+            canvasX,
+            canvasY
         });
+    };
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !contextMenu) return;
+
+        // Capture coordinates immediately
+        const pos = uploadPosRef.current || (contextMenu ? { x: contextMenu.canvasX, y: contextMenu.canvasY } : null);
+        if (!pos) return;
+
+        const { x: canvasX, y: canvasY } = pos;
+        setContextMenu(null);
+        uploadPosRef.current = null;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const base64 = event.target?.result as string;
+            const img = new Image();
+            img.onload = () => {
+                const maxDim = 400;
+                let w = img.width;
+                let h = img.height;
+                const ratio = w / h;
+                if (w > h) {
+                    w = Math.min(w, maxDim);
+                    h = w / ratio;
+                } else {
+                    h = Math.min(h, maxDim);
+                    w = h * ratio;
+                }
+                onAddNote('image', canvasX, canvasY, base64, Math.round(w), Math.round(h));
+                toast.success('Image added to canvas');
+            };
+            img.onerror = () => {
+                toast.error('Failed to load image');
+            };
+            img.src = base64;
+        };
+        reader.onerror = () => toast.error('Failed to read file');
+        reader.readAsDataURL(file);
+
+        // Reset input to allow re-uploading same file
+        e.target.value = '';
     };
 
     const closeMenu = () => setContextMenu(null);
@@ -40,6 +98,13 @@ const Canvas: React.FC<CanvasProps> = ({ notes, onAddNote, onUpdateNote, onDelet
             onContextMenu={handleContextMenu}
             onClick={closeMenu}
         >
+            <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleImageUpload}
+            />
             {/* Background elements for consistency with Home */}
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary-500/10 via-background-500 to-background-500 z-0" />
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 z-0 mix-blend-overlay" />
@@ -52,6 +117,7 @@ const Canvas: React.FC<CanvasProps> = ({ notes, onAddNote, onUpdateNote, onDelet
                 }}
             />
             <TransformWrapper
+                ref={transformRef}
                 initialScale={1}
                 minScale={0.1}
                 maxScale={5}
@@ -133,7 +199,12 @@ const Canvas: React.FC<CanvasProps> = ({ notes, onAddNote, onUpdateNote, onDelet
                             </button>
                             <div className="h-[1px] bg-white/5 mx-4" />
                             <button
-                                onClick={() => { toast.success('Image upload coming soon!'); closeMenu(); }}
+                                onClick={() => {
+                                    if (contextMenu) {
+                                        uploadPosRef.current = { x: contextMenu.canvasX, y: contextMenu.canvasY };
+                                        fileInputRef.current?.click();
+                                    }
+                                }}
                                 className="w-full flex items-center gap-3 px-6 py-4 hover:bg-white/5 text-white transition-all text-base font-medium group"
                             >
                                 <IconPlus size={20} className="text-white/60 group-hover:text-white" />

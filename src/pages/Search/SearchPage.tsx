@@ -14,6 +14,7 @@ import {
 import Sidebar from '../../components/layout/Sidebar/Sidebar';
 import RoomCard from '../../components/home/RoomCard/RoomCard';
 import RoomDetailsModal from '../../components/home/RoomDetailsModal/RoomDetailsModal';
+import CreateRoomModal from '../../components/home/CreateRoomModal/CreateRoomModal';
 import { Button } from '../../components/common/Button/Button';
 import type { Room } from '../../types/room.types';
 import { useSidebar } from '../../context/SidebarContext';
@@ -167,6 +168,7 @@ const Search: React.FC = () => {
     const [ownedFilter, setOwnedFilter] = useState(false);
 
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
     const currentUserId = 'user1';
@@ -220,6 +222,12 @@ const Search: React.FC = () => {
         setOwnedFilter(false);
     };
 
+    const handleCreateRoom = (data: any) => {
+        toast.success(`Room "${data.name}" created! Redirecting to home...`);
+        setIsCreateModalOpen(false);
+        navigate('/home');
+    };
+
     return (
         <div className="min-h-screen bg-background-500 text-white selection:bg-primary-500/30">
             {/* Background Elements */}
@@ -234,7 +242,10 @@ const Search: React.FC = () => {
                 }}
             />
 
-            <Sidebar userAvatar="/src/assets/images/cats/Cat (9).png" />
+            <Sidebar
+                onCreateRoom={() => setIsCreateModalOpen(true)}
+                userAvatar="/src/assets/images/cats/Cat (9).png"
+            />
 
             <main className={cn(
                 "min-h-screen relative z-10 transition-all duration-300",
@@ -435,6 +446,12 @@ const Search: React.FC = () => {
                 }}
                 room={selectedRoom}
                 onEnter={handleEnterRoom}
+            />
+
+            <CreateRoomModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onSubmit={handleCreateRoom}
             />
         </div>
     );

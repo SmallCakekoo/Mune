@@ -5,11 +5,11 @@ import { useTheme } from '../../../context/ThemeContext';
 import { cn } from '../../../utils/cn';
 
 const themes = [
-    { id: 'purple', name: 'Mune Purple', color: 'bg-primary-500' },
-    { id: 'blue', name: 'Ocean Blue', color: 'bg-blue-500' },
-    { id: 'cyan', name: 'Cyber Cyan', color: 'bg-secondary-cyan-500' },
-    { id: 'green', name: 'Emerald', color: 'bg-green-500' },
-    { id: 'red', name: 'Ruby', color: 'bg-error-500' },
+    { id: 'purple', name: 'Mune Purple', color: 'bg-[#8B5CF6]' },
+    { id: 'blue', name: 'Ocean Blue', color: 'bg-[#3B82F6]' },
+    { id: 'cyan', name: 'Cyber Cyan', color: 'bg-[#06B6D4]' },
+    { id: 'green', name: 'Emerald', color: 'bg-[#10B981]' },
+    { id: 'red', name: 'Ruby', color: 'bg-[#EF4444]' },
 ];
 
 const ThemeSettings: React.FC = () => {

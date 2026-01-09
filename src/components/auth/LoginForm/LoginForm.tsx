@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Input } from '../../common/Input/Input';
 import { Button } from '../../common/Button/Button';
 import { SocialLoginButton } from '../../common/Button/SocialLoginButton';
+import { Checkbox } from '../../common/Checkbox/Checkbox';
 import { ArrowRight } from 'lucide-react';
 
 const loginSchema = z.object({
@@ -91,16 +92,10 @@ const LoginForm = () => {
                 </div>
 
                 <div className="flex items-center justify-between pt-2">
-                    <label className="flex items-center gap-2 cursor-pointer group">
-                        <input
-                            type="checkbox"
-                            id="remember"
-                            className="w-4 h-4 rounded border-2 border-white/20 bg-transparent text-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:ring-offset-0 transition-all duration-200 cursor-pointer checked:bg-primary-500 checked:border-primary-500"
-                        />
-                        <span className="text-sm text-neutral-5 group-hover:text-white transition-colors select-none">
-                            Remember me
-                        </span>
-                    </label>
+                    <Checkbox
+                        label="Remember me"
+                        {...register('remember' as any)}
+                    />
                     <Link
                         to="/forgot-password"
                         className="text-sm text-neutral-5 hover:text-primary-400 font-medium transition-colors uppercase tracking-wider"

@@ -129,7 +129,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
       className={cn(
         'relative rounded-2xl p-6 border border-white/10',
         'bg-background-400/50 backdrop-blur-xl',
-        'hover:border-primary-500/30 transition-all cursor-pointer',
+        'hover:border-primary-500/30 transition-all',
         'group'
       )}
     >

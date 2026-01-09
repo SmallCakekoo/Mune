@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Input } from '../../common/Input/Input';
 import { Button } from '../../common/Button/Button';
 import { SocialLoginButton } from '../../common/Button/SocialLoginButton';
+import { Checkbox } from '../../common/Checkbox/Checkbox';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
 const signupSchema = z.object({
@@ -123,7 +124,7 @@ const SignupForm = () => {
                         error={errors.password?.message}
                         {...register('password')}
                     />
-                    
+
                     {password && (
                         <motion.div
                             initial={{ opacity: 0, height: 0 }}
@@ -153,30 +154,29 @@ const SignupForm = () => {
                 </div>
 
                 <div className="pt-2">
-                    <label className="flex items-start gap-3 cursor-pointer group">
-                        <input
-                            type="checkbox"
-                            id="terms"
-                            className="mt-0.5 w-4 h-4 rounded border-2 border-white/20 bg-transparent text-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:ring-offset-0 transition-all duration-200 cursor-pointer checked:bg-primary-500 checked:border-primary-500"
-                            {...register('terms')}
-                        />
-                        <span className="text-sm text-neutral-5 group-hover:text-white transition-colors leading-relaxed select-none">
-                            I agree to the{' '}
-                            <Link
-                                to="/terms-of-service"
-                                className="text-primary-400 hover:text-primary-300 font-semibold underline underline-offset-2 cursor-pointer"
-                            >
-                                Terms & Conditions
-                            </Link>
-                            {' '}and{' '}
-                            <Link
-                                to="/privacy-policy"
-                                className="text-primary-400 hover:text-primary-300 font-semibold underline underline-offset-2 cursor-pointer"
-                            >
-                                Privacy Policy
-                            </Link>
-                        </span>
-                    </label>
+                    <Checkbox
+                        {...register('terms')}
+                        label={
+                            <span className="text-sm text-neutral-5 group-hover:text-white transition-colors leading-relaxed select-none">
+                                I agree to the{' '}
+                                <Link
+                                    to="/terms-of-service"
+                                    className="text-primary-400 hover:text-primary-300 font-semibold underline underline-offset-2 cursor-pointer"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    Terms & Conditions
+                                </Link>
+                                {' '}and{' '}
+                                <Link
+                                    to="/privacy-policy"
+                                    className="text-primary-400 hover:text-primary-300 font-semibold underline underline-offset-2 cursor-pointer"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    Privacy Policy
+                                </Link>
+                            </span>
+                        }
+                    />
                     {errors.terms && (
                         <motion.p
                             initial={{ opacity: 0, y: -5 }}
