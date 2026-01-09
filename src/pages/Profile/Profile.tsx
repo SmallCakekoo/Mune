@@ -7,6 +7,8 @@ import FavoriteSongCard from '../../components/profile/FavoriteSongCard/Favorite
 import FavoriteSongSelectionModal from '../../components/profile/FavoriteSongSelectionModal/FavoriteSongSelectionModal';
 import RoomGrid from '../../components/profile/RoomGrid/RoomGrid';
 import { useAuth } from '../../context/AuthContext';
+import { useSidebar } from '../../context/SidebarContext';
+import { cn } from '../../utils/cn';
 import type { Room } from '../../types/room.types';
 import { Loader } from '../../components/common/Loader/Loader';
 import EditRoomModal from '../../components/home/EditRoomModal/EditRoomModal';
@@ -62,6 +64,7 @@ const mockRooms: Room[] = [
 
 const Profile: React.FC = () => {
     const { user, addCategory, removeCategory, updateCategory, addRoomToCategory, removeRoomFromCategory, updateFavoriteSongs, isLoading } = useAuth();
+    const { isCollapsed } = useSidebar();
     const navigate = useNavigate();
 
     // Modal States
@@ -120,7 +123,7 @@ const Profile: React.FC = () => {
 
     const handleEnterRoom = (room: Room) => {
         toast.success(`Entering ${room.name}...`);
-        // navigate(`/room/${room.id}`);
+        navigate(`/room/${room.id}`);
     };
 
     const handleUpdateRoom = async () => {
@@ -205,7 +208,10 @@ const Profile: React.FC = () => {
                 onCreateRoom={() => setIsCreateModalOpen(true)}
             />
 
-            <main className="ml-0 md:ml-[80px] lg:ml-[280px] min-h-screen relative z-10 transition-all duration-300">
+            <main className={cn(
+                "min-h-screen relative z-10 transition-all duration-300",
+                isCollapsed ? "ml-0 md:ml-[80px]" : "ml-0 md:ml-[280px]"
+            )}>
                 <div className="container mx-auto px-6 py-8 pt-24 md:pt-12">
                     {/* Profile Header Section */}
                     <motion.div

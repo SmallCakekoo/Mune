@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
     IconSearch,
     IconFilter,
@@ -15,6 +16,7 @@ import RoomCard from '../../components/home/RoomCard/RoomCard';
 import RoomDetailsModal from '../../components/home/RoomDetailsModal/RoomDetailsModal';
 import { Button } from '../../components/common/Button/Button';
 import type { Room } from '../../types/room.types';
+import { useSidebar } from '../../context/SidebarContext';
 import { cn } from '../../utils/cn';
 import toast from 'react-hot-toast';
 
@@ -156,6 +158,8 @@ const mockRooms: Room[] = [
 ];
 
 const Search: React.FC = () => {
+    const navigate = useNavigate();
+    const { isCollapsed } = useSidebar();
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedQuery, setDebouncedQuery] = useState('');
     const [privacyFilter, setPrivacyFilter] = useState<'all' | 'public' | 'private'>('all');
@@ -201,6 +205,7 @@ const Search: React.FC = () => {
 
     const handleEnterRoom = (room: Room) => {
         toast.success(`Entering ${room.name}...`);
+        navigate(`/room/${room.id}`);
     };
 
     const handleViewDetails = (room: Room) => {
@@ -231,7 +236,10 @@ const Search: React.FC = () => {
 
             <Sidebar userAvatar="/src/assets/images/cats/Cat (9).png" />
 
-            <main className="ml-0 md:ml-[80px] lg:ml-[280px] min-h-screen relative z-10 transition-all duration-300">
+            <main className={cn(
+                "min-h-screen relative z-10 transition-all duration-300",
+                isCollapsed ? "ml-0 md:ml-[80px]" : "ml-0 md:ml-[280px]"
+            )}>
                 <div className="container mx-auto px-6 py-8 pt-20 md:pt-8 min-h-screen flex flex-col">
                     {/* Header */}
                     <motion.div
