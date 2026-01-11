@@ -15,6 +15,7 @@ import UserProfile from './pages/Profile/UserProfile';
 import Room from './pages/Room/Room';
 import Settings from './pages/Profile/Settings';
 import DesignSystem from './pages/DesignSystem/DesignSystem';
+import BehanceShowcase from './pages/BehanceShowcase/BehanceShowcase';
 import ScrollToTop from './components/layout/ScrollToTop';
 import { SidebarProvider } from './context/SidebarContext';
 import { Toaster } from 'react-hot-toast';
@@ -47,6 +48,7 @@ function App() {
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
           <Route path="/design-system" element={<DesignSystem />} />
+          <Route path="/behance" element={<BehanceShowcase />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster position="bottom-right" />

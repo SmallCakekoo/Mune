@@ -72,27 +72,34 @@ const Modal: React.FC<ModalProps> = ({
               transition={{ duration: 0.2 }}
               onClick={(e) => e.stopPropagation()}
               className={cn(
-                'w-full bg-background-400 border border-white/10 rounded-2xl shadow-2xl',
+                'relative w-full bg-background-400 border border-white/10 rounded-2xl shadow-2xl',
                 'backdrop-blur-xl pointer-events-auto',
                 sizeClasses[size],
                 className
               )}
             >
               {/* Header */}
-              {(title || showCloseButton) && (
+              {title ? (
                 <div className="flex items-center justify-between p-6 border-b border-white/10">
-                  {title && (
-                    <h2 className="text-2xl font-bold text-white">{title}</h2>
-                  )}
+                  <h2 className="text-2xl font-bold text-white">{title}</h2>
                   {showCloseButton && (
                     <button
                       onClick={onClose}
-                      className="ml-auto p-2 rounded-lg text-neutral-5 hover:text-white hover:bg-white/10 transition-colors"
+                      className="p-2 rounded-lg text-neutral-5 hover:text-white hover:bg-white/10 transition-colors"
                     >
                       <IconX size={20} />
                     </button>
                   )}
                 </div>
+              ) : (
+                showCloseButton && (
+                  <button
+                    onClick={onClose}
+                    className="absolute top-4 right-4 z-10 p-2 rounded-lg text-neutral-5 hover:text-white hover:bg-white/10 transition-colors"
+                  >
+                    <IconX size={24} />
+                  </button>
+                )
               )}
 
               {/* Content */}

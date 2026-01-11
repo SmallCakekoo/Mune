@@ -18,15 +18,28 @@ import {
     IconSearch,
     IconPlus,
     IconTrash,
-    IconEdit
+    IconEdit,
+    IconLoader,
+    IconComponents,
+    IconAppWindow,
+    IconForms,
 } from '@tabler/icons-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useState } from 'react';
+import { Button } from '../../components/common/Button/Button';
+import { Input } from '../../components/common/Input/Input';
+import { Checkbox } from '../../components/common/Checkbox/Checkbox';
+import { Loader } from '../../components/common/Loader/Loader';
+import Modal from '../../components/common/Modal/Modal';
+import ConfirmationDialog from '../../components/common/ConfirmationDialog/ConfirmationDialog';
 import MuneLogo from '../../assets/images/MuneExpanded.svg';
 
 const SECTION_ICON_SIZE = 24;
 
 const DesignSystem = () => {
     const { theme: activeTheme, setTheme } = useTheme();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const themes = [
         { id: 'purple', color: '#8B5CF6', name: 'Purple' },
@@ -265,6 +278,171 @@ const DesignSystem = () => {
                         </div>
                     </div>
                 </section>
+
+                {/* UI Kit */}
+                <section className="pt-16 border-t border-white/10">
+                    <SectionTitle icon={IconComponents} title="UI Kit" />
+
+                    <div className="space-y-24">
+                        {/* Buttons */}
+                        <div className="space-y-12">
+                            <div className="flex items-center gap-3">
+                                <IconMouse size={20} className="text-secondary-cyan-500" />
+                                <h3 className="text-sm font-medium text-neutral-5 uppercase tracking-wider">Buttons</h3>
+                            </div>
+                            <div className="bg-background-400 p-8 md:p-12 rounded-2xl border border-white/10 space-y-12">
+                                <div className="space-y-6">
+                                    <h4 className="text-xs font-bold text-primary-400 uppercase tracking-widest">Variants</h4>
+                                    <div className="flex flex-wrap gap-4">
+                                        <Button variant="primary">Primary Button</Button>
+                                        <Button variant="secondary">Secondary Button</Button>
+                                        <Button variant="outline">Outline Button</Button>
+                                        <Button variant="ghost">Ghost Button</Button>
+                                        <Button variant="link">Link Button</Button>
+                                        <Button variant="social">Social Button</Button>
+                                    </div>
+                                </div>
+                                <div className="space-y-6">
+                                    <h4 className="text-xs font-bold text-primary-400 uppercase tracking-widest">Sizes</h4>
+                                    <div className="flex flex-wrap items-center gap-6">
+                                        <div className="flex flex-col gap-2 items-center">
+                                            <Button size="sm">Small</Button>
+                                            <span className="text-[10px] font-mono opacity-40">sm</span>
+                                        </div>
+                                        <div className="flex flex-col gap-2 items-center">
+                                            <Button size="default">Default</Button>
+                                            <span className="text-[10px] font-mono opacity-40">default</span>
+                                        </div>
+                                        <div className="flex flex-col gap-2 items-center">
+                                            <Button size="lg">Large</Button>
+                                            <span className="text-[10px] font-mono opacity-40">lg</span>
+                                        </div>
+                                        <div className="flex flex-col gap-2 items-center">
+                                            <Button size="icon"><IconPlus size={20} /></Button>
+                                            <span className="text-[10px] font-mono opacity-40">icon</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="space-y-6">
+                                    <h4 className="text-xs font-bold text-primary-400 uppercase tracking-widest">States</h4>
+                                    <div className="flex flex-wrap gap-4">
+                                        <Button isLoading>Loading State</Button>
+                                        <Button disabled>Disabled State</Button>
+                                        <Button fullWidth>Full Width Button</Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Forms */}
+                        <div className="space-y-12">
+                            <div className="flex items-center gap-3">
+                                <IconForms size={20} className="text-secondary-cyan-500" />
+                                <h3 className="text-sm font-medium text-neutral-5 uppercase tracking-wider">Forms & Inputs</h3>
+                            </div>
+                            <div className="bg-background-400 p-8 md:p-12 rounded-2xl border border-white/10">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                    <div className="space-y-8">
+                                        <h4 className="text-xs font-bold text-primary-400 uppercase tracking-widest">Input States</h4>
+                                        <Input placeholder="Default input" />
+                                        <Input label="With Label" placeholder="Enter something..." />
+                                        <Input label="With Helper Text" helperText="This is a useful hint." placeholder="Focus me..." />
+                                        <Input label="Error State" error="This field is required" defaultValue="Invalid value" />
+                                        <Input type="password" label="Password Input" defaultValue="password123" />
+                                    </div>
+                                    <div className="space-y-8">
+                                        <h4 className="text-xs font-bold text-primary-400 uppercase tracking-widest">Checkboxes</h4>
+                                        <div className="space-y-6 p-6 bg-white/5 rounded-xl border border-white/5">
+                                            <Checkbox label="Default Checkbox" />
+                                            <Checkbox label="Checked by Default" defaultChecked />
+                                            <Checkbox label="Disabled Checkbox" disabled />
+                                            <Checkbox label={
+                                                <span>I agree to the <span className="text-primary-400 underline">Terms and Conditions</span></span>
+                                            } />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Feedback */}
+                        <div className="space-y-12">
+                            <div className="flex items-center gap-3">
+                                <IconLoader size={20} className="text-secondary-cyan-500" />
+                                <h3 className="text-sm font-medium text-neutral-5 uppercase tracking-wider">Feedback Indicators</h3>
+                            </div>
+                            <div className="bg-background-400 p-8 md:p-12 rounded-2xl border border-white/10">
+                                <div className="flex flex-wrap items-center gap-16">
+                                    <div className="flex flex-col gap-4 items-center">
+                                        <Loader size="sm" />
+                                        <span className="text-[10px] font-mono opacity-40">sm</span>
+                                    </div>
+                                    <div className="flex flex-col gap-4 items-center">
+                                        <Loader size="md" />
+                                        <span className="text-[10px] font-mono opacity-40">md</span>
+                                    </div>
+                                    <div className="flex flex-col gap-4 items-center">
+                                        <Loader size="lg" />
+                                        <span className="text-[10px] font-mono opacity-40">lg</span>
+                                    </div>
+                                    <div className="flex flex-col gap-4 items-center">
+                                        <Loader size="md" color="white" />
+                                        <span className="text-[10px] font-mono opacity-40">color="white"</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Overlays */}
+                        <div className="space-y-12">
+                            <div className="flex items-center gap-3">
+                                <IconAppWindow size={20} className="text-secondary-cyan-500" />
+                                <h3 className="text-sm font-medium text-neutral-5 uppercase tracking-wider">Overlays & Modals</h3>
+                            </div>
+                            <div className="bg-background-400 p-8 md:p-12 rounded-2xl border border-white/10">
+                                <div className="flex flex-wrap gap-6">
+                                    <Button variant="outline" onClick={() => setIsModalOpen(true)}>
+                                        Open Example Modal
+                                    </Button>
+                                    <Button variant="outline" onClick={() => setIsDialogOpen(true)}>
+                                        Trigger Confirmation Dialog
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Modal Examples */}
+                <Modal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    title="Design System Modal"
+                >
+                    <div className="space-y-6">
+                        <p className="text-neutral-5">
+                            This is an example of the shared Modal component. It handles backdrops,
+                            transitions, and accessibility features like scroll-locking and ESC-to-close.
+                        </p>
+                        <div className="flex justify-end gap-3">
+                            <Button variant="ghost" onClick={() => setIsModalOpen(false)}>Close</Button>
+                            <Button variant="primary" onClick={() => setIsModalOpen(false)}>Save Changes</Button>
+                        </div>
+                    </div>
+                </Modal>
+
+                <ConfirmationDialog
+                    isOpen={isDialogOpen}
+                    onClose={() => setIsDialogOpen(false)}
+                    onConfirm={() => {
+                        console.log('Confirmed');
+                        setIsDialogOpen(false);
+                    }}
+                    title="Are you absolutely sure?"
+                    message="This action cannot be undone. This will permanently delete your account and remove your data from our servers."
+                    confirmText="Yes, delete account"
+                    variant="danger"
+                />
 
             </main>
 

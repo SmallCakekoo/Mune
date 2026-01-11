@@ -49,7 +49,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       size="sm"
       className="!max-w-md"
     >
-      <div className="space-y-6">
+      <div className="space-y-6 pt-2">
         {/* Icon and Title */}
         <div className="flex flex-col items-center text-center space-y-4">
           <div
