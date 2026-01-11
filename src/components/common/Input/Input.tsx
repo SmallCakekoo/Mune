@@ -40,8 +40,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                             "disabled:cursor-not-allowed disabled:opacity-50",
                             "transition-all duration-300 ease-out",
                             error
-                                ? "border-error-400 bg-error-500/10 focus-visible:border-error-500 focus-visible:ring-error-500/20 text-white placeholder:text-neutral-5/50"
-                                : "border-white/20 bg-white/5 text-white placeholder:text-neutral-5/50 focus-visible:border-primary-400 focus-visible:ring-2 focus-visible:ring-primary-500/20 hover:border-white/30 hover:bg-white/10",
+                                ? "border-error-400 bg-error-500/10 focus-visible:border-error-500 focus-visible:ring-error-500/20 text-neutral-5 placeholder:text-neutral-5/50"
+                                : "border-neutral-5/20 bg-neutral-5/5 text-neutral-5 placeholder:text-neutral-5/50 focus-visible:border-primary-400 focus-visible:ring-2 focus-visible:ring-primary-500/20 hover:border-neutral-5/30 hover:bg-neutral-5/10",
                             "focus-visible:outline-none",
                             className
                         )}
@@ -59,7 +59,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                                 "text-neutral-5 hover:text-primary-400",
                                 "focus:outline-none focus:text-primary-400",
                                 "transition-all duration-200",
-                                "p-1.5 rounded-lg hover:bg-white/10",
+                                "p-1.5 rounded-lg hover:bg-neutral-5/10",
                                 "active:scale-95"
                             )}
                             tabIndex={-1}

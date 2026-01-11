@@ -34,7 +34,7 @@ const Header = ({ showNavLinks = true }: HeaderProps) => {
                             <a
                                 key={item}
                                 href={`#${item.toLowerCase()}`}
-                                className="text-neutral-5 hover:text-white font-medium transition-colors"
+                                className="text-neutral-5 hover:text-primary-400 font-medium transition-colors"
                             >
                                 {item}
                             </a>
@@ -45,7 +45,7 @@ const Header = ({ showNavLinks = true }: HeaderProps) => {
                 <div className="flex items-center gap-4">
                     <Link
                         to="/login"
-                        className="text-white hover:text-white font-medium transition-colors px-4 py-2"
+                        className="text-neutral-5 hover:text-primary-400 font-medium transition-colors px-4 py-2"
                     >
                         Log In
                     </Link>

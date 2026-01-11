@@ -70,6 +70,36 @@
   --secondary-500: #fca5a5;
 }
 
+[data-appearance="light"] {
+  --color-background-100: #e5e7eb;
+  --color-background-200: #d1d5db;
+  --color-background-300: #f3f4f6;
+  --color-background-400: #ffffff;
+  --color-background-500: #f9f9f9;
+
+  --color-neutral-5: #1a1a1aff;
+  --color-neutral-100: #525252ff;
+  --color-neutral-200: #e4e4e4ff;
+  --color-neutral-300: #d4d4d4ff;
+  --color-neutral-400: #e5e7ebff;
+  --color-neutral-500: #ffffff;
+}
+
+[data-appearance="dark"] {
+  --color-background-100: #235cb0ff;
+  --color-background-200: #1c4b8eff;
+  --color-background-300: #16396cff;
+  --color-background-400: #0f274aff;
+  --color-background-500: #081528ff;
+
+  --color-neutral-5: #e4e4e4ff;
+  --color-neutral-100: #525252ff;
+  --color-neutral-200: #3d3d3dff;
+  --color-neutral-300: #292929ff;
+  --color-neutral-400: #141414ff;
+  --color-neutral-500: #000000ff;
+}
+
 @theme {
   --font-sans: 'Outfit', sans-serif;
   --font-display: 'Pally', sans-serif;
@@ -83,18 +113,18 @@
 
   --color-secondary-cyan-500: var(--secondary-500);
 
-  --color-background-100: #235cb0ff;
-  --color-background-200: #1c4b8eff;
-  --color-background-300: #16396cff;
-  --color-background-400: #0f274aff;
-  --color-background-500: #081528ff;
+  --color-background-100: var(--color-background-100);
+  --color-background-200: var(--color-background-200);
+  --color-background-300: var(--color-background-300);
+  --color-background-400: var(--color-background-400);
+  --color-background-500: var(--color-background-500);
 
-  --color-neutral-5: #e4e4e4ff;
-  --color-neutral-100: #525252ff;
-  --color-neutral-200: #3d3d3dff;
-  --color-neutral-300: #292929ff;
-  --color-neutral-400: #141414ff;
-  --color-neutral-500: #000000ff;
+  --color-neutral-5: var(--color-neutral-5);
+  --color-neutral-100: var(--color-neutral-100);
+  --color-neutral-200: var(--color-neutral-200);
+  --color-neutral-300: var(--color-neutral-300);
+  --color-neutral-400: var(--color-neutral-400);
+  --color-neutral-500: var(--color-neutral-500);
 
   --color-success-500: #17dd66ff;
   --color-error-500: #ef4444ff;
@@ -106,7 +136,6 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: dark;
   color: var(--color-neutral-5);
   background-color: var(--color-background-500);
 
@@ -123,12 +152,14 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background-color: var(--color-background-500);
+  color: var(--color-neutral-5);
   overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-weight: 700;
+  color: var(--color-neutral-5);
 }
 
 /* Scrollbar styling */

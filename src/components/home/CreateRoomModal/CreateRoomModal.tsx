@@ -111,11 +111,10 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
             <button
               type="button"
               onClick={() => setValue('privacy', 'public')}
-              className={`flex items-center gap-2 p-4 rounded-xl border-2 transition-all ${
-                privacy === 'public'
+              className={`flex items-center gap-2 p-4 rounded-xl border-2 transition-all ${privacy === 'public'
                   ? 'border-primary-500 bg-primary-500/20 text-white'
                   : 'border-white/20 bg-white/5 text-neutral-5 hover:border-white/30 hover:bg-white/10'
-              }`}
+                }`}
               disabled={isSubmitting}
             >
               <IconWorld size={20} />
@@ -124,11 +123,10 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
             <button
               type="button"
               onClick={() => setValue('privacy', 'private')}
-              className={`flex items-center gap-2 p-4 rounded-xl border-2 transition-all ${
-                privacy === 'private'
+              className={`flex items-center gap-2 p-4 rounded-xl border-2 transition-all ${privacy === 'private'
                   ? 'border-primary-500 bg-primary-500/20 text-white'
                   : 'border-white/20 bg-white/5 text-neutral-5 hover:border-white/30 hover:bg-white/10'
-              }`}
+                }`}
               disabled={isSubmitting}
             >
               <IconLock size={20} />

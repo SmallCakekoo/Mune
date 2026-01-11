@@ -80,12 +80,12 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
         <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-background-400/50 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl"
+            className="bg-background-400/50 backdrop-blur-xl rounded-2xl border border-neutral-5/10 p-8 shadow-2xl"
         >
             <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Basic Info Section */}
                 <div>
-                    <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <h3 className="text-xl font-bold text-neutral-5 mb-6 flex items-center gap-2">
                         <IconUser size={24} className="text-primary-500" />
                         Profile Information
                     </h3>
@@ -122,7 +122,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
                                     type="text"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all"
+                                    className="w-full px-4 py-3 rounded-xl bg-neutral-5/5 border border-neutral-5/10 text-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-neutral-5/10 transition-all"
                                 />
                             </div>
 
@@ -136,7 +136,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
                                         type="text"
                                         value={formData.username}
                                         onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                                        className="w-full pl-8 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all"
+                                        className="w-full pl-8 pr-4 py-3 rounded-xl bg-neutral-5/5 border border-neutral-5/10 text-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-neutral-5/10 transition-all"
                                     />
                                 </div>
                             </div>
@@ -151,16 +151,16 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
                         <textarea
                             value={formData.bio}
                             onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                            className="w-full h-24 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all resize-none"
+                            className="w-full h-24 px-4 py-3 rounded-xl bg-neutral-5/5 border border-neutral-5/10 text-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-neutral-5/10 transition-all resize-none"
                         />
                     </div>
                 </div>
 
-                <div className="h-px bg-white/10" />
+                <div className="h-px bg-neutral-5/10" />
 
                 {/* Social Links Section */}
                 <div>
-                    <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <h3 className="text-xl font-bold text-neutral-5 mb-6 flex items-center gap-2">
                         <IconShare size={24} className="text-primary-500" />
                         Social Links
                     </h3>
@@ -176,7 +176,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
                                 value={formData.socialLinks.discord}
                                 onChange={(e) => handleSocialChange('discord', e.target.value)}
                                 placeholder="@username"
-                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all"
+                                className="w-full px-4 py-3 rounded-xl bg-neutral-5/5 border border-neutral-5/10 text-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-neutral-5/10 transition-all"
                             />
                         </div>
 
@@ -190,7 +190,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
                                 value={formData.socialLinks.github}
                                 onChange={(e) => handleSocialChange('github', e.target.value)}
                                 placeholder="@username"
-                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all"
+                                className="w-full px-4 py-3 rounded-xl bg-neutral-5/5 border border-neutral-5/10 text-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-neutral-5/10 transition-all"
                             />
                         </div>
 
@@ -204,7 +204,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
                                 value={formData.socialLinks.linkedin}
                                 onChange={(e) => handleSocialChange('linkedin', e.target.value)}
                                 placeholder="/in/username"
-                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all"
+                                className="w-full px-4 py-3 rounded-xl bg-neutral-5/5 border border-neutral-5/10 text-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-neutral-5/10 transition-all"
                             />
                         </div>
 
@@ -218,7 +218,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
                                 value={formData.socialLinks.twitter}
                                 onChange={(e) => handleSocialChange('twitter', e.target.value)}
                                 placeholder="@username"
-                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all"
+                                className="w-full px-4 py-3 rounded-xl bg-neutral-5/5 border border-neutral-5/10 text-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-neutral-5/10 transition-all"
                             />
                         </div>
                     </div>
