@@ -115,19 +115,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {
         )}
       >
         {/* Header */}
-        <div className="p-4 flex items-center justify-between border-b border-white/10">
+        <div className={cn(
+          "p-4 flex items-center border-b border-white/10 min-h-[73px]",
+          isCollapsed ? "justify-center" : "justify-between"
+        )}>
           <AnimatePresence mode="wait">
-            {isCollapsed ? (
-              <motion.div
-                key="collapsed"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className="w-10 h-10 flex items-center justify-center"
-              >
-
-              </motion.div>
-            ) : (
+            {!isCollapsed && (
               <motion.div
                 key="expanded"
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -140,7 +133,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {
                   alt="Mune"
                   className="h-8"
                   onError={(e) => {
-                    // Fallback if image doesn't load
                     e.currentTarget.style.display = 'none';
                   }}
                 />
@@ -166,9 +158,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {
               whileHover={{ x: 4 }}
               whileTap={{ scale: 0.98 }}
               className={cn(
-                'w-full flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer',
+                'w-full flex items-center rounded-xl cursor-pointer',
                 'text-neutral-5 hover:text-white transition-colors',
                 'hover:bg-white/10',
+                isCollapsed ? 'justify-center px-0 py-3' : 'gap-3 px-4 py-3',
                 item.isActive &&
                 'bg-primary-500/20 text-white border border-primary-500/30'
               )}
@@ -192,8 +185,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {
         <div className="p-4 border-t border-white/10">
           <div
             className={cn(
-              'flex items-center gap-3 p-2 rounded-xl',
-              'hover:bg-white/10 transition-colors cursor-pointer'
+              'flex items-center p-2 rounded-xl',
+              'hover:bg-white/10 transition-colors cursor-pointer',
+              isCollapsed ? 'justify-center' : 'gap-3'
             )}
             onClick={() => navigate('/profile')}
           >
