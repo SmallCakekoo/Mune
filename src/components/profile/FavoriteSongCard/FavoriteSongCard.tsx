@@ -8,6 +8,19 @@ interface FavoriteSongCardProps {
 }
 
 const FavoriteSongCard: React.FC<FavoriteSongCardProps> = ({ song }) => {
+    // Fixed random-looking values to satisfy React's purity rules
+    const bars = React.useMemo(() =>
+        Array.from({ length: 50 }).map((_, i) => ({
+            heights: [
+                ((i * 7) % 4) + 2,
+                ((i * 13) % 16) + 4,
+                ((i * 19) % 8) + 2,
+                ((i * 23) % 16) + 4,
+                ((i * 29) % 4) + 2
+            ],
+            duration: 0.8 + ((i * 3) % 10) / 10
+        })), []);
+
     return (
         <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -44,20 +57,14 @@ const FavoriteSongCard: React.FC<FavoriteSongCardProps> = ({ song }) => {
                 </p>
 
                 <div className="mt-3 flex gap-0.5 h-4 items-end opacity-20 group-hover:opacity-60 transition-opacity">
-                    {Array.from({ length: 50 }).map((_, i) => (
+                    {bars.map((bar, i) => (
                         <motion.div
                             key={i}
                             animate={{
-                                height: [
-                                    Math.random() * 4 + 2,
-                                    Math.random() * 16 + 4,
-                                    Math.random() * 8 + 2,
-                                    Math.random() * 16 + 4,
-                                    Math.random() * 4 + 2
-                                ],
+                                height: bar.heights,
                             }}
                             transition={{
-                                duration: 0.8 + Math.random() * 1,
+                                duration: bar.duration,
                                 repeat: Infinity,
                                 delay: i * 0.05,
                                 ease: "easeInOut"

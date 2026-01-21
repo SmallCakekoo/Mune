@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/layout/Sidebar/Sidebar';
@@ -9,160 +9,20 @@ import RoomDetailsModal from '../../components/home/RoomDetailsModal/RoomDetails
 import ConfirmationDialog from '../../components/common/ConfirmationDialog/ConfirmationDialog';
 import TodoList from '../../components/home/TodoList/TodoList';
 import { Button } from '../../components/common/Button/Button';
-import { useSidebar } from '../../context/SidebarContext';
+import { useSidebar } from '../../hooks/useSidebar';
+import { useAuth } from '../../hooks/useAuth';
 import { cn } from '../../utils/cn';
 import type { Room, RoomPrivacy } from '../../types/room.types';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
 import toast from 'react-hot-toast';
-
-// Mock data - In production this would come from an API or context
-const mockRooms: Room[] = [
-  {
-    id: '1',
-    name: '¡Work in mune!',
-    description: 'My creative space',
-    privacy: 'public',
-    owner: {
-      id: 'user1',
-      name: 'Snow Cat',
-      avatar: '/src/assets/images/cats/Cat (9).png',
-    },
-    createdAt: new Date('2026-01-15'),
-    updatedAt: new Date('2026-01-20'),
-    lastActivity: new Date(Date.now() - 3600000), // 1h ago
-    songCount: 34,
-    memberCount: 5,
-    members: [
-      { id: 'user1', name: 'Snow Cat', avatar: '/src/assets/images/cats/Cat (9).png' },
-      { id: 'user2', name: 'Soviet Cat', avatar: '/src/assets/images/cats/Cat (2).png' },
-      { id: 'user3', name: 'French Cat', avatar: '/src/assets/images/cats/Cat (3).png' },
-      { id: 'user4', name: 'Cartoon Cat', avatar: '/src/assets/images/cats/Cat (4).png' },
-      { id: 'user5', name: 'Tiny Music Cat', avatar: '/src/assets/images/cats/Cat (5).png' },
-    ],
-  },
-  {
-    id: '2',
-    name: 'DCA',
-    description: 'Design and code',
-    privacy: 'private',
-    password: '1234',
-    owner: {
-      id: 'user1',
-      name: 'Snow Cat',
-      avatar: '/src/assets/images/cats/Cat (9).png',
-    },
-    createdAt: new Date('2026-01-10'),
-    updatedAt: new Date('2026-01-18'),
-    lastActivity: new Date(Date.now() - 7200000), // 2h ago
-    songCount: 39,
-    memberCount: 3,
-    members: [
-      { id: 'user1', name: 'Snow Cat', avatar: '/src/assets/images/cats/Cat (9).png' },
-      { id: 'user2', name: 'Soviet Cat', avatar: '/src/assets/images/cats/Cat (2).png' },
-      { id: 'user3', name: 'French Cat', avatar: '/src/assets/images/cats/Cat (3).png' },
-    ],
-  },
-  {
-    id: '3',
-    name: 'PixelDNA :)',
-    description: 'Creative projects',
-    privacy: 'public',
-    owner: {
-      id: 'user2',
-      name: 'Soviet Cat',
-      avatar: '/src/assets/images/cats/Cat (2).png',
-    },
-    createdAt: new Date('2026-01-12'),
-    updatedAt: new Date('2026-01-19'),
-    lastActivity: new Date(Date.now() - 18000000), // 5h ago
-    songCount: 21,
-    memberCount: 7,
-    members: [
-      { id: 'user2', name: 'Soviet Cat', avatar: '/src/assets/images/cats/Cat (2).png' },
-      { id: 'user1', name: 'Snow Cat', avatar: '/src/assets/images/cats/Cat (9).png' },
-      { id: 'user3', name: 'French Cat', avatar: '/src/assets/images/cats/Cat (3).png' },
-      { id: 'user4', name: 'Cartoon Cat', avatar: '/src/assets/images/cats/Cat (4).png' },
-      { id: 'user5', name: 'Tiny Music Cat', avatar: '/src/assets/images/cats/Cat (5).png' },
-      { id: 'user6', name: 'Shy Cat', avatar: '/src/assets/images/cats/Cat (6).png' },
-      { id: 'user7', name: 'Samurai Cat', avatar: '/src/assets/images/cats/Cat (7).png' },
-    ],
-  },
-  {
-    id: '4',
-    name: '¡bRUUh!',
-    description: 'Music room',
-    privacy: 'public',
-    owner: {
-      id: 'user1',
-      name: 'Snow Cat',
-      avatar: '/src/assets/images/cats/Cat (9).png',
-    },
-    createdAt: new Date('2026-01-08'),
-    updatedAt: new Date('2026-01-17'),
-    lastActivity: new Date(Date.now() - 32400000), // 9h ago
-    songCount: 124,
-    memberCount: 12,
-    members: [
-      { id: 'user1', name: 'Snow Cat', avatar: '/src/assets/images/cats/Cat (9).png' },
-      { id: 'user2', name: 'Soviet Cat', avatar: '/src/assets/images/cats/Cat (2).png' },
-      { id: 'user3', name: 'French Cat', avatar: '/src/assets/images/cats/Cat (3).png' },
-      { id: 'user4', name: 'Cartoon Cat', avatar: '/src/assets/images/cats/Cat (4).png' },
-      { id: 'user5', name: 'Tiny Music Cat', avatar: '/src/assets/images/cats/Cat (5).png' },
-      { id: 'user6', name: 'Shy Cat', avatar: '/src/assets/images/cats/Cat (6).png' },
-      { id: 'user7', name: 'Samurai Cat', avatar: '/src/assets/images/cats/Cat (7).png' },
-      { id: 'user8', name: 'Maxwell Cat', avatar: '/src/assets/images/cats/Cat (8).png' },
-    ],
-  },
-  {
-    id: '5',
-    name: 'AE is my pasion',
-    description: 'After Effects workspace',
-    privacy: 'private',
-    password: 'ae123',
-    owner: {
-      id: 'user1',
-      name: 'Snow Cat',
-      avatar: '/src/assets/images/cats/Cat (9).png',
-    },
-    createdAt: new Date('2026-01-05'),
-    updatedAt: new Date('2026-01-16'),
-    lastActivity: new Date(Date.now() - 43200000), // 12h ago
-    songCount: 9,
-    memberCount: 2,
-    members: [
-      { id: 'user1', name: 'Snow Cat', avatar: '/src/assets/images/cats/Cat (9).png' },
-      { id: 'user2', name: 'Soviet Cat', avatar: '/src/assets/images/cats/Cat (2).png' },
-    ],
-  },
-  {
-    id: '6',
-    name: 'Celeste.',
-    description: 'Beautiful workspace',
-    privacy: 'public',
-    owner: {
-      id: 'user3',
-      name: 'French Cat',
-      avatar: '/src/assets/images/cats/Cat (3).png',
-    },
-    createdAt: new Date('2026-01-03'),
-    updatedAt: new Date('2026-01-15'),
-    lastActivity: new Date(Date.now() - 54000000), // 15h ago
-    songCount: 123,
-    memberCount: 8,
-    members: [
-      { id: 'user3', name: 'French Cat', avatar: '/src/assets/images/cats/Cat (3).png' },
-      { id: 'user1', name: 'Snow Cat', avatar: '/src/assets/images/cats/Cat (9).png' },
-      { id: 'user2', name: 'Soviet Cat', avatar: '/src/assets/images/cats/Cat (2).png' },
-      { id: 'user4', name: 'Cartoon Cat', avatar: '/src/assets/images/cats/Cat (4).png' },
-      { id: 'user5', name: 'Tiny Music Cat', avatar: '/src/assets/images/cats/Cat (5).png' },
-    ],
-  },
-];
+import * as roomService from '../../services/room.service';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { user, isLoading } = useAuth();
   const { isCollapsed } = useSidebar();
-  const [rooms, setRooms] = useState<Room[]>(mockRooms);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [isLoadingRooms, setIsLoadingRooms] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -172,7 +32,20 @@ const Home: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isTodoListOpen, setIsTodoListOpen] = useState(false);
 
-  const currentUserId = 'user1'; // In production this would come from the authentication context
+  // Fetch rooms
+  useEffect(() => {
+    if (!user) return;
+
+    // Subscribe to user's rooms (real-time updates)
+    const unsubscribe = roomService.subscribeToUserRooms(user.id, (fetchedRooms) => {
+      setRooms(fetchedRooms);
+      setIsLoadingRooms(false);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  if (isLoading) return null; // Or a loader
 
   // Filter rooms based on search query
   const filteredRooms = rooms.filter((room) =>
@@ -187,34 +60,28 @@ const Home: React.FC = () => {
     privacy: RoomPrivacy;
     password?: string;
   }) => {
-    const newRoom: Room = {
-      id: `room-${Date.now()}`,
-      name: data.name,
-      description: data.description,
-      privacy: data.privacy,
-      password: data.password,
-      owner: {
-        id: currentUserId,
-        name: 'Snow Cat',
-        avatar: '/src/assets/images/cats/Cat (9).png',
-      },
-      members: [
-        {
-          id: currentUserId,
-          name: 'Snow Cat',
-          avatar: '/src/assets/images/cats/Cat (9).png',
-        },
-      ],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      lastActivity: new Date(),
-      songCount: 0,
-      memberCount: 1,
-    };
+    if (!user) {
+      console.error('Home: No user found when creating room');
+      return;
+    }
 
-    setRooms([newRoom, ...rooms]);
-    toast.success('Room created successfully!');
-    setIsCreateModalOpen(false);
+    console.log('Home: Creating room with data:', data);
+
+    try {
+      const roomId = await roomService.createRoom(user.id, {
+        name: data.name,
+        description: data.description,
+        privacy: data.privacy,
+        password: data.password
+      });
+      console.log('Home: Room created with ID:', roomId);
+
+      toast.success('Room created successfully!');
+      setIsCreateModalOpen(false);
+    } catch (error) {
+      console.error('Home: Error creating room:', error);
+      toast.error('Failed to create room');
+    }
   };
 
   // Handle edit room
@@ -226,31 +93,39 @@ const Home: React.FC = () => {
   }) => {
     if (!selectedRoom) return;
 
-    const updatedRooms = rooms.map((room) =>
-      room.id === selectedRoom.id
-        ? {
-          ...room,
-          ...data,
-          updatedAt: new Date(),
-        }
-        : room
-    );
+    try {
+      await roomService.updateRoom(selectedRoom.id, {
+        name: data.name,
+        description: data.description
+      });
 
-    setRooms(updatedRooms);
-    toast.success('Room updated successfully!');
-    setIsEditModalOpen(false);
-    setSelectedRoom(null);
+      if (selectedRoom.privacy !== data.privacy || data.password) {
+        await roomService.updateRoomPrivacy(selectedRoom.id, data.privacy, data.password);
+      }
+
+      toast.success('Room updated successfully!');
+      setIsEditModalOpen(false);
+      setSelectedRoom(null);
+    } catch (error) {
+      console.error('Error updating room:', error);
+      toast.error('Failed to update room');
+    }
   };
 
-  // Handle remove room
-  const handleRemoveRoom = () => {
+  // Handle remove room logic
+  const handleRemoveRoom = async () => {
     if (!selectedRoom) return;
 
-    setRooms(rooms.filter((room) => room.id !== selectedRoom.id));
-    toast.success('Room removed from recent');
-    setIsConfirmDialogOpen(false);
-    setSelectedRoom(null);
-    setConfirmAction(null);
+    try {
+      await roomService.deleteRoom(selectedRoom.id);
+      toast.success('Room deleted');
+      setIsConfirmDialogOpen(false);
+      setSelectedRoom(null);
+      setConfirmAction(null);
+    } catch (error) {
+      console.error('Error deleting room:', error);
+      toast.error('Failed to delete room');
+    }
   };
 
   // Handle view details
@@ -265,7 +140,7 @@ const Home: React.FC = () => {
     setIsEditModalOpen(true);
   };
 
-  // Handle remove
+  // Handle remove dialog trigger
   const handleRemove = (room: Room) => {
     setSelectedRoom(room);
     setConfirmAction(() => () => handleRemoveRoom());
@@ -292,11 +167,8 @@ const Home: React.FC = () => {
         }}
       />
 
-      {/* Sidebar */}
-      <Sidebar
-        onCreateRoom={() => setIsCreateModalOpen(true)}
-        userAvatar="/src/assets/images/cats/Cat (9).png"
-      />
+      {/* Sidebar - No userAvatar needed as it pulls from context */}
+      <Sidebar onCreateRoom={() => setIsCreateModalOpen(true)} />
 
       {/* Main Content */}
       <main className={cn(
@@ -311,7 +183,7 @@ const Home: React.FC = () => {
             className="mb-8"
           >
             <h1 className="text-4xl font-bold text-white mb-2">
-              Welcome back, Snow Cat
+              Welcome back, {user?.name?.split(' ')[0] || 'User'}
             </h1>
             <p className="text-lg text-neutral-5">
               Enter your space where ideas and music flow
@@ -345,9 +217,13 @@ const Home: React.FC = () => {
 
           {/* Rooms Section */}
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6">Your Recent Rooms</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">Your Rooms</h2>
 
-            {filteredRooms.length === 0 ? (
+            {isLoadingRooms ? (
+              <div className="flex justify-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+              </div>
+            ) : filteredRooms.length === 0 ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -376,7 +252,7 @@ const Home: React.FC = () => {
                   >
                     <RoomCard
                       room={room}
-                      currentUserId={currentUserId}
+                      currentUserId={user?.id || ''}
                       onViewDetails={handleViewDetails}
                       onEdit={handleEdit}
                       onRemove={handleRemove}
@@ -425,11 +301,11 @@ const Home: React.FC = () => {
           setConfirmAction(null);
         }}
         onConfirm={confirmAction || (() => { })}
-        title="Remove Room from Recent"
-        message="Are you sure you want to remove this room from your recent rooms? This will not delete the room."
-        confirmText="Remove"
+        title="Delete Room"
+        message="Are you sure you want to delete this room? This action cannot be undone."
+        confirmText="Delete"
         cancelText="Cancel"
-        variant="warning"
+        variant="danger"
       />
 
       {/* Todo List Floating Button */}

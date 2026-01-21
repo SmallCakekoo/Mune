@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/layout/Sidebar/Sidebar';
@@ -6,10 +6,11 @@ import ProfileHeader from '../../components/profile/ProfileHeader/ProfileHeader'
 import FavoriteSongCard from '../../components/profile/FavoriteSongCard/FavoriteSongCard';
 import FavoriteSongSelectionModal from '../../components/profile/FavoriteSongSelectionModal/FavoriteSongSelectionModal';
 import RoomGrid from '../../components/profile/RoomGrid/RoomGrid';
-import { useAuth } from '../../context/AuthContext';
-import { useSidebar } from '../../context/SidebarContext';
+import { useAuth } from '../../hooks/useAuth';
+import { useSidebar } from '../../hooks/useSidebar';
 import { cn } from '../../utils/cn';
 import type { Room } from '../../types/room.types';
+import * as roomService from '../../services/room.service';
 import { Loader } from '../../components/common/Loader/Loader';
 import EditRoomModal from '../../components/home/EditRoomModal/EditRoomModal';
 import RoomDetailsModal from '../../components/home/RoomDetailsModal/RoomDetailsModal';
@@ -20,47 +21,7 @@ import CreateRoomModal from '../../components/home/CreateRoomModal/CreateRoomMod
 import AddRoomToCategoryModal from '../../components/profile/AddRoomToCategoryModal/AddRoomToCategoryModal';
 import ConfirmationDialog from '../../components/common/ConfirmationDialog/ConfirmationDialog';
 import type { RoomPrivacy } from '../../types/room.types';
-
-// Mock data - Reusing similar logic as Home.tsx for demonstration
-const mockRooms: Room[] = [
-    {
-        id: '1',
-        name: '¡Work in mune!',
-        description: 'My creative space',
-        privacy: 'public',
-        owner: { id: 'user1', name: 'Snow Cat', avatar: '/src/assets/images/cats/Cat (9).png' },
-        members: [{ id: 'user1', name: 'Snow Cat', avatar: '/src/assets/images/cats/Cat (9).png' }],
-        songCount: 34,
-        lastActivity: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    },
-    {
-        id: '2',
-        name: 'DCA',
-        privacy: 'private',
-        owner: { id: 'user1', name: 'Snow Cat', avatar: '/src/assets/images/cats/Cat (9).png' },
-        members: [{ id: 'user1', name: 'Snow Cat', avatar: '/src/assets/images/cats/Cat (9).png' }],
-        songCount: 39,
-        lastActivity: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    },
-    {
-        id: '3',
-        name: 'PixelDNA :)',
-        privacy: 'public',
-        owner: { id: 'user2', name: 'Soviet Cat', avatar: '/src/assets/images/cats/Cat (2).png' },
-        members: [
-            { id: 'user2', name: 'Soviet Cat', avatar: '/src/assets/images/cats/Cat (2).png' },
-            { id: 'user1', name: 'Snow Cat', avatar: '/src/assets/images/cats/Cat (9).png' }
-        ],
-        songCount: 21,
-        lastActivity: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    }
-];
+import type { Category } from '../../types/user.types';
 
 const Profile: React.FC = () => {
     const { user, addCategory, removeCategory, updateCategory, addRoomToCategory, removeRoomFromCategory, updateFavoriteSongs, isLoading } = useAuth();
@@ -87,14 +48,25 @@ const Profile: React.FC = () => {
     const [isAddingCategory, setIsAddingCategory] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState('');
 
-    const [rooms, setRooms] = useState<Room[]>(mockRooms);
+    const [rooms, setRooms] = useState<Room[]>([]);
+    const [isLoadingRooms, setIsLoadingRooms] = useState(true);
+
+    // Fetch rooms
+    useEffect(() => {
+        if (!user) return;
+        const unsubscribe = roomService.subscribeToUserRooms(user.id, (fetchedRooms) => {
+            setRooms(fetchedRooms);
+            setIsLoadingRooms(false);
+        });
+        return () => unsubscribe();
+    }, [user]);
     const [isFavModalOpen, setIsFavModalOpen] = useState(false);
 
     // Group Rooms Logic
     const categorizedRooms = useMemo(() => {
         if (!user) return [];
         const userCategories = user.categories || [];
-        return userCategories.map(cat => ({
+        return userCategories.map((cat: Category) => ({
             ...cat,
             rooms: rooms.filter(r => cat.roomIds.includes(r.id))
         }));
@@ -126,9 +98,18 @@ const Profile: React.FC = () => {
         navigate(`/room/${room.id}`);
     };
 
-    const handleUpdateRoom = async () => {
+    const handleUpdateRoom = async (data: { name: string; description?: string; privacy: RoomPrivacy; password?: string }) => {
+        if (!selectedRoom) return;
+
+        setRooms(prev => prev.map(r =>
+            r.id === selectedRoom.id
+                ? { ...r, ...data, updatedAt: new Date() }
+                : r
+        ));
+
         toast.success('Room updated successfully!');
         setIsEditModalOpen(false);
+        setSelectedRoom(null);
     };
 
     const handleAddCategory = async () => {
@@ -157,10 +138,11 @@ const Profile: React.FC = () => {
             name: data.name,
             description: data.description || '',
             privacy: data.privacy,
+            password: data.password,
             owner: {
                 id: user.id,
                 name: user.name,
-                avatar: user.avatar
+                avatar: user.avatar || undefined
             },
             members: [],
             memberCount: 1,
@@ -189,7 +171,7 @@ const Profile: React.FC = () => {
         toast.success('Room removed from category');
     };
 
-    if (isLoading || !user) {
+    if (isLoading || !user || isLoadingRooms) {
         return (
             <div className="min-h-screen bg-background-500 flex items-center justify-center">
                 <Loader size="lg" />
@@ -204,7 +186,6 @@ const Profile: React.FC = () => {
             <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 z-0 mix-blend-overlay" />
 
             <Sidebar
-                userAvatar={user.avatar}
                 onCreateRoom={() => setIsCreateModalOpen(true)}
             />
 
@@ -223,6 +204,7 @@ const Profile: React.FC = () => {
                             user={user}
                             onSettingsClick={() => navigate('/settings')}
                         />
+                        <div className="mt-8"></div>
                     </motion.div>
 
                     {/* Favorite Songs Section */}
@@ -251,7 +233,7 @@ const Profile: React.FC = () => {
                             </div>
                         ) : (
                             <div className="p-8 rounded-2xl bg-white/5 border border-white/10 border-dashed text-center">
-                                <p className="text-neutral-500 italic">No favorite tracks selected yet.</p>
+                                <p className="text-white italic">No favorite tracks selected yet.</p>
                                 <Button
                                     variant="ghost"
                                     size="sm"
@@ -399,7 +381,7 @@ const Profile: React.FC = () => {
                 isOpen={!!isAddingRoomToCategoryId}
                 onClose={() => setIsAddingRoomToCategoryId(null)}
                 categoryName={user.categories?.find(c => c.id === isAddingRoomToCategoryId)?.name || ''}
-                availableRooms={rooms.filter(r => r.owner.id === user.id && !user.categories?.find(c => c.id === isAddingRoomToCategoryId)?.roomIds.includes(r.id))}
+                availableRooms={rooms.filter(r => r.owner.id === user.id && !user.categories?.find(c => c.id === isAddingRoomToCategoryId)?.roomIds?.includes(r.id))}
                 onAdd={handleAddRoomsToCategory}
             />
 
@@ -410,7 +392,7 @@ const Profile: React.FC = () => {
                 title={confirmAction?.title || ''}
                 message={confirmAction?.message || ''}
                 confirmText="Confirm"
-                variant={confirmAction?.title.includes('Delete') ? 'danger' : 'warning'}
+                variant={confirmAction?.title?.includes('Delete') ? 'danger' : 'warning'}
             />
         </div>
     );

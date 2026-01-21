@@ -24,7 +24,7 @@ import {
     IconAppWindow,
     IconForms,
 } from '@tabler/icons-react';
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme } from '../../hooks/useTheme';
 import { useState } from 'react';
 import { Button } from '../../components/common/Button/Button';
 import { Input } from '../../components/common/Input/Input';
@@ -453,7 +453,7 @@ const DesignSystem = () => {
     );
 };
 
-const SectionTitle = ({ icon: Icon, title }: { icon: any, title: string }) => (
+const SectionTitle = ({ icon: Icon, title }: { icon: React.ElementType, title: string }) => (
     <div className="flex items-center gap-3 mb-8">
         <div className="p-2.5 bg-primary-500/10 rounded-xl border border-primary-500/20 text-primary-400">
             <Icon size={SECTION_ICON_SIZE} />

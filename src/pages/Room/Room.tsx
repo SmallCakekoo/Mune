@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { useSidebar } from '../../context/SidebarContext';
+import { useAuth } from '../../hooks/useAuth';
+import { useSidebar } from '../../hooks/useSidebar';
 import Canvas from '../../components/room/Canvas/Canvas';
 import Sidebar from '../../components/layout/Sidebar/Sidebar';
 import RoomTopBar from '../../components/room/RoomTopBar/RoomTopBar';

@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ import { Button } from '../../common/Button/Button';
 import { SocialLoginButton } from '../../common/Button/SocialLoginButton';
 import { Checkbox } from '../../common/Checkbox/Checkbox';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { useAuth } from '../../../hooks/useAuth';
 
 const signupSchema = z.object({
     firstName: z.string().min(2, 'First name is required'),
@@ -25,12 +26,17 @@ const SignupForm = () => {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-        watch,
+        control,
     } = useForm<SignupFormData>({
         resolver: zodResolver(signupSchema),
     });
 
-    const password = watch('password');
+    const { signUpWithEmail, signInWithGoogle, signInWithGithub } = useAuth();
+
+    const password = useWatch({
+        control,
+        name: 'password',
+    });
 
     const passwordRequirements = [
         { label: 'At least 8 characters', met: password ? password.length >= 8 : false },
@@ -39,9 +45,13 @@ const SignupForm = () => {
     ];
 
     const onSubmit = async (data: SignupFormData) => {
-        console.log(data);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        navigate('/home');
+        try {
+            const displayName = `${data.firstName} ${data.lastName}`;
+            await signUpWithEmail(data.email, data.password, displayName);
+            navigate('/home');
+        } catch (error) {
+            console.error('Signup failed:', error);
+        }
     };
 
     return (
@@ -240,12 +250,12 @@ const SignupForm = () => {
                 <div className="grid grid-cols-2 gap-3">
                     <SocialLoginButton
                         provider="github"
-                        onClick={() => console.log('Github signup')}
+                        onClick={signInWithGithub}
                         className="bg-white/5 hover:bg-white/10 border border-white/10 text-white hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                     />
                     <SocialLoginButton
                         provider="google"
-                        onClick={() => console.log('Google signup')}
+                        onClick={signInWithGoogle}
                         className="bg-white/5 hover:bg-white/10 border border-white/10 text-white hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                     />
                 </div>

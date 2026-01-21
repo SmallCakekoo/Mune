@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IconChecklist, IconX, IconPlus, IconTrash } from '@tabler/icons-react';
 import { cn } from '../../../utils/cn';
-
-interface Todo {
-  id: string;
-  text: string;
-  completed: boolean;
-}
+import { useAuth } from '../../../hooks/useAuth';
+import * as taskService from '../../../services/task.service';
+import type { Task } from '../../../types/task.types';
+import toast from 'react-hot-toast';
 
 interface TodoListProps {
   isOpen: boolean;
@@ -15,42 +13,70 @@ interface TodoListProps {
 }
 
 const TodoList: React.FC<TodoListProps> = ({ isOpen, onToggle }) => {
-  const [todos, setTodos] = useState<Todo[]>([
-    { id: '1', text: 'Finish the UI for Mune', completed: false },
-    { id: '2', text: 'Implement Firebase Authentication (login & signup flow)', completed: false },
-    { id: '3', text: 'Style components using TailwindCSS (dark/light themes)', completed: false },
-    { id: '4', text: 'Deploy MVP initial to Vercel', completed: false },
-    { id: '5', text: 'Configure Redux Toolkit for global state management', completed: false },
-    { id: '6', text: 'Configure commit conventions and branching strategy in GitHub', completed: false },
-    { id: '7', text: 'Watch videos of Midudev', completed: false },
-    { id: '8', text: 'Practice with Three.js', completed: false },
-  ]);
+  const { user } = useAuth();
+  const [todos, setTodos] = useState<Task[]>([]);
   const [newTodo, setNewTodo] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleAddTodo = () => {
-    if (newTodo.trim()) {
-      setTodos([
-        ...todos,
-        {
-          id: Date.now().toString(),
-          text: newTodo.trim(),
-          completed: false,
-        },
-      ]);
+  // Subscribe to tasks
+  useEffect(() => {
+    if (!user) {
+      const timer = setTimeout(() => {
+        setTodos((prev) => (prev.length ? [] : prev));
+        setIsLoading(false);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+
+    console.log('TodoList: subscribing to tasks...');
+    const unsubscribe = taskService.subscribeToUserTasks(user.id, (fetchedTasks) => {
+      console.log('TodoList: tasks updated in component', fetchedTasks);
+      // Sort client-side since we removed server-side sort
+      const sortedTasks = [...fetchedTasks].sort((a, b) => {
+        const dateA = a.createdAt instanceof Date ? a.createdAt : (a.createdAt as { toDate: () => Date }).toDate();
+        const dateB = b.createdAt instanceof Date ? b.createdAt : (b.createdAt as { toDate: () => Date }).toDate();
+        return dateA.getTime() - dateB.getTime();
+      });
+      setTodos(sortedTasks);
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  const handleAddTodo = async () => {
+    if (!user || !newTodo.trim()) return;
+
+    try {
+      await taskService.createTask(user.id, {
+        text: newTodo.trim(),
+        completed: false
+      });
       setNewTodo('');
+      toast.success('Task added');
+    } catch (error) {
+      console.error('Error adding task:', error);
+      toast.error('Failed to add task');
     }
   };
 
-  const handleToggleTodo = (id: string) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
+  const handleToggleTodo = async (id: string, currentStatus: boolean) => {
+    try {
+      await taskService.updateTask(id, { completed: !currentStatus });
+    } catch (error) {
+      console.error('Error updating task:', error);
+      toast.error('Failed to update task');
+    }
   };
 
-  const handleDeleteTodo = (id: string) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+  const handleDeleteTodo = async (id: string) => {
+    try {
+      await taskService.deleteTask(id);
+      toast.success('Task deleted');
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      toast.error('Failed to delete task');
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -145,7 +171,11 @@ const TodoList: React.FC<TodoListProps> = ({ isOpen, onToggle }) => {
               {/* Todo List */}
               <div className="flex-1 overflow-y-auto p-6 space-y-2">
                 <AnimatePresence>
-                  {todos.map((todo, index) => (
+                  {isLoading ? (
+                    <div className="flex justify-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+                    </div>
+                  ) : todos.map((todo, index) => (
                     <motion.div
                       key={todo.id}
                       initial={{ opacity: 0, x: -20 }}
@@ -159,7 +189,7 @@ const TodoList: React.FC<TodoListProps> = ({ isOpen, onToggle }) => {
                       )}
                     >
                       <button
-                        onClick={() => handleToggleTodo(todo.id)}
+                        onClick={() => handleToggleTodo(todo.id, todo.completed)}
                         className={cn(
                           'w-5 h-5 rounded border-2 flex-shrink-0',
                           'transition-all duration-200',
@@ -206,7 +236,7 @@ const TodoList: React.FC<TodoListProps> = ({ isOpen, onToggle }) => {
                   ))}
                 </AnimatePresence>
 
-                {todos.length === 0 && (
+                {!isLoading && todos.length === 0 && (
                   <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -225,7 +255,7 @@ const TodoList: React.FC<TodoListProps> = ({ isOpen, onToggle }) => {
                     value={newTodo}
                     onChange={(e) => setNewTodo(e.target.value)}
                     onKeyPress={handleKeyPress}
-                      placeholder="Add your task here..."
+                    placeholder="Add your task here..."
                     className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all"
                   />
                   <button

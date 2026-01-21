@@ -10,7 +10,7 @@ import Sidebar from '../../components/layout/Sidebar/Sidebar';
 import ProfileSettings from '../../components/profile/ProfileSettings/ProfileSettings';
 import ThemeSettings from '../../components/profile/ThemeSettings/ThemeSettings';
 import CreateRoomModal from '../../components/home/CreateRoomModal/CreateRoomModal';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../../components/common/Button/Button';
 import ConfirmationDialog from '../../components/common/ConfirmationDialog/ConfirmationDialog';
 import { Loader } from '../../components/common/Loader/Loader';
@@ -29,7 +29,7 @@ const Settings: React.FC = () => {
             await logout();
             toast.success('Logged out successfully');
             navigate('/');
-        } catch (error) {
+        } catch {
             toast.error('Failed to logout');
         }
     };
@@ -39,7 +39,7 @@ const Settings: React.FC = () => {
             await deleteAccount();
             toast.success('Account deleted successfully');
             navigate('/');
-        } catch (error) {
+        } catch {
             toast.error('Failed to delete account');
         }
     };

@@ -15,8 +15,8 @@ export interface User {
   name: string;
   email: string;
   username: string;
-  bio?: string;
-  avatar?: string;
+  bio?: string | null;
+  avatar?: string | null;
   favoriteSongs?: FavoriteSong[];
   socialLinks?: {
     discord?: string;

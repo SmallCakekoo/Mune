@@ -303,7 +303,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
           onClick={handleEnter}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary-500 hover:bg-primary-400 text-white font-semibold transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary-500 hover:bg-primary-400 text-white font-semibold transition-colors cursor-pointer"
         >
           <IconPlayerPlay size={18} />
           <span>Enter</span>
