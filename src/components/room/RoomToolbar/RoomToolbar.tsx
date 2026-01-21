@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { IconHome, IconSearch, IconPlus } from '@tabler/icons-react';
 import { cn } from '../../../utils/cn';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../../hooks/useAuth';
 
 const MuneLogo = new URL('../../../assets/images/MuneCollapsed.svg', import.meta.url).href;
 

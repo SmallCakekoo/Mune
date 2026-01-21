@@ -15,152 +15,20 @@ import Sidebar from '../../components/layout/Sidebar/Sidebar';
 import RoomCard from '../../components/home/RoomCard/RoomCard';
 import RoomDetailsModal from '../../components/home/RoomDetailsModal/RoomDetailsModal';
 import CreateRoomModal from '../../components/home/CreateRoomModal/CreateRoomModal';
+import RoomPasswordModal from '../../components/home/RoomPasswordModal/RoomPasswordModal';
 import { Button } from '../../components/common/Button/Button';
 import type { Room } from '../../types/room.types';
-import { useSidebar } from '../../context/SidebarContext';
+import { useSidebar } from '../../hooks/useSidebar';
 import { cn } from '../../utils/cn';
 import toast from 'react-hot-toast';
-
-// Mock data - In production this would come from an API or context
-const mockRooms: Room[] = [
-    {
-        id: '1',
-        name: '¡Work in mune!',
-        description: 'My creative space where ideas and music flow together. Join us for a productive session!',
-        privacy: 'public',
-        owner: {
-            id: 'user1',
-            name: 'Snow Cat',
-            avatar: '/src/assets/images/cats/Cat (9).png',
-        },
-        createdAt: new Date('2026-01-15'),
-        updatedAt: new Date('2026-01-20'),
-        lastActivity: new Date(Date.now() - 3600000), // 1h ago
-        songCount: 34,
-        memberCount: 5,
-        members: [
-            { id: 'user1', name: 'Snow Cat', avatar: '/src/assets/images/cats/Cat (9).png' },
-            { id: 'user2', name: 'Soviet Cat', avatar: '/src/assets/images/cats/Cat (2).png' },
-            { id: 'user3', name: 'French Cat', avatar: '/src/assets/images/cats/Cat (3).png' },
-            { id: 'user4', name: 'Cartoon Cat', avatar: '/src/assets/images/cats/Cat (4).png' },
-            { id: 'user5', name: 'Tiny Music Cat', avatar: '/src/assets/images/cats/Cat (5).png' },
-        ],
-    },
-    {
-        id: '2',
-        name: 'DCA',
-        description: 'Design and code. A private space for focused developers.',
-        privacy: 'private',
-        password: '1234',
-        owner: {
-            id: 'user1',
-            name: 'Snow Cat',
-            avatar: '/src/assets/images/cats/Cat (9).png',
-        },
-        createdAt: new Date('2026-01-10'),
-        updatedAt: new Date('2026-01-18'),
-        lastActivity: new Date(Date.now() - 7200000), // 2h ago
-        songCount: 39,
-        memberCount: 3,
-        members: [
-            { id: 'user1', name: 'Snow Cat', avatar: '/src/assets/images/cats/Cat (9).png' },
-            { id: 'user2', name: 'Soviet Cat', avatar: '/src/assets/images/cats/Cat (2).png' },
-            { id: 'user3', name: 'French Cat', avatar: '/src/assets/images/cats/Cat (3).png' },
-        ],
-    },
-    {
-        id: '3',
-        name: 'PixelDNA :)',
-        description: 'Creative projects and pixel art discussions.',
-        privacy: 'public',
-        owner: {
-            id: 'user2',
-            name: 'Soviet Cat',
-            avatar: '/src/assets/images/cats/Cat (2).png',
-        },
-        createdAt: new Date('2026-01-12'),
-        updatedAt: new Date('2026-01-19'),
-        lastActivity: new Date(Date.now() - 18000000), // 5h ago
-        songCount: 21,
-        memberCount: 7,
-        members: [
-            { id: 'user2', name: 'Soviet Cat', avatar: '/src/assets/images/cats/Cat (2).png' },
-            { id: 'user1', name: 'Snow Cat', avatar: '/src/assets/images/cats/Cat (9).png' },
-            { id: 'user3', name: 'French Cat', avatar: '/src/assets/images/cats/Cat (3).png' },
-            { id: 'user4', name: 'Cartoon Cat', avatar: '/src/assets/images/cats/Cat (4).png' },
-            { id: 'user5', name: 'Tiny Music Cat', avatar: '/src/assets/images/cats/Cat (5).png' },
-            { id: 'user6', name: 'Shy Cat', avatar: '/src/assets/images/cats/Cat (6).png' },
-            { id: 'user7', name: 'Samurai Cat', avatar: '/src/assets/images/cats/Cat (7).png' },
-        ],
-    },
-    {
-        id: '4',
-        name: '¡bRUUh!',
-        description: 'The loudest music room in the city. Feel the bass!',
-        privacy: 'public',
-        owner: {
-            id: 'user4',
-            name: 'Cartoon Cat',
-            avatar: '/src/assets/images/cats/Cat (4).png',
-        },
-        createdAt: new Date('2026-01-08'),
-        updatedAt: new Date('2026-01-17'),
-        lastActivity: new Date(Date.now() - 32400000), // 9h ago
-        songCount: 124,
-        memberCount: 12,
-        members: [
-            { id: 'user4', name: 'Cartoon Cat', avatar: '/src/assets/images/cats/Cat (4).png' },
-            { id: 'user2', name: 'Soviet Cat', avatar: '/src/assets/images/cats/Cat (2).png' },
-            { id: 'user3', name: 'French Cat', avatar: '/src/assets/images/cats/Cat (3).png' },
-        ],
-    },
-    {
-        id: '5',
-        name: 'AE is my passion',
-        description: 'After Effects workspace. Motion graphics lovers only.',
-        privacy: 'private',
-        password: 'ae123',
-        owner: {
-            id: 'user5',
-            name: 'Tiny Music Cat',
-            avatar: '/src/assets/images/cats/Cat (5).png',
-        },
-        createdAt: new Date('2026-01-05'),
-        updatedAt: new Date('2026-01-16'),
-        lastActivity: new Date(Date.now() - 43200000), // 12h ago
-        songCount: 9,
-        memberCount: 2,
-        members: [
-            { id: 'user5', name: 'Tiny Music Cat', avatar: '/src/assets/images/cats/Cat (5).png' },
-            { id: 'user6', name: 'Shy Cat', avatar: '/src/assets/images/cats/Cat (6).png' },
-        ],
-    },
-    {
-        id: '6',
-        name: 'Celeste.',
-        description: 'Beautiful workspace inspired by the mountains.',
-        privacy: 'public',
-        owner: {
-            id: 'user3',
-            name: 'French Cat',
-            avatar: '/src/assets/images/cats/Cat (3).png',
-        },
-        createdAt: new Date('2026-01-03'),
-        updatedAt: new Date('2026-01-15'),
-        lastActivity: new Date(Date.now() - 54000000), // 15h ago
-        songCount: 123,
-        memberCount: 8,
-        members: [
-            { id: 'user3', name: 'French Cat', avatar: '/src/assets/images/cats/Cat (3).png' },
-            { id: 'user4', name: 'Cartoon Cat', avatar: '/src/assets/images/cats/Cat (4).png' },
-            { id: 'user5', name: 'Tiny Music Cat', avatar: '/src/assets/images/cats/Cat (5).png' },
-        ],
-    },
-];
+import { getAllRooms } from '../../services/room.service';
+import { useAuth } from '../../hooks/useAuth';
+import { Loader } from '../../components/common/Loader/Loader';
 
 const Search: React.FC = () => {
     const navigate = useNavigate();
     const { isCollapsed } = useSidebar();
+    const { user } = useAuth();
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedQuery, setDebouncedQuery] = useState('');
     const [privacyFilter, setPrivacyFilter] = useState<'all' | 'public' | 'private'>('all');
@@ -169,9 +37,30 @@ const Search: React.FC = () => {
 
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+    const [passwordRoom, setPasswordRoom] = useState<Room | null>(null);
 
-    const currentUserId = 'user1';
+    const [rooms, setRooms] = useState<Room[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Fetch rooms
+    useEffect(() => {
+        const fetchRooms = async () => {
+            try {
+                setIsLoading(true);
+                const fetchedRooms = await getAllRooms();
+                setRooms(fetchedRooms);
+            } catch (error) {
+                console.error('Failed to fetch rooms:', error);
+                toast.error('Failed to load rooms');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchRooms();
+    }, []);
 
     // Debounce search query
     useEffect(() => {
@@ -183,7 +72,7 @@ const Search: React.FC = () => {
 
     // Filter logic
     const filteredRooms = useMemo(() => {
-        return mockRooms.filter(room => {
+        return rooms.filter(room => {
             // Search matching
             const matchesSearch = room.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
                 room.description?.toLowerCase().includes(debouncedQuery.toLowerCase());
@@ -194,20 +83,41 @@ const Search: React.FC = () => {
             if (privacyFilter !== 'all' && room.privacy !== privacyFilter) return false;
 
             // Joined filter
-            const isJoined = room.members?.some(m => m.id === currentUserId) || false;
+            const isJoined = room.members?.some(m => m.id === user?.id) || false;
             if (joinedFilter === 'joined' && !isJoined) return false;
             if (joinedFilter === 'not_joined' && isJoined) return false;
 
             // Owned filter
-            if (ownedFilter && room.owner.id !== currentUserId) return false;
+            if (ownedFilter && room.owner.id !== user?.id) return false;
 
             return true;
         });
-    }, [debouncedQuery, privacyFilter, joinedFilter, ownedFilter, currentUserId]);
+    }, [rooms, debouncedQuery, privacyFilter, joinedFilter, ownedFilter, user]);
 
-    const handleEnterRoom = (room: Room) => {
+    const handleRoomAccess = (room: Room) => {
         toast.success(`Entering ${room.name}...`);
         navigate(`/room/${room.id}`);
+    };
+
+    const handleEnterRoom = (room: Room) => {
+        // 1. If public, just enter
+        if (room.privacy === 'public') {
+            handleRoomAccess(room);
+            return;
+        }
+
+        // 2. If private, check if owner or member
+        const isOwner = user?.id === room.owner.id;
+        const isMember = room.members?.some(m => m.id === user?.id);
+
+        if (isOwner || isMember) {
+            handleRoomAccess(room);
+            return;
+        }
+
+        // 3. If private and not authorized, show password modal
+        setPasswordRoom(room);
+        setIsPasswordModalOpen(true);
     };
 
     const handleViewDetails = (room: Room) => {
@@ -222,7 +132,7 @@ const Search: React.FC = () => {
         setOwnedFilter(false);
     };
 
-    const handleCreateRoom = (data: any) => {
+    const handleCreateRoom = (data: Partial<Room>) => {
         toast.success(`Room "${data.name}" created! Redirecting to home...`);
         setIsCreateModalOpen(false);
         navigate('/home');
@@ -244,7 +154,7 @@ const Search: React.FC = () => {
 
             <Sidebar
                 onCreateRoom={() => setIsCreateModalOpen(true)}
-                userAvatar="/src/assets/images/cats/Cat (9).png"
+                userAvatar={user?.avatar || undefined}
             />
 
             <main className={cn(
@@ -302,7 +212,7 @@ const Search: React.FC = () => {
                                         ].map(f => (
                                             <button
                                                 key={f.id}
-                                                onClick={() => setPrivacyFilter(f.id as any)}
+                                                onClick={() => setPrivacyFilter(f.id as 'all' | 'public' | 'private')}
                                                 className={cn(
                                                     "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border",
                                                     privacyFilter === f.id
@@ -329,7 +239,7 @@ const Search: React.FC = () => {
                                         ].map(f => (
                                             <button
                                                 key={f.id}
-                                                onClick={() => setJoinedFilter(f.id as any)}
+                                                onClick={() => setJoinedFilter(f.id as 'all' | 'joined' | 'not_joined')}
                                                 className={cn(
                                                     "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border",
                                                     joinedFilter === f.id
@@ -383,60 +293,64 @@ const Search: React.FC = () => {
                             </h2>
                         </div>
 
-                        <AnimatePresence mode="popLayout">
-                            {filteredRooms.length === 0 ? (
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.95 }}
-                                    className="flex flex-col items-center justify-center py-20 px-6 rounded-3xl bg-white/5 border border-white/10 text-center"
-                                >
-                                    <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6">
-                                        <IconSearch size={40} className="text-neutral-5" />
-                                    </div>
-                                    <h3 className="text-2xl font-bold text-white mb-2">No rooms found</h3>
-                                    <p className="text-neutral-5 text-lg max-w-md">
-                                        We couldn't find any rooms matching your current search and filters. Try adjusting them!
-                                    </p>
-                                    <Button
-                                        variant="outline"
-                                        className="mt-8"
-                                        onClick={clearFilters}
+                        {isLoading ? (
+                            <div className="flex items-center justify-center py-20">
+                                <Loader size="lg" />
+                            </div>
+                        ) : (
+                            <AnimatePresence mode="popLayout">
+                                {filteredRooms.length === 0 ? (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.95 }}
+                                        className="flex flex-col items-center justify-center py-20 px-6 rounded-3xl bg-white/5 border border-white/10 text-center"
                                     >
-                                        Clear Filters
-                                    </Button>
-                                </motion.div>
-                            ) : (
-                                <motion.div
-                                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                                    layout
-                                >
-                                    {filteredRooms.map((room: Room, index: number) => (
-                                        <motion.div
-                                            key={room.id}
-                                            layout
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, scale: 0.9 }}
-                                            transition={{ delay: index * 0.05 }}
+                                        <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6">
+                                            <IconSearch size={40} className="text-neutral-5" />
+                                        </div>
+                                        <h3 className="text-2xl font-bold text-white mb-2">No rooms found</h3>
+                                        <p className="text-neutral-5 text-lg max-w-md">
+                                            We couldn't find any rooms matching your current search and filters. Try adjusting them!
+                                        </p>
+                                        <Button
+                                            variant="outline"
+                                            className="mt-8"
+                                            onClick={clearFilters}
                                         >
-                                            <RoomCard
-                                                room={room}
-                                                currentUserId={currentUserId}
-                                                onViewDetails={handleViewDetails}
-                                                onEnter={handleEnterRoom}
-                                            // Search page might not need Edit/Remove in the same way Home does
-                                            // but they are available in the component. 
-                                            // For now we only pass VIEW and ENTER as requested.
-                                            />
-                                        </motion.div>
-                                    ))}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                                            Clear Filters
+                                        </Button>
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                                        layout
+                                    >
+                                        {filteredRooms.map((room: Room, index: number) => (
+                                            <motion.div
+                                                key={room.id}
+                                                layout
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, scale: 0.9 }}
+                                                transition={{ delay: index * 0.05 }}
+                                            >
+                                                <RoomCard
+                                                    room={room}
+                                                    currentUserId={user?.id || ''}
+                                                    onViewDetails={handleViewDetails}
+                                                    onEnter={handleEnterRoom}
+                                                />
+                                            </motion.div>
+                                        ))}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        )}
                     </div>
                 </div>
             </main>
+
 
             <RoomDetailsModal
                 isOpen={isDetailsModalOpen}
@@ -452,6 +366,16 @@ const Search: React.FC = () => {
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
                 onSubmit={handleCreateRoom}
+            />
+
+            <RoomPasswordModal
+                isOpen={isPasswordModalOpen}
+                onClose={() => {
+                    setIsPasswordModalOpen(false);
+                    setPasswordRoom(null);
+                }}
+                room={passwordRoom}
+                onSuccess={handleRoomAccess}
             />
         </div>
     );

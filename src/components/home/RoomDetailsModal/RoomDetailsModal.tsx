@@ -202,7 +202,7 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
                 onEnter(room);
                 onClose();
               }}
-              className="w-full"
+              className="w-full cursor-pointer"
             >
               Enter the Room
             </Button>

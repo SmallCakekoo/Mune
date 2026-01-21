@@ -8,10 +8,12 @@ import { Button } from '../../common/Button/Button';
 import { SocialLoginButton } from '../../common/Button/SocialLoginButton';
 import { Checkbox } from '../../common/Checkbox/Checkbox';
 import { ArrowRight } from 'lucide-react';
+import { useAuth } from '../../../hooks/useAuth';
 
 const loginSchema = z.object({
     email: z.string().email('Please enter a valid email address'),
     password: z.string().min(1, 'Password is required'),
+    remember: z.boolean().optional(),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -26,10 +28,15 @@ const LoginForm = () => {
         resolver: zodResolver(loginSchema),
     });
 
+    const { signInWithEmail, signInWithGoogle, signInWithGithub } = useAuth();
+
     const onSubmit = async (data: LoginFormData) => {
-        console.log(data);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        navigate('/home');
+        try {
+            await signInWithEmail(data.email, data.password);
+            navigate('/home');
+        } catch (error) {
+            console.error('Login failed:', error);
+        }
     };
 
     return (
@@ -94,7 +101,7 @@ const LoginForm = () => {
                 <div className="flex items-center justify-between pt-2">
                     <Checkbox
                         label="Remember me"
-                        {...register('remember' as any)}
+                        {...register('remember')}
                     />
                     <Link
                         to="/forgot-password"
@@ -155,12 +162,12 @@ const LoginForm = () => {
                 <div className="grid grid-cols-2 gap-3">
                     <SocialLoginButton
                         provider="github"
-                        onClick={() => console.log('Github login')}
+                        onClick={signInWithGithub}
                         className="bg-white/5 hover:bg-white/10 border border-white/10 text-white hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                     />
                     <SocialLoginButton
                         provider="google"
-                        onClick={() => console.log('Google login')}
+                        onClick={signInWithGoogle}
                         className="bg-white/5 hover:bg-white/10 border border-white/10 text-white hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                     />
                 </div>

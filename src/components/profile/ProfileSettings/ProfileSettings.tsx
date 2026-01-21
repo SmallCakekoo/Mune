@@ -41,7 +41,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
         try {
             await onUpdate(formData);
             toast.success('Profile updated successfully!');
-        } catch (error) {
+        } catch {
             toast.error('Failed to update profile');
         } finally {
             setIsSubmitting(false);

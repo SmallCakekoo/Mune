@@ -11,14 +11,14 @@ const createRoomSchema = z.object({
   name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres').max(50, 'El nombre no puede exceder 50 caracteres'),
   description: z.string().max(200, 'La descripción no puede exceder 200 caracteres').optional(),
   privacy: z.enum(['public', 'private']),
-  password: z.string().min(4, 'La contraseña debe tener al menos 4 caracteres').optional(),
+  password: z.string().optional(),
 }).refine((data) => {
-  if (data.privacy === 'private' && !data.password) {
-    return false;
+  if (data.privacy === 'private') {
+    return !!data.password && data.password.length >= 4;
   }
   return true;
 }, {
-  message: 'Las salas privadas requieren una contraseña',
+  message: 'Las salas privadas requieren una contraseña de al menos 4 caracteres',
   path: ['password'],
 });
 
@@ -56,13 +56,15 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
   const privacy = watch('privacy');
 
   const handleFormSubmit = async (data: CreateRoomFormData) => {
+    console.log('CreateRoomModal: Form submitted', data);
     setIsSubmitting(true);
     try {
       await onSubmit(data);
+      console.log('CreateRoomModal: Submission successful');
       reset();
       onClose();
     } catch (error) {
-      console.error('Error creating room:', error);
+      console.error('CreateRoomModal: Error creating room:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -82,7 +84,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
       title="Create New Room"
       size="md"
     >
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(handleFormSubmit, (errors) => console.error('Form validation errors:', errors))} className="space-y-6">
         {/* Name */}
         <Input
           {...register('name')}
@@ -112,8 +114,8 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
               type="button"
               onClick={() => setValue('privacy', 'public')}
               className={`flex items-center gap-2 p-4 rounded-xl border-2 transition-all ${privacy === 'public'
-                  ? 'border-primary-500 bg-primary-500/20 text-white'
-                  : 'border-white/20 bg-white/5 text-neutral-5 hover:border-white/30 hover:bg-white/10'
+                ? 'border-primary-500 bg-primary-500/20 text-white'
+                : 'border-white/20 bg-white/5 text-neutral-5 hover:border-white/30 hover:bg-white/10'
                 }`}
               disabled={isSubmitting}
             >
@@ -124,8 +126,8 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
               type="button"
               onClick={() => setValue('privacy', 'private')}
               className={`flex items-center gap-2 p-4 rounded-xl border-2 transition-all ${privacy === 'private'
-                  ? 'border-primary-500 bg-primary-500/20 text-white'
-                  : 'border-white/20 bg-white/5 text-neutral-5 hover:border-white/30 hover:bg-white/10'
+                ? 'border-primary-500 bg-primary-500/20 text-white'
+                : 'border-white/20 bg-white/5 text-neutral-5 hover:border-white/30 hover:bg-white/10'
                 }`}
               disabled={isSubmitting}
             >
@@ -164,6 +166,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
             type="submit"
             isLoading={isSubmitting}
             className="flex-1"
+            onClick={() => console.log('Create Room button clicked')}
           >
             Create Room
           </Button>

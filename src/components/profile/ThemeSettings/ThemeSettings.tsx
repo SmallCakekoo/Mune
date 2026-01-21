@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { IconPalette, IconCheck, IconSun, IconMoon, IconDeviceDesktop } from '@tabler/icons-react';
-import { useTheme } from '../../../context/ThemeContext';
+import { useTheme } from '../../../hooks/useTheme';
+import type { Theme, Appearance } from '../../../context/ThemeContext';
 import { cn } from '../../../utils/cn';
 
 const themes = [
@@ -36,7 +37,7 @@ const ThemeSettings: React.FC = () => {
                     {appearances.map((app) => (
                         <button
                             key={app.id}
-                            onClick={() => setAppearance(app.id as any)}
+                            onClick={() => setAppearance(app.id as Appearance)}
                             className={cn(
                                 "relative flex items-center gap-4 p-4 rounded-xl border transition-all group",
                                 currentAppearance === app.id
@@ -74,7 +75,7 @@ const ThemeSettings: React.FC = () => {
                     {themes.map((theme) => (
                         <button
                             key={theme.id}
-                            onClick={() => setTheme(theme.id as any)}
+                            onClick={() => setTheme(theme.id as Theme)}
                             className={cn(
                                 "relative flex flex-col items-center gap-3 p-4 rounded-xl border transition-all group",
                                 currentTheme === theme.id

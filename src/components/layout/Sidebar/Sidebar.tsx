@@ -10,11 +10,13 @@ import {
   IconMenu2,
   IconX,
 } from '@tabler/icons-react';
-import { useSidebar } from '../../../context/SidebarContext';
+import { useSidebar } from '../../../hooks/useSidebar';
 import { cn } from '../../../utils/cn';
 // Import SVGs as React components or URLs
 // const MuneLogoCollapsed = new URL('../../../assets/images/MuneCollapsed.svg', import.meta.url).href;
 const MuneLogoExpanded = new URL('../../../assets/images/MuneExpanded.svg', import.meta.url).href;
+
+import { useAuth } from '../../../hooks/useAuth';
 
 interface SidebarItem {
   id: string;
@@ -27,10 +29,12 @@ interface SidebarItem {
 
 interface SidebarProps {
   onCreateRoom?: () => void;
+  // userAvatar prop is no longer needed as we get it from context, but keeping it optional for backward compat if needed
   userAvatar?: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom, userAvatar }) => {
+const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {
+  const { user } = useAuth();
   const { isCollapsed, setIsCollapsed, toggleSidebar } = useSidebar();
   const navigate = useNavigate();
   const location = useLocation();
@@ -80,8 +84,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom, userAvatar }) => {
     }
   };
 
-  // Default avatar path - Snow Cat uses Cat (9).png
-  const defaultAvatar = userAvatar || '/src/assets/images/cats/Cat (9).png';
+  // Default avatar path
+  const defaultAvatar = user?.avatar || '/src/assets/images/cats/Cat (9).png';
 
   return (
     <>
@@ -211,7 +215,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom, userAvatar }) => {
                 className="flex-1 min-w-0"
               >
                 <p className="text-sm font-medium text-white truncate">
-                  Snow Cat
+                  {user?.name || 'User'}
                 </p>
                 <p className="text-xs text-neutral-5 truncate">View Profile</p>
               </motion.div>

@@ -1,11 +1,19 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, Navigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 import { motion } from 'framer-motion';
 import MuneLogo from '../../assets/images/MuneCollapsed.svg';
 
-interface AuthLayoutProps {
-}
+const AuthLayout = () => {
+    const { isAuthenticated, isLoading } = useAuth();
 
-const AuthLayout: React.FC<AuthLayoutProps> = () => {
+    if (isLoading) {
+        return null; // Or a loading spinner
+    }
+
+    if (isAuthenticated) {
+        return <Navigate to="/home" replace />;
+    }
+
     return (
         <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 md:p-8 bg-background-500 relative overflow-hidden">
             {/* Background Elements - Similar to Landing */}

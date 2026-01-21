@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     IconPlayerPlay,
@@ -47,21 +47,40 @@ const RoomMusicPlayer: React.FC = () => {
         durationLabel: '3:30'
     });
 
-    React.useEffect(() => {
-        let interval: ReturnType<typeof setInterval>;
-        if (isPlaying) {
-            interval = setInterval(() => {
-                setProgress(p => {
-                    if (p >= 100) {
-                        playNext();
-                        return 0;
-                    }
-                    return p + 0.1;
-                });
-            }, 100);
+    const playTrack = useCallback((track: Track, fromQueue = false) => {
+        // Agregar canción actual al historial si existe
+        if (currentTrack.id !== '0' && !history.find(t => t.id === currentTrack.id)) {
+            setHistory([currentTrack, ...history].slice(0, 20));
         }
-        return () => clearInterval(interval);
-    }, [isPlaying, queue]);
+
+        setCurrentTrack(track);
+        setIsPlaying(true);
+        setProgress(0);
+
+        if (!fromQueue) {
+            setShowPlaylist(false);
+        }
+    }, [currentTrack, history]);
+
+    const playNext = useCallback(() => {
+        if (queue.length > 0) {
+            const nextTrack = queue[0];
+            playTrack(nextTrack, true);
+            setQueue(queue.slice(1));
+        } else {
+            setIsPlaying(false);
+        }
+    }, [queue, playTrack]);
+
+    const playPrevious = useCallback(() => {
+        if (history.length > 0) {
+            const prevTrack = history[0];
+            setCurrentTrack(prevTrack);
+            setHistory(history.slice(1));
+            setIsPlaying(true);
+            setProgress(0);
+        }
+    }, [history]);
 
     const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
         const bounds = e.currentTarget.getBoundingClientRect();
@@ -92,40 +111,21 @@ const RoomMusicPlayer: React.FC = () => {
         setQueue(queue.filter(t => t.id !== trackId));
     };
 
-    const playTrack = (track: Track, fromQueue = false) => {
-        // Agregar canción actual al historial si existe
-        if (currentTrack.id !== '0' && !history.find(t => t.id === currentTrack.id)) {
-            setHistory([currentTrack, ...history].slice(0, 20));
+    React.useEffect(() => {
+        let interval: ReturnType<typeof setInterval>;
+        if (isPlaying) {
+            interval = setInterval(() => {
+                setProgress(p => {
+                    if (p >= 100) {
+                        playNext();
+                        return 0;
+                    }
+                    return p + 0.1;
+                });
+            }, 100);
         }
-
-        setCurrentTrack(track);
-        setIsPlaying(true);
-        setProgress(0);
-
-        if (!fromQueue) {
-            setShowPlaylist(false);
-        }
-    };
-
-    const playNext = () => {
-        if (queue.length > 0) {
-            const nextTrack = queue[0];
-            playTrack(nextTrack, true);
-            setQueue(queue.slice(1));
-        } else {
-            setIsPlaying(false);
-        }
-    };
-
-    const playPrevious = () => {
-        if (history.length > 0) {
-            const prevTrack = history[0];
-            setCurrentTrack(prevTrack);
-            setHistory(history.slice(1));
-            setIsPlaying(true);
-            setProgress(0);
-        }
-    };
+        return () => clearInterval(interval);
+    }, [isPlaying, playNext]);
 
     const clearHistory = () => {
         setHistory([]);

@@ -17,8 +17,9 @@ import Settings from './pages/Profile/Settings';
 import DesignSystem from './pages/DesignSystem/DesignSystem';
 import BehanceShowcase from './pages/BehanceShowcase/BehanceShowcase';
 import ScrollToTop from './components/layout/ScrollToTop';
-import { SidebarProvider } from './context/SidebarContext';
+import { SidebarProvider } from './context/SidebarProvider';
 import { Toaster } from 'react-hot-toast';
+import ProtectedRoute from './components/auth/ProtectedRoute/ProtectedRoute';
 
 function App() {
   return (
@@ -37,12 +38,15 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
           </Route>
 
-          <Route path="/home" element={<Home />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/user/:id" element={<UserProfile />} />
-          <Route path="/room/:id" element={<Room />} />
-          <Route path="/settings" element={<Settings />} />
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/user/:id" element={<UserProfile />} />
+            <Route path="/room/:id" element={<Room />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
 
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
