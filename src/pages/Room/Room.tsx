@@ -51,6 +51,11 @@ const RoomPage: React.FC = () => {
                 setRoomDescription(room.description || '');
                 setRoomPrivacy(room.privacy || 'public');
 
+                // Track recent visit
+                if (currentUser) {
+                    roomService.trackRecentVisit(currentUser.id, roomId);
+                }
+
                 const presenceMembers: RoomPresence[] = room.members.map(m => ({
                     userId: m.id,
                     user: {

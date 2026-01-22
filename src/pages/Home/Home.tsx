@@ -22,6 +22,7 @@ const Home: React.FC = () => {
   const { user, isLoading } = useAuth();
   const { isCollapsed } = useSidebar();
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [recentRooms, setRecentRooms] = useState<Room[]>([]);
   const [isLoadingRooms, setIsLoadingRooms] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -40,6 +41,17 @@ const Home: React.FC = () => {
     const unsubscribe = roomService.subscribeToUserRooms(user.id, (fetchedRooms) => {
       setRooms(fetchedRooms);
       setIsLoadingRooms(false);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // Fetch recent rooms
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubscribe = roomService.subscribeToRecentRooms(user.id, (fetchedRecents) => {
+      setRecentRooms(fetchedRecents);
     });
 
     return () => unsubscribe();
@@ -215,9 +227,37 @@ const Home: React.FC = () => {
             </div>
           </div>
 
-          {/* Rooms Section */}
+          {/* Recent Rooms Section */}
+          {!searchQuery && recentRooms.length > 0 && (
+            <div className="mb-12">
+              <h2 className="text-2xl font-bold text-white mb-6">Recently Visited</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {recentRooms.map((room, index) => (
+                  <motion.div
+                    key={`recent-${room.id}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <RoomCard
+                      room={room}
+                      currentUserId={user?.id || ''}
+                      onViewDetails={handleViewDetails}
+                      onEdit={handleEdit}
+                      onRemove={handleRemove}
+                      onEnter={handleEnterRoom}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* All Rooms Section */}
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6">Your Rooms</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">
+              {searchQuery ? 'Search Results' : 'Your Rooms'}
+            </h2>
 
             {isLoadingRooms ? (
               <div className="flex justify-center py-12">
