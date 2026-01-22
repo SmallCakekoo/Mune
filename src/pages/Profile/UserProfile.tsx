@@ -70,7 +70,7 @@ const UserProfile: React.FC = () => {
 
     const handleRoomAccess = (room: Room) => {
         toast.success(`Entering ${room.name}...`);
-        navigate(`/room/${room.id}`);
+        navigate(`/rooms/${room.id}`);
     };
 
     const handleEnterRoom = (room: Room) => {
@@ -123,7 +123,7 @@ const UserProfile: React.FC = () => {
             <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary-500/10 via-background-500 to-background-500 z-0" />
             <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 z-0 mix-blend-overlay" />
 
-            <Sidebar userAvatar={currentUser?.avatar || undefined} />
+            <Sidebar />
 
             <main className="ml-0 md:ml-[80px] lg:ml-[280px] min-h-screen relative z-10 transition-all duration-300">
                 <div className="container mx-auto px-6 py-8 pt-24 md:pt-12">

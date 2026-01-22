@@ -44,7 +44,7 @@ function App() {
             <Route path="/search" element={<Search />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/user/:id" element={<UserProfile />} />
-            <Route path="/room/:id" element={<Room />} />
+            <Route path="/rooms/:roomId" element={<Room />} />
             <Route path="/settings" element={<Settings />} />
           </Route>
 

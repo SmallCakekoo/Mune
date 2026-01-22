@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -12,8 +12,11 @@ import type { Note, TodoItem } from '../../../types/room.types'
 import { cn } from '../../../utils/cn'
 import { formatDistanceToNow } from 'date-fns'
 
+
+
 interface NoteCardProps {
     note: Note
+    scale: number
     onUpdate: (updates: Partial<Note>) => void
     onDelete: () => void
     onDuplicate: () => void
@@ -21,6 +24,7 @@ interface NoteCardProps {
 
 const NoteCard: React.FC<NoteCardProps> = ({
     note,
+    scale,
     onUpdate,
     onDelete,
     onDuplicate,
@@ -29,6 +33,53 @@ const NoteCard: React.FC<NoteCardProps> = ({
     const [isResizing, setIsResizing] = useState(false)
     const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
     const [showColorPicker, setShowColorPicker] = useState(false)
+
+    // Local state for immediate typing feedback
+    const [localTitle, setLocalTitle] = useState(note.title)
+    const [localContent, setLocalContent] = useState(note.content)
+
+    // Robust per-instance debounce using useRef
+    const debounceTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    const updateRef = React.useRef(onUpdate);
+
+    // Keep update ref fresh
+    useEffect(() => {
+        updateRef.current = onUpdate;
+    }, [onUpdate]);
+
+    const debouncedUpdate = useCallback((updates: Partial<Note>) => {
+        if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = setTimeout(() => {
+            updateRef.current(updates);
+        }, 800); // Slightly faster than 1s for better feel
+    }, []);
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+        };
+    }, []);
+
+    // Update local state when remote data changes (unless editing)
+    useEffect(() => {
+        if (!isEditing) {
+            setLocalTitle(note.title)
+            setLocalContent(note.content)
+        }
+    }, [note.title, note.content, isEditing])
+
+    const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const val = e.target.value
+        setLocalTitle(val)
+        debouncedUpdate({ title: val })
+    }
+
+    const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const val = e.target.value
+        setLocalContent(val)
+        debouncedUpdate({ content: val })
+    }
 
     const stop = (e: React.SyntheticEvent) => {
         e.stopPropagation()
@@ -66,7 +117,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
 
         const move = (ev: MouseEvent) => {
             onUpdate({
-                height: Math.max(140, Math.min(600, startHeight + ev.clientY - startY)),
+                height: Math.max(140, Math.min(600, startHeight + (ev.clientY - startY) / scale)),
             })
         }
 
@@ -87,9 +138,13 @@ const NoteCard: React.FC<NoteCardProps> = ({
             drag={!isEditing && !isResizing}
             dragMomentum={false}
             dragListener={!isEditing && !isResizing}
-            onDragEnd={(_, info) =>
-                onUpdate({ x: note.x + info.offset.x, y: note.y + info.offset.y })
-            }
+            onDragEnd={(_, info) => {
+                // Fix double movement by dividing by scale
+                onUpdate({
+                    x: note.x + info.offset.x / scale,
+                    y: note.y + info.offset.y / scale
+                })
+            }}
             onPointerDown={stop}
             onMouseDown={stop}
             onTouchStart={stop}
@@ -227,8 +282,8 @@ const NoteCard: React.FC<NoteCardProps> = ({
             {note.type !== 'image' && (
                 <div className="relative group/title">
                     <textarea
-                        value={note.title}
-                        onChange={(e) => onUpdate({ title: e.target.value })}
+                        value={localTitle}
+                        onChange={handleTitleChange}
                         onFocus={() => setIsEditing(true)}
                         onBlur={() => setIsEditing(false)}
                         onPointerDown={stop}
@@ -248,8 +303,8 @@ const NoteCard: React.FC<NoteCardProps> = ({
             {/* ---------------- BODY ---------------- */}
             {note.type === 'text' && (
                 <textarea
-                    value={note.content as string}
-                    onChange={(e) => onUpdate({ content: e.target.value })}
+                    value={localContent as string}
+                    onChange={handleContentChange}
                     onFocus={() => setIsEditing(true)}
                     onBlur={() => setIsEditing(false)}
                     onPointerDown={stop}
@@ -297,7 +352,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
             {/* ---------------- FOOTER ---------------- */}
             {note.type !== 'image' && (
                 <div className="text-[10px] text-black/40 mt-3 font-medium">
-                    Created {formatDistanceToNow(new Date(note.createdAt))} ago
+                    {note.createdAt ? `Created ${formatDistanceToNow(new Date(note.createdAt))} ago` : 'Creating...'}
                 </div>
             )}
 

@@ -5,15 +5,15 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { IconPlus, IconTrash, IconEdit, IconCheck } from '@tabler/icons-react'
 import type { Note } from '../../../types/room.types'
 import NoteCard from '../Note/Note'
-import toast from 'react-hot-toast'
 
 interface CanvasProps {
     notes: Note[]
+    scale: number
     onAddNote: (
         type: 'text' | 'todo' | 'image',
         x: number,
         y: number,
-        content?: string,
+        content?: string | any, // Adjusted to match Room.tsx
         width?: number,
         height?: number
     ) => void
@@ -26,6 +26,7 @@ interface CanvasProps {
 
 const Canvas: React.FC<CanvasProps> = ({
     notes,
+    scale,
     onAddNote,
     onUpdateNote,
     onDeleteNote,
@@ -72,30 +73,10 @@ const Canvas: React.FC<CanvasProps> = ({
         uploadPosRef.current = null
         setContextMenu(null)
 
-        const reader = new FileReader()
-        reader.onload = (event) => {
-            const base64 = event.target?.result as string
-            const img = new Image()
-            img.onload = () => {
-                const max = 400
-                let w = img.width
-                let h = img.height
-                const ratio = w / h
+        // Pass the file object directly. 
+        // Validation and upload will be handled in Room.tsx/room-notes.service
+        onAddNote('image', x, y, file)
 
-                if (w > h) {
-                    w = Math.min(w, max)
-                    h = w / ratio
-                } else {
-                    h = Math.min(h, max)
-                    w = h * ratio
-                }
-
-                onAddNote('image', x, y, base64, Math.round(w), Math.round(h))
-                toast.success('Image added')
-            }
-            img.src = base64
-        }
-        reader.readAsDataURL(file)
         e.target.value = ''
     }
 
@@ -132,6 +113,7 @@ const Canvas: React.FC<CanvasProps> = ({
                             <NoteCard
                                 key={note.id}
                                 note={note}
+                                scale={scale}
                                 onUpdate={(u) => onUpdateNote(note.id, u)}
                                 onDelete={() => onDeleteNote(note.id)}
                                 onDuplicate={() => onDuplicateNote(note.id)}

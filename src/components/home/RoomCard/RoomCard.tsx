@@ -65,7 +65,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
     if (onEnter) {
       onEnter(room);
     } else {
-      navigate(`/room/${room.id}`);
+      navigate(`/rooms/${room.id}`);
     }
   };
 

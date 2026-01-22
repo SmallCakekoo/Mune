@@ -150,7 +150,7 @@ const Home: React.FC = () => {
   // Handle enter room
   const handleEnterRoom = (room: Room) => {
     toast.success(`Entering ${room.name}...`);
-    navigate(`/room/${room.id}`);
+    navigate(`/rooms/${room.id}`);
   };
 
   return (
