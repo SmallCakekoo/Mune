@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IconTrash, IconSettings, IconShield } from '@tabler/icons-react';
+import { IconTrash, IconSettings, IconShield, IconEye, IconEyeOff, IconLock } from '@tabler/icons-react';
 import { Button } from '../../common/Button/Button';
 import Modal from '../../common/Modal/Modal';
 import { cn } from '../../../utils/cn';
@@ -11,7 +11,9 @@ interface RoomSettingsOverlayProps {
         name: string;
         description?: string;
         privacy?: string;
+        password?: string;
     };
+    isOwner: boolean;
     onUpdateRoom: (updates: any) => Promise<void>;
     onDeleteRoom: () => void;
 }
@@ -20,26 +22,36 @@ const RoomSettingsOverlay: React.FC<RoomSettingsOverlayProps> = ({
     isOpen,
     onClose,
     room,
+    isOwner,
     onUpdateRoom,
     onDeleteRoom
 }) => {
     const [name, setName] = useState(room.name);
     const [description, setDescription] = useState(room.description || '');
     const [isPublic, setIsPublic] = useState(room.privacy === 'public');
+    const [password, setPassword] = useState(room.password || '');
+    const [showPassword, setShowPassword] = useState(false);
 
     // Update local state when room changes
     useEffect(() => {
         setName(room.name);
         setDescription(room.description || '');
         setIsPublic(room.privacy === 'public');
+        setPassword(room.password || '');
     }, [room]);
 
     const handleSave = async () => {
-        await onUpdateRoom({
+        const updates: any = {
             name,
             description,
             privacy: isPublic ? 'public' : 'private'
-        });
+        };
+
+        if (!isPublic && isOwner) {
+            updates.password = password;
+        }
+
+        await onUpdateRoom(updates);
         onClose();
     };
     return (
@@ -102,7 +114,7 @@ const RoomSettingsOverlay: React.FC<RoomSettingsOverlayProps> = ({
                             </div>
                             <div>
                                 <p className="text-sm font-bold text-white">Public Visibility</p>
-                                <p className="text-xs text-neutral-5">{isPublic ? 'Anyone with the link can view and join' : 'Only invited members can join'}</p>
+                                <p className="text-xs text-neutral-5">{isPublic ? 'Anyone with the link can view and join' : 'Only members with password can join'}</p>
                             </div>
                         </div>
                         <div className={cn(
@@ -115,6 +127,34 @@ const RoomSettingsOverlay: React.FC<RoomSettingsOverlayProps> = ({
                             )} />
                         </div>
                     </div>
+
+                    {!isPublic && isOwner && (
+                        <div className="space-y-2 mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                            <label className="text-sm font-medium text-neutral-5 ml-1 flex items-center gap-2">
+                                <IconLock size={14} />
+                                Room Password
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-4 pr-12 py-3 text-white placeholder-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all font-medium"
+                                    placeholder="Enter new password"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-5 hover:text-white transition-colors"
+                                >
+                                    {showPassword ? <IconEyeOff size={20} /> : <IconEye size={20} />}
+                                </button>
+                            </div>
+                            <p className="text-[10px] text-neutral-5 ml-1">
+                                {room.password ? 'Note: Existing password is saved as a secure hash.' : 'Set a password to restrict access.'}
+                            </p>
+                        </div>
+                    )}
                 </section>
 
                 {/* Danger Zone */}

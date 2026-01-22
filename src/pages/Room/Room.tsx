@@ -32,6 +32,8 @@ const RoomPage: React.FC = () => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [roomDescription, setRoomDescription] = useState('');
     const [roomPrivacy, setRoomPrivacy] = useState('public');
+    const [roomPassword, setRoomPassword] = useState('');
+    const [roomOwnerId, setRoomOwnerId] = useState('');
 
     // Fetch Room Metadata
     useEffect(() => {
@@ -50,6 +52,8 @@ const RoomPage: React.FC = () => {
                 setRoomName(room.name);
                 setRoomDescription(room.description || '');
                 setRoomPrivacy(room.privacy || 'public');
+                setRoomPassword(room.password || '');
+                setRoomOwnerId(room.owner.id);
 
                 // Track recent visit
                 if (currentUser) {
@@ -185,16 +189,24 @@ const RoomPage: React.FC = () => {
     const handleUpdateRoom = useCallback(async (updates: any) => {
         if (!roomId) return;
         try {
-            await roomService.updateRoom(roomId, updates);
+            // Hash password if it changed
+            let finalUpdates = { ...updates };
+            if (updates.password && updates.password !== roomPassword) {
+                finalUpdates.password = await roomService.hashPassword(updates.password);
+            }
+
+            await roomService.updateRoom(roomId, finalUpdates);
             if (updates.name !== undefined) setRoomName(updates.name);
             if (updates.description !== undefined) setRoomDescription(updates.description);
             if (updates.privacy !== undefined) setRoomPrivacy(updates.privacy);
+            if (finalUpdates.password !== undefined) setRoomPassword(finalUpdates.password);
+
             toast.success('Room settings saved');
         } catch (err) {
             console.error('Error updating room:', err);
             toast.error('Failed to save settings');
         }
-    }, [roomId]);
+    }, [roomId, roomPassword]);
 
     const handleDeleteRoom = useCallback(async () => {
         if (!roomId) return;
@@ -347,8 +359,10 @@ const RoomPage: React.FC = () => {
                 room={{
                     name: roomName,
                     description: roomDescription,
-                    privacy: roomPrivacy
+                    privacy: roomPrivacy,
+                    password: roomPassword
                 }}
+                isOwner={currentUser?.id === roomOwnerId}
                 onUpdateRoom={handleUpdateRoom}
                 onDeleteRoom={handleDeleteRoom}
             />

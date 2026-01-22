@@ -16,7 +16,9 @@ import {
 import { db } from '../lib/firebase';
 import type { Room, RoomPrivacy } from '../types/room.types';
 import { timestampToDate } from '../types/firestore.types';
-import { hashPassword } from '../utils/encryption';
+import { hashPassword as utilHashPassword } from '../utils/encryption';
+
+export const hashPassword = utilHashPassword;
 
 /**
  * Room creation data

@@ -4,6 +4,8 @@ import { Button } from '../../common/Button/Button';
 import { IconLock } from '@tabler/icons-react';
 import type { Room } from '../../../types/room.types';
 import toast from 'react-hot-toast';
+import { hashPassword } from '../../../utils/encryption';
+import CryptoJS from 'crypto-js';
 
 interface RoomPasswordModalProps {
     isOpen: boolean;
@@ -23,14 +25,22 @@ const RoomPasswordModal: React.FC<RoomPasswordModalProps> = ({
 
     if (!room) return null;
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!password) {
             setError('Password is required');
             return;
         }
 
-        if (password === room.password) {
+        const hashedPassword = await hashPassword(password);
+        // Legacy UTF-16LE hash (used in some existing rooms)
+        const hashedPasswordUtf16 = CryptoJS.SHA256(CryptoJS.enc.Utf16LE.parse(password)).toString();
+
+        if (
+            hashedPassword === room.password ||
+            hashedPasswordUtf16 === room.password ||
+            password === room.password
+        ) {
             onSuccess(room);
             onClose();
             setPassword('');
