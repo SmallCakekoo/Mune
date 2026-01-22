@@ -61,11 +61,11 @@ const RoomSidebar: React.FC = () => {
                     className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-500/20 hover:border-primary-500/50 transition-all group relative"
                 >
                     <img
-                        src={user?.avatar || '/src/assets/images/cats/Cat (9).png'}
+                        src={user?.avatar || '/src/assets/images/cats/Default.png'}
                         alt="Profile"
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                            e.currentTarget.src = '/src/assets/images/cats/Cat (9).png';
+                            e.currentTarget.src = '/src/assets/images/cats/Default.png';
                         }}
                     />
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />

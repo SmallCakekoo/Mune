@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Modal from '../../common/Modal/Modal';
 import { Button } from '../../common/Button/Button';
-import type { Room } from '../../../types/room.types';
+import type { Room, RoomPresence } from '../../../types/room.types';
 import { IconLock, IconWorld, IconUsers, IconMusic, IconCalendar, IconUser, IconChevronRight } from '@tabler/icons-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { enUS } from 'date-fns/locale/en-US';
 import { cn } from '../../../utils/cn';
 import { useNavigate } from 'react-router-dom';
+import { subscribeToPresence } from '../../../services/presence.service';
+import { useUsersResolver } from '../../../hooks/useUserResolver';
 
 interface RoomDetailsModalProps {
   isOpen: boolean;
@@ -22,6 +24,21 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
   onEnter,
 }) => {
   const navigate = useNavigate();
+  const [onlineMembers, setOnlineMembers] = useState<RoomPresence[]>([]);
+
+  const onlineUserIds = useMemo(() => onlineMembers.map(m => m.userId), [onlineMembers]);
+  const { users: resolvedUsers } = useUsersResolver(onlineUserIds);
+
+  useEffect(() => {
+    if (!isOpen || !room?.id) return;
+
+    const unsubscribe = subscribeToPresence(room.id, (members) => {
+      setOnlineMembers(members);
+    });
+
+    return () => unsubscribe();
+  }, [isOpen, room?.id]);
+
   if (!room) return null;
 
   const formatDate = (date?: Date | string) => {
@@ -48,9 +65,7 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
   };
 
   const getOwnerAvatar = () => {
-    if (room.owner.avatar) return room.owner.avatar;
-    const catNumber = ((room.owner.id?.charCodeAt(0) || 0) % 40) + 1;
-    return `/src/assets/images/cats/Cat (${catNumber}).png`;
+    return room.owner.avatar || '/src/assets/images/cats/Default.png';
   };
 
   return (
@@ -93,8 +108,7 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
             alt={room.owner.name}
             className="w-12 h-12 rounded-full object-cover border-2 border-primary-500/30"
             onError={(e) => {
-              const catNumber = ((room.owner.id?.charCodeAt(0) || 0) % 40) + 1;
-              e.currentTarget.src = `/src/assets/images/cats/Cat (${catNumber}).png`;
+              e.currentTarget.src = '/src/assets/images/cats/Default.png';
             }}
           />
           <div>
@@ -124,10 +138,10 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
           <div className="p-4 rounded-xl bg-white/5 border border-white/10">
             <div className="flex items-center gap-2 text-neutral-5 mb-2">
               <IconUsers size={18} />
-              <span className="text-sm">Members</span>
+              <span className="text-sm">Online</span>
             </div>
             <p className="text-2xl font-bold text-white">
-              {room.memberCount || room.members?.length || 0}
+              {onlineMembers.length}
             </p>
           </div>
         </div>
@@ -156,34 +170,38 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
           )}
         </div>
 
-        {/* Members List */}
-        {room.members && room.members.length > 0 && (
+        {/* Online Members List */}
+        {onlineMembers.length > 0 && (
           <div>
             <h4 className="text-sm font-semibold text-neutral-5 mb-3">
-              Members ({room.members.length})
+              Online Now ({onlineMembers.length})
             </h4>
             <div className="grid grid-cols-1 gap-2">
-              {room.members.map((member) => {
+              {onlineMembers.map((presence) => {
+                const resolvedUser = resolvedUsers[presence.userId];
+                const name = resolvedUser?.name || 'Loading...';
+                const avatar = resolvedUser?.avatar || '/src/assets/images/cats/Default.png';
+
                 return (
                   <button
-                    key={member.id}
+                    key={presence.userId}
                     onClick={() => {
                       onClose();
-                      navigate(`/user/${member.id}`);
+                      navigate(`/user/${presence.userId}`);
                     }}
                     className="w-full flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary-500/30 transition-all group"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10">
                         <img
-                          src={member.avatar || '/src/assets/images/cats/Cat (1).png'}
-                          alt={member.name}
+                          src={avatar}
+                          alt={name}
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="text-left">
-                        <p className="text-white font-bold text-sm">{member.name}</p>
-                        <p className="text-neutral-5 text-xs">Member</p>
+                        <p className="text-white font-bold text-sm">{name}</p>
+                        <p className="text-emerald-400 text-xs">Online</p>
                       </div>
                     </div>
                     <IconChevronRight size={18} className="text-neutral-5 group-hover:text-primary-400 group-hover:translate-x-1 transition-all" />

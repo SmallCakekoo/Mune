@@ -123,12 +123,14 @@ export const getRoomById = async (roomId: string): Promise<Room | null> => {
     privacy: data.privacy,
     password: data.password,
     avatar: data.avatar,
+    ownerId: data.ownerId,
     owner: {
       id: data.ownerId,
       name: ownerData?.name || 'Unknown',
       email: ownerData?.email,
       avatar: ownerData?.avatar,
     },
+    memberIds,
     members,
     songCount: data.songCount,
     memberCount: data.memberCount,
@@ -197,6 +199,18 @@ export const trackRecentVisit = async (userId: string, roomId: string): Promise<
     roomId,
     visitedAt: serverTimestamp(),
   }, { merge: true });
+};
+
+/**
+ * Remove a room from user's recent history
+ */
+export const removeRecentRoom = async (userId: string, roomId: string): Promise<void> => {
+  if (!userId || !roomId) return;
+  
+  const recentRef = doc(db, 'users', userId, 'recents', roomId);
+  const batch = writeBatch(db);
+  batch.delete(recentRef);
+  await batch.commit();
 };
 
 /**

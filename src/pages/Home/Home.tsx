@@ -13,7 +13,7 @@ import { useSidebar } from '../../hooks/useSidebar';
 import { useAuth } from '../../hooks/useAuth';
 import { cn } from '../../utils/cn';
 import type { Room, RoomPrivacy } from '../../types/room.types';
-import { IconPlus, IconSearch } from '@tabler/icons-react';
+import { IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import toast from 'react-hot-toast';
 import * as roomService from '../../services/room.service';
 
@@ -29,7 +29,7 @@ const Home: React.FC = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
-  const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null);
+  const [confirmType, setConfirmType] = useState<'removeRecent' | 'deleteRoom' | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isTodoListOpen, setIsTodoListOpen] = useState(false);
 
@@ -124,16 +124,29 @@ const Home: React.FC = () => {
     }
   };
 
-  // Handle remove room logic
-  const handleRemoveRoom = async () => {
-    if (!selectedRoom) return;
-
+  // Handle removal from recents
+  const handleRemoveRecent = async (room: Room) => {
+    if (!user) return;
     try {
-      await roomService.deleteRoom(selectedRoom.id);
-      toast.success('Room deleted');
+      await roomService.removeRecentRoom(user.id, room.id);
+      toast.success('Removed from recents');
       setIsConfirmDialogOpen(false);
       setSelectedRoom(null);
-      setConfirmAction(null);
+      setConfirmType(null);
+    } catch (error) {
+      console.error('Error removing from recents:', error);
+      toast.error('Failed to remove from recents');
+    }
+  };
+
+  // Handle permanent room deletion
+  const handleRemoveRoom = async (room: Room) => {
+    try {
+      await roomService.deleteRoom(room.id);
+      toast.success('Room deleted permanently');
+      setIsConfirmDialogOpen(false);
+      setSelectedRoom(null);
+      setConfirmType(null);
     } catch (error) {
       console.error('Error deleting room:', error);
       toast.error('Failed to delete room');
@@ -155,8 +168,23 @@ const Home: React.FC = () => {
   // Handle remove dialog trigger
   const handleRemove = (room: Room) => {
     setSelectedRoom(room);
-    setConfirmAction(() => () => handleRemoveRoom());
+    setConfirmType('removeRecent');
     setIsConfirmDialogOpen(true);
+  };
+
+  const handleDeleteTrigger = (room: Room) => {
+    setSelectedRoom(room);
+    setConfirmType('deleteRoom');
+    setIsConfirmDialogOpen(true);
+  };
+
+  const handleConfirmAction = () => {
+    if (!selectedRoom || !confirmType) return;
+    if (confirmType === 'removeRecent') {
+      handleRemoveRecent(selectedRoom);
+    } else {
+      handleRemoveRoom(selectedRoom);
+    }
   };
 
   // Handle enter room
@@ -297,6 +325,14 @@ const Home: React.FC = () => {
                       onEdit={handleEdit}
                       onRemove={handleRemove}
                       onEnter={handleEnterRoom}
+                      extraOptions={room.ownerId === user?.id ? [
+                        {
+                          label: 'Delete Room',
+                          icon: <IconTrash size={18} />,
+                          onClick: handleDeleteTrigger,
+                          variant: 'danger'
+                        }
+                      ] : []}
                     />
                   </motion.div>
                 ))}
@@ -338,14 +374,16 @@ const Home: React.FC = () => {
         onClose={() => {
           setIsConfirmDialogOpen(false);
           setSelectedRoom(null);
-          setConfirmAction(null);
+          setConfirmType(null);
         }}
-        onConfirm={confirmAction || (() => { })}
-        title="Delete Room"
-        message="Are you sure you want to delete this room? This action cannot be undone."
-        confirmText="Delete"
+        onConfirm={handleConfirmAction}
+        title={confirmType === 'removeRecent' ? "Remove from Recents" : "Delete Room"}
+        message={confirmType === 'removeRecent'
+          ? "Are you sure you want to remove this room from your recent history? This will not delete the room."
+          : "Are you sure you want to permanently delete this room? This action cannot be undone."}
+        confirmText={confirmType === 'removeRecent' ? "Remove" : "Delete"}
         cancelText="Cancel"
-        variant="danger"
+        variant={confirmType === 'removeRecent' ? "warning" : "danger"}
       />
 
       {/* Todo List Floating Button */}

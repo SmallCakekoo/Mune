@@ -120,7 +120,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
                             />
                             <div className="relative group" onClick={handleAvatarClick}>
                                 <img
-                                    src={formData.avatar || '/src/assets/images/cats/Cat (9).png'}
+                                    src={formData.avatar || '/src/assets/images/cats/Default.png'}
                                     alt="Profile Preview"
                                     className="w-32 h-32 rounded-2xl object-cover border-2 border-primary-500/30 group-hover:border-primary-500 transition-all cursor-pointer"
                                 />

@@ -14,6 +14,10 @@ import type { Room } from '../../../types/room.types';
 import { cn } from '../../../utils/cn';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS } from 'date-fns/locale/en-US';
+import { subscribeToPresence } from '../../../services/presence.service';
+import type { RoomPresence } from '../../../types/room.types';
+import { useUsersResolver } from '../../../hooks/useUserResolver';
+import { useMemo } from 'react';
 
 interface RoomCardProps {
   room: Room;
@@ -40,10 +44,22 @@ const RoomCard: React.FC<RoomCardProps> = ({
   extraOptions
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [onlineMembers, setOnlineMembers] = useState<RoomPresence[]>([]);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const isOwner = room.owner.id === currentUserId;
+
+  const onlineUserIds = useMemo(() => onlineMembers.map(m => m.userId), [onlineMembers]);
+  const { users: resolvedUsers } = useUsersResolver(onlineUserIds);
+
+  useEffect(() => {
+    if (!room.id) return;
+    const unsubscribe = subscribeToPresence(room.id, (members) => {
+      setOnlineMembers(members);
+    });
+    return () => unsubscribe();
+  }, [room.id]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -104,11 +120,9 @@ const RoomCard: React.FC<RoomCardProps> = ({
     }
   };
 
-  // Get random cat avatar for owner if not provided
+  // Get owner avatar or default
   const getOwnerAvatar = () => {
-    if (room.owner.avatar) return room.owner.avatar;
-    const catNumber = ((room.owner.id?.charCodeAt(0) || 0) % 40) + 1;
-    return `/src/assets/images/cats/Cat (${catNumber}).png`;
+    return room.owner.avatar || '/src/assets/images/cats/Default.png';
   };
 
   // Gradient colors for cards - Using theme variables
@@ -210,13 +224,15 @@ const RoomCard: React.FC<RoomCardProps> = ({
                       <span>Edit</span>
                     </button>
                   )}
-                  <button
-                    onClick={handleRemove}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-left text-error-400 hover:text-error-300 hover:bg-error-500/10 transition-colors"
-                  >
-                    <IconTrash size={18} />
-                    <span>Remove from recent</span>
-                  </button>
+                  {onRemove && (
+                    <button
+                      onClick={handleRemove}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left text-error-400 hover:text-error-300 hover:bg-error-500/10 transition-colors"
+                    >
+                      <IconTrash size={18} />
+                      <span>Remove from recent</span>
+                    </button>
+                  )}
                   {extraOptions?.map((option, idx) => (
                     <button
                       key={idx}
@@ -244,8 +260,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
               alt={room.owner.name}
               className="w-8 h-8 rounded-full object-cover border-2 border-primary-500/30"
               onError={(e) => {
-                const catNumber = ((room.owner.id?.charCodeAt(0) || 0) % 40) + 1;
-                e.currentTarget.src = `/src/assets/images/cats/Cat (${catNumber}).png`;
+                e.currentTarget.src = '/src/assets/images/cats/Default.png';
               }}
             />
             <p className="text-xs text-neutral-5 truncate">
@@ -257,42 +272,44 @@ const RoomCard: React.FC<RoomCardProps> = ({
         {/* Members Avatars */}
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2">
-            {room.members && room.members.length > 0 ? (
+            {onlineMembers.length > 0 ? (
               <>
                 <div className="flex -space-x-2">
-                  {room.members?.slice(0, 5).map((member) => (
-                    <button
-                      key={member.id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/user/${member.id}`);
-                      }}
-                      className="w-8 h-8 rounded-full border-2 border-background-400 overflow-hidden hover:scale-110 hover:z-10 transition-transform relative z-0"
-                      title={member.name}
-                    >
-                      <img
-                        src={member.avatar || '/src/assets/images/cats/Cat (1).png'}
-                        alt={member.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          const catNumber = ((member.id?.charCodeAt(0) || 0) % 40) + 1;
-                          e.currentTarget.src = `/src/assets/images/cats/Cat (${catNumber}).png`;
+                  {onlineMembers.slice(0, 5).map((presence) => {
+                    const resolvedUser = resolvedUsers[presence.userId];
+                    const name = resolvedUser?.name || 'Loading...';
+                    const avatar = resolvedUser?.avatar || '/src/assets/images/cats/Default.png';
+
+                    return (
+                      <button
+                        key={presence.userId}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/user/${presence.userId}`);
                         }}
-                      />
-                    </button>
-                  ))}
-                  {room.members.length > 5 && (
+                        className="w-8 h-8 rounded-full border-2 border-background-400 overflow-hidden hover:scale-110 hover:z-10 transition-transform relative z-0"
+                        title={name}
+                      >
+                        <img
+                          src={avatar}
+                          alt={name}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    );
+                  })}
+                  {onlineMembers.length > 5 && (
                     <div className="w-8 h-8 rounded-full border-2 border-background-400 bg-primary-500/20 flex items-center justify-center text-xs font-semibold text-neutral-5 dark:text-white relative z-0 -ml-2">
-                      +{room.members.length - 5}
+                      +{onlineMembers.length - 5}
                     </div>
                   )}
                 </div>
                 <p className="text-xs text-neutral-5">
-                  {room.members.length} {room.members.length === 1 ? 'member' : 'members'}
+                  {onlineMembers.length} {onlineMembers.length === 1 ? 'online' : 'online'}
                 </p>
               </>
             ) : (
-              <p className="text-xs text-neutral-5">No members yet</p>
+              <p className="text-xs text-neutral-5">No one online</p>
             )}
           </div>
         </div>

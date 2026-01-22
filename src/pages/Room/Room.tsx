@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useSidebar } from '../../hooks/useSidebar';
@@ -16,6 +16,8 @@ import toast from 'react-hot-toast';
 import * as roomService from '../../services/room.service';
 import * as noteService from '../../services/room-notes.service';
 import * as presenceService from '../../services/presence.service';
+import { WritingMemberIndicator } from '../../components/room/ActiveUsers/WritingMemberIndicator';
+
 
 
 const RoomPage: React.FC = () => {
@@ -64,20 +66,6 @@ const RoomPage: React.FC = () => {
                     roomService.trackRecentVisit(currentUser.id, roomId);
                 }
 
-                const presenceMembers: RoomPresence[] = room.members.map(m => ({
-                    userId: m.id,
-                    user: {
-                        id: m.id,
-                        name: m.name,
-                        username: m.id,
-                        avatar: m.avatar,
-                        email: m.email || ''
-                    },
-                    lastActive: new Date(),
-                    isWriting: false
-                }));
-                setActiveMembers(presenceMembers);
-
             } catch (err) {
                 console.error('Error fetching room data:', err);
                 setError('Failed to load room data');
@@ -98,12 +86,24 @@ const RoomPage: React.FC = () => {
         return () => unsubscribe();
     }, [roomId]);
 
+    // Memoized user data for presence to avoid unnecessary updates
+    const userPresenceData = useMemo(() => {
+        if (!currentUser) return null;
+        return {
+            id: currentUser.id,
+            name: currentUser.name,
+            username: currentUser.username,
+            avatar: currentUser.avatar,
+            email: currentUser.email
+        };
+    }, [currentUser?.id, currentUser?.name, currentUser?.username, currentUser?.avatar, currentUser?.email]);
+
     // Real-time Presence Subscription
     useEffect(() => {
-        if (!roomId || !currentUser) return;
+        if (!roomId || !userPresenceData) return;
 
         // Join room presence
-        presenceService.joinRoom(roomId, currentUser);
+        presenceService.joinRoom(roomId, userPresenceData as any);
 
         // Subscribe to presence changes
         const unsubscribe = presenceService.subscribeToPresence(roomId, (presenceMembers) => {
@@ -112,17 +112,17 @@ const RoomPage: React.FC = () => {
 
         // Cleanup on unmount
         const handleUnload = () => {
-            presenceService.leaveRoom(roomId, currentUser.id);
+            presenceService.leaveRoom(roomId, userPresenceData.id);
         };
 
         window.addEventListener('beforeunload', handleUnload);
 
         return () => {
             unsubscribe();
-            presenceService.leaveRoom(roomId, currentUser.id);
+            presenceService.leaveRoom(roomId, userPresenceData.id);
             window.removeEventListener('beforeunload', handleUnload);
         };
-    }, [roomId, currentUser]);
+    }, [roomId, userPresenceData]);
 
 
     const handleAddNote = useCallback(async (type: 'text' | 'todo' | 'image', x: number, y: number, content?: string | TodoItem[] | File, width?: number, height?: number) => {
@@ -351,7 +351,7 @@ const RoomPage: React.FC = () => {
                         <div className="pointer-events-auto">
                             <ActiveUsers
                                 members={activeMembers}
-                                isOwner={true}
+                                isOwner={currentUser?.id === roomOwnerId}
                                 currentUserId={currentUser?.id}
                             />
                         </div>
@@ -361,43 +361,10 @@ const RoomPage: React.FC = () => {
                     <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
                         <AnimatePresence>
                             {activeMembers.filter(m => m.isWriting).map(member => (
-                                <motion.div
+                                <WritingMemberIndicator
                                     key={member.userId}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 20 }}
-                                    className="flex flex-col items-center gap-2"
-                                >
-                                    <div className="w-10 h-10 rounded-full border-2 border-primary-500 overflow-hidden shadow-lg shadow-primary-500/20">
-                                        <img
-                                            src={member.user.avatar || '/src/assets/images/cats/Cat (1).png'}
-                                            alt={member.user.name}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
-                                    <div className="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full border border-white/5">
-                                        <p className="text-xs font-bold text-white/90">
-                                            {member.user.name} is writing
-                                        </p>
-                                        <div className="flex gap-1">
-                                            <motion.div
-                                                animate={{ y: [0, -3, 0] }}
-                                                transition={{ repeat: Infinity, duration: 1, delay: 0 }}
-                                                className="w-1 h-1 rounded-full bg-primary-400"
-                                            />
-                                            <motion.div
-                                                animate={{ y: [0, -3, 0] }}
-                                                transition={{ repeat: Infinity, duration: 1, delay: 0.2 }}
-                                                className="w-1 h-1 rounded-full bg-primary-400"
-                                            />
-                                            <motion.div
-                                                animate={{ y: [0, -3, 0] }}
-                                                transition={{ repeat: Infinity, duration: 1, delay: 0.4 }}
-                                                className="w-1 h-1 rounded-full bg-primary-400"
-                                            />
-                                        </div>
-                                    </div>
-                                </motion.div>
+                                    userId={member.userId}
+                                />
                             ))}
                         </AnimatePresence>
                     </div>

@@ -39,8 +39,8 @@ const Settings: React.FC = () => {
             await deleteAccount();
             toast.success('Account deleted successfully');
             navigate('/');
-        } catch {
-            toast.error('Failed to delete account');
+        } catch (error) {
+            console.error('Delete account failed:', error);
         }
     };
 

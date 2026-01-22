@@ -26,9 +26,16 @@ const ForgotPassword = () => {
     });
 
     const onSubmit = async (data: ForgotPasswordFormData) => {
-        console.log(data);
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        setIsSubmitted(true);
+        try {
+            await import('../../services/auth.service').then(authService =>
+                authService.sendPasswordReset(data.email)
+            );
+            setIsSubmitted(true);
+        } catch (error) {
+            console.error('Password reset error:', error);
+            // For security, show success even if email doesn't exist
+            setIsSubmitted(true);
+        }
     };
 
     if (isSubmitted) {
@@ -136,7 +143,7 @@ const ForgotPassword = () => {
                 >
                     Forgot Password?
                 </motion.h2>
-                
+
                 <motion.p
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}

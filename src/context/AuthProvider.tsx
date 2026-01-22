@@ -38,11 +38,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                             const userData = docSnap.data() as User;
                             // Add ID to user data since it's not in the document body typically
                             setUser({ ...userData, id: fbUser.uid });
+                            setIsLoading(false);
                         } else {
-                            console.error('User document not found');
-                            setUser(null);
+                            // User document not found yet (common in first login/signup)
+                            // We don't set isLoading(false) or setUser(null) yet to avoid flickering correctly
+                            console.log('Waiting for user document to be created...');
+
+                            // Safety timeout: if after 10 seconds document still doesn't exist, stop loading
+                            setTimeout(() => {
+                                setIsLoading((loading) => {
+                                    if (loading) {
+                                        console.error('User document not found after 10 seconds');
+                                        return false;
+                                    }
+                                    return loading;
+                                });
+                            }, 10000);
                         }
-                        setIsLoading(false);
                     }, (error) => {
                         console.error('Error listening to user data:', error);
                         setIsLoading(false);
@@ -88,17 +100,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const intervalId = setInterval(async () => {
             try {
                 await userService.incrementMinutesSpent(firebaseUser.uid, 1);
-                setUser((prev) => {
-                    if (!prev) return null;
-                    return {
-                        ...prev,
-                        stats: {
-                            ...prev.stats,
-                            roomsCreated: prev.stats?.roomsCreated || 0,
-                            minutesSpent: (prev.stats?.minutesSpent || 0) + 1,
-                        },
-                    };
-                });
             } catch (error) {
                 console.error('Error tracking time:', error);
             }
@@ -172,7 +173,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         try {
             await userService.updateUserProfile(firebaseUser.uid, data);
-            setUser((prev: User | null) => (prev ? { ...prev, ...data } : null));
             toast.success('Profile updated!');
         } catch {
             toast.error('Failed to update profile');
@@ -243,7 +243,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         try {
             await userService.updateFavoriteSongs(firebaseUser.uid, songs);
-            setUser((prev: User | null) => (prev ? { ...prev, favoriteSongs: songs } : null));
             toast.success('Favorite songs updated!');
         } catch {
             toast.error('Failed to update favorite songs');
@@ -263,20 +262,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const deleteAccount = async (): Promise<void> => {
         if (!firebaseUser) throw new Error('No user logged in');
+        const uid = firebaseUser.uid;
 
         try {
-            if (confirm('Are you sure you want to delete your account? This action cannot be undone and all your rooms will be deleted.')) {
-                setIsLoading(true);
-                // 1. Delete Firestore Data
-                await userService.deleteUserFullData(firebaseUser.uid);
+            setIsLoading(true);
 
-                // 2. Delete Auth User
-                await authService.deleteAuthUser();
+            // 1. Delete Auth User first (this requires fresh login)
+            await authService.deleteAuthUser();
 
-                setUser(null);
-                setFirebaseUser(null);
-                toast.success('Account deleted successfully');
-            }
+            // 2. Only if Auth deletion succeeds, delete Firestore Data
+            await userService.deleteUserFullData(uid);
+
+            setUser(null);
+            setFirebaseUser(null);
         } catch (error) {
             console.error('Delete account error:', error);
             const err = error as { code?: string; message: string };
@@ -285,8 +283,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             } else {
                 toast.error('Failed to delete account: ' + (err.message || 'Unknown error'));
             }
-            setIsLoading(false);
             throw error;
+        } finally {
+            setIsLoading(false);
         }
     };
 
