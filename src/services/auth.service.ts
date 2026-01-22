@@ -6,6 +6,7 @@ import {
   GithubAuthProvider,
   signOut as firebaseSignOut,
   onAuthStateChanged,
+  sendPasswordResetEmail,
   type User as FirebaseUser,
   type UserCredential,
   updateProfile,
@@ -103,6 +104,13 @@ export const signOut = async (): Promise<void> => {
 };
 
 /**
+ * Send password reset email
+ */
+export const sendPasswordReset = async (email: string): Promise<void> => {
+  return sendPasswordResetEmail(auth, email);
+};
+
+/**
  * Delete current user from Firebase Auth
  */
 export const deleteAuthUser = async (): Promise<void> => {
@@ -146,7 +154,7 @@ const createUserDocument = async (
     email: firebaseUser.email || '',
     username,
     bio: '',
-    avatar: firebaseUser.photoURL || null,
+    avatar: firebaseUser.photoURL || '/src/assets/images/cats/Default.png',
     favoriteSongs: [],
     socialLinks: {},
     stats: {

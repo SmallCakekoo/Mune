@@ -16,14 +16,6 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, onSettingsClick, isOwnProfile = true }) => {
-    const getInitials = (user: User) => {
-        const text = user.name || user.username || '??';
-        const parts = text.split(' ').filter(Boolean);
-        if (parts.length >= 2) {
-            return (parts[0][0] + parts[1][0]).toUpperCase();
-        }
-        return text.slice(0, 2).toUpperCase();
-    };
 
     return (
         <div className="relative overflow-hidden rounded-3xl bg-primary-600 p-8 shadow-2xl">
@@ -38,19 +30,14 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, onSettingsClick, is
                     animate={{ opacity: 1, scale: 1 }}
                     className="relative group shrink-0"
                 >
-                    {user.avatar ? (
-                        <img
-                            src={user.avatar}
-                            alt={user.name}
-                            className="w-40 h-40 rounded-2xl object-cover border-4 border-white/20 shadow-xl group-hover:scale-105 transition-transform duration-300"
-                        />
-                    ) : (
-                        <div className="w-40 h-40 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-700 flex items-center justify-center border-4 border-white/20 shadow-xl group-hover:scale-105 transition-transform duration-300">
-                            <span className="text-5xl font-bold text-white tracking-widest">
-                                {getInitials(user)}
-                            </span>
-                        </div>
-                    )}
+                    <img
+                        src={user.avatar || '/src/assets/images/cats/Default.png'}
+                        alt={user.name}
+                        className="w-40 h-40 rounded-2xl object-cover border-4 border-white/20 shadow-xl group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                            e.currentTarget.src = '/src/assets/images/cats/Default.png';
+                        }}
+                    />
                 </motion.div>
 
                 {/* User Info */}

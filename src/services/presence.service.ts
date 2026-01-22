@@ -17,16 +17,11 @@ const PRESENCE_SUBCOLLECTION = 'presence';
 
 export const joinRoom = async (roomId: string, user: User) => {
     const presenceRef = doc(db, PRESENCE_COLLECTION, roomId, PRESENCE_SUBCOLLECTION, user.id);
-    const presenceData: RoomPresence = {
+    const presenceData: Partial<RoomPresence> = {
         userId: user.id,
-        user: {
-            id: user.id,
-            name: user.name,
-            username: user.username,
-            avatar: user.avatar,
-            email: user.email
-        },
-        lastActive: new Date().toISOString(), // Fallback if serverTimestamp is not used in some places
+        // We no longer store the full user object here to avoid data duplication and stale names.
+        // Names should be resolved reactively from the 'users' collection.
+        lastActive: new Date().toISOString(),
         isWriting: false
     };
 

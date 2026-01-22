@@ -21,7 +21,7 @@ import type { Room } from '../../types/room.types';
 import { useSidebar } from '../../hooks/useSidebar';
 import { cn } from '../../utils/cn';
 import toast from 'react-hot-toast';
-import { getAllRooms } from '../../services/room.service';
+import * as roomService from '../../services/room.service';
 import { useAuth } from '../../hooks/useAuth';
 import { Loader } from '../../components/common/Loader/Loader';
 
@@ -49,7 +49,7 @@ const Search: React.FC = () => {
         const fetchRooms = async () => {
             try {
                 setIsLoading(true);
-                const fetchedRooms = await getAllRooms();
+                const fetchedRooms = await roomService.getAllRooms();
                 setRooms(fetchedRooms);
             } catch (error) {
                 console.error('Failed to fetch rooms:', error);
@@ -132,10 +132,24 @@ const Search: React.FC = () => {
         setOwnedFilter(false);
     };
 
-    const handleCreateRoom = (data: Partial<Room>) => {
-        toast.success(`Room "${data.name}" created! Redirecting to home...`);
-        setIsCreateModalOpen(false);
-        navigate('/home');
+    const handleCreateRoom = async (data: Partial<Room>) => {
+        if (!user) return;
+
+        try {
+            await roomService.createRoom(user.id, {
+                name: data.name!,
+                description: data.description,
+                privacy: data.privacy!,
+                password: data.password
+            });
+
+            toast.success(`Room "${data.name}" created! Redirecting to home...`);
+            setIsCreateModalOpen(false);
+            navigate('/home');
+        } catch (error) {
+            console.error('Error creating room:', error);
+            toast.error('Failed to create room');
+        }
     };
 
     return (

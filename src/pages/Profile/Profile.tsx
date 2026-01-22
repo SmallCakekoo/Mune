@@ -101,15 +101,23 @@ const Profile: React.FC = () => {
     const handleUpdateRoom = async (data: { name: string; description?: string; privacy: RoomPrivacy; password?: string }) => {
         if (!selectedRoom) return;
 
-        setRooms(prev => prev.map(r =>
-            r.id === selectedRoom.id
-                ? { ...r, ...data, updatedAt: new Date() }
-                : r
-        ));
+        try {
+            await roomService.updateRoom(selectedRoom.id, {
+                name: data.name,
+                description: data.description
+            });
 
-        toast.success('Room updated successfully!');
-        setIsEditModalOpen(false);
-        setSelectedRoom(null);
+            if (selectedRoom.privacy !== data.privacy || data.password) {
+                await roomService.updateRoomPrivacy(selectedRoom.id, data.privacy, data.password);
+            }
+
+            toast.success('Room updated successfully!');
+            setIsEditModalOpen(false);
+            setSelectedRoom(null);
+        } catch (error) {
+            console.error('Error updating room:', error);
+            toast.error('Failed to update room');
+        }
     };
 
     const handleAddCategory = async () => {
@@ -133,28 +141,20 @@ const Profile: React.FC = () => {
     const handleCreateRoom = async (data: { name: string; description?: string; privacy: RoomPrivacy; password?: string }) => {
         if (!user) return;
 
-        const newRoom: Room = {
-            id: `room-${Date.now()}`,
-            name: data.name,
-            description: data.description || '',
-            privacy: data.privacy,
-            password: data.password,
-            owner: {
-                id: user.id,
-                name: user.name,
-                avatar: user.avatar || undefined
-            },
-            members: [],
-            memberCount: 1,
-            songCount: 0,
-            lastActivity: new Date(),
-            createdAt: new Date(),
-            updatedAt: new Date()
-        };
+        try {
+            await roomService.createRoom(user.id, {
+                name: data.name,
+                description: data.description,
+                privacy: data.privacy,
+                password: data.password
+            });
 
-        setRooms(prev => [newRoom, ...prev]);
-        toast.success(`Room "${data.name}" created!`);
-        setIsCreateModalOpen(false);
+            toast.success(`Room "${data.name}" created!`);
+            setIsCreateModalOpen(false);
+        } catch (error) {
+            console.error('Error creating room:', error);
+            toast.error('Failed to create room');
+        }
     };
 
     const handleAddRoomsToCategory = async (roomIds: string[]) => {
@@ -169,6 +169,25 @@ const Profile: React.FC = () => {
     const handleRemoveFromCategory = async (categoryId: string, roomId: string) => {
         await removeRoomFromCategory(categoryId, roomId);
         toast.success('Room removed from category');
+    };
+
+    // Handle delete room
+    const handleDeleteRoom = (room: Room) => {
+        setConfirmAction({
+            title: 'Delete Room',
+            message: `Are you sure you want to permanently delete "${room.name}"? This action cannot be undone.`,
+            onConfirm: async () => {
+                try {
+                    await roomService.deleteRoom(room.id);
+                    toast.success(`Room "${room.name}" deleted successfully`);
+                    setIsConfirmDialogOpen(false);
+                } catch (error) {
+                    console.error('Error deleting room:', error);
+                    toast.error('Failed to delete room');
+                }
+            }
+        });
+        setIsConfirmDialogOpen(true);
     };
 
     if (isLoading || !user || isLoadingRooms) {
@@ -328,7 +347,10 @@ const Profile: React.FC = () => {
                                     onViewDetails={handleViewDetails}
                                     onEdit={handleEdit}
                                     onEnter={handleEnterRoom}
-                                    extraOptions={[{ label: 'Remove', icon: <IconTrash size={16} />, onClick: (room: Room) => handleRemoveFromCategory(cat.id, room.id), variant: 'danger' }]}
+                                    extraOptions={[
+                                        { label: 'Remove from Category', icon: <IconTrash size={16} />, onClick: (room: Room) => handleRemoveFromCategory(cat.id, room.id), variant: 'danger' },
+                                        ...(cat.rooms.some(r => r.owner.id === user.id) ? [{ label: 'Delete Room', icon: <IconTrash size={16} />, onClick: handleDeleteRoom, variant: 'danger' as const }] : [])
+                                    ]}
                                 />
                             </div>
                         ))}
@@ -344,6 +366,9 @@ const Profile: React.FC = () => {
                                 onViewDetails={handleViewDetails}
                                 onEdit={handleEdit}
                                 onEnter={handleEnterRoom}
+                                extraOptions={[
+                                    { label: 'Delete Room', icon: <IconTrash size={16} />, onClick: handleDeleteRoom, variant: 'danger' as const }
+                                ]}
                             />
                         </div>
                     </div>

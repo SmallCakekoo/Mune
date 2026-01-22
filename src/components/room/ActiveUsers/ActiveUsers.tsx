@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { RoomPresence } from '../../../types/room.types';
 import { cn } from '../../../utils/cn';
 import { IconUserMinus, IconBan, IconChevronUp, IconUsers, IconChevronDown } from '@tabler/icons-react';
 import toast from 'react-hot-toast';
+import { useAuth } from '../../../hooks/useAuth';
+import { useUserResolver } from '../../../hooks/useUserResolver';
 
 interface ActiveUsersProps {
     members: RoomPresence[];
@@ -15,6 +17,16 @@ interface ActiveUsersProps {
 const ActiveUsers: React.FC<ActiveUsersProps> = ({ members, isOwner, currentUserId }) => {
     const navigate = useNavigate();
     const [isExpanded, setIsExpanded] = useState(false);
+
+    // Filter out duplicates if any (safety check)
+    const uniqueMembers = useMemo(() => {
+        const seen = new Set();
+        return members.filter(m => {
+            if (seen.has(m.userId)) return false;
+            seen.add(m.userId);
+            return true;
+        });
+    }, [members]);
 
     const handleKick = (userId: string, name: string) => {
         console.log(`Kicking user ${userId}`);
@@ -88,71 +100,17 @@ const ActiveUsers: React.FC<ActiveUsersProps> = ({ members, isOwner, currentUser
 
                         {/* Members List */}
                         <div className="space-y-2 max-h-[400px] overflow-y-auto overflow-x-hidden pr-1">
-                            {members.map((member, index) => (
-                                <motion.div
+                            {uniqueMembers.map((member, index) => (
+                                <MemberItem
                                     key={member.userId}
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: index * 0.05 }}
-                                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/8 transition-all group cursor-pointer relative"
-                                >
-                                    <div
-                                        className="flex items-center gap-3 flex-1 min-w-0"
-                                        onClick={() => handleUserClick(member.userId)}
-                                    >
-                                        <div className="relative flex-shrink-0">
-                                            <div className="w-11 h-11 rounded-xl overflow-hidden border-2 border-white/10 bg-background-500 group-hover:border-primary-500/40 transition-all shadow-lg">
-                                                <img
-                                                    src={member.user.avatar || '/src/assets/images/cats/Cat (1).png'}
-                                                    alt={member.user.name}
-                                                    className="w-full h-full object-cover transition-transform group-hover:scale-110"
-                                                />
-                                            </div>
-                                            <div className={cn(
-                                                "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-background-500",
-                                                member.isWriting ? 'bg-primary-500 shadow-lg shadow-primary-500/50' : 'bg-emerald-500 shadow-lg shadow-emerald-500/50'
-                                            )} />
-                                        </div>
-
-                                        <div className="min-w-0 flex-1">
-                                            <p className="text-sm font-bold text-white truncate group-hover:text-primary-400 transition-colors">
-                                                {member.user.name}
-                                            </p>
-                                            <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider">
-                                                {member.isWriting ? (
-                                                    <span className="flex gap-0.5 items-center">
-                                                        <span className="w-1 h-1 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                                                        <span className="w-1 h-1 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                                                        <span className="w-1 h-1 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                                                        <span className="ml-1 text-primary-400">Writing</span>
-                                                    </span>
-                                                ) : (
-                                                    <span className="text-emerald-400">Online</span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Owner Actions */}
-                                    {isOwner && member.userId !== currentUserId && (
-                                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); handleKick(member.userId, member.user.name); }}
-                                                className="p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all active:scale-95"
-                                                title="Kick user"
-                                            >
-                                                <IconUserMinus size={16} />
-                                            </button>
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); handleBan(member.userId, member.user.name); }}
-                                                className="p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all active:scale-95"
-                                                title="Ban user"
-                                            >
-                                                <IconBan size={16} />
-                                            </button>
-                                        </div>
-                                    )}
-                                </motion.div>
+                                    member={member}
+                                    index={index}
+                                    isOwner={isOwner}
+                                    currentUserId={currentUserId}
+                                    onKick={handleKick}
+                                    onBan={handleBan}
+                                    onUserClick={handleUserClick}
+                                />
                             ))}
                         </div>
                     </motion.div>
@@ -175,26 +133,13 @@ const ActiveUsers: React.FC<ActiveUsersProps> = ({ members, isOwner, currentUser
 
                             {/* Avatar Stack Vertical */}
                             <div className="flex flex-col gap-2">
-                                {members.slice(0, 4).map((m, i) => (
-                                    <motion.div
+                                {uniqueMembers.slice(0, 4).map((m, i) => (
+                                    <AvatarItem
                                         key={m.userId}
-                                        initial={{ opacity: 0, y: -10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: i * 0.1 }}
-                                        className="relative"
-                                    >
-                                        <div className="w-10 h-10 rounded-full border-2 border-background-500 overflow-hidden bg-background-500 shadow-lg group-hover:border-primary-500/50 transition-all">
-                                            <img
-                                                src={m.user.avatar || '/src/assets/images/cats/Cat (1).png'}
-                                                alt={m.user.name}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
-                                        <div className={cn(
-                                            "absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-background-500",
-                                            m.isWriting ? 'bg-primary-500' : 'bg-emerald-500'
-                                        )} />
-                                    </motion.div>
+                                        userId={m.userId}
+                                        index={i}
+                                        isWriting={m.isWriting}
+                                    />
                                 ))}
                                 {members.length > 4 && (
                                     <div className="w-10 h-10 rounded-full border-2 border-background-500 bg-gradient-to-br from-primary-500/20 to-primary-600/20 backdrop-blur flex items-center justify-center shadow-lg">
@@ -205,13 +150,134 @@ const ActiveUsers: React.FC<ActiveUsersProps> = ({ members, isOwner, currentUser
 
                             {/* Count Badge */}
                             <div className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5 w-full justify-center">
-                                <span className="text-xs font-bold text-white">{members.length}</span>
+                                <span className="text-xs font-bold text-white">{uniqueMembers.length}</span>
                                 <IconChevronDown size={14} className="text-white/70 group-hover:text-white transition-colors" />
                             </div>
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
+        </motion.div>
+    );
+};
+
+interface MemberItemProps {
+    member: RoomPresence;
+    index: number;
+    isOwner?: boolean;
+    currentUserId?: string;
+    onKick: (userId: string, name: string) => void;
+    onBan: (userId: string, name: string) => void;
+    onUserClick: (userId: string) => void;
+}
+
+const MemberItem: React.FC<MemberItemProps> = ({ member, index, isOwner, currentUserId, onKick, onBan, onUserClick }) => {
+    const { user } = useUserResolver(member.userId);
+    const { user: currentUser } = useAuth();
+
+    // Use current user from auth if available to ensure absolute consistency.
+    // Otherwise, always resolve from the 'users' collection (user object from useUserResolver).
+    // We strictly avoid member.user here as it might be stale metadata stored in the room presence document.
+    const displayUser = member.userId === currentUserId && currentUser ? currentUser : user;
+
+    if (!displayUser) return null;
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.05 }}
+            className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/8 transition-all group cursor-pointer relative"
+        >
+            <div
+                className="flex items-center gap-3 flex-1 min-w-0"
+                onClick={() => onUserClick(member.userId)}
+            >
+                <div className="relative flex-shrink-0">
+                    <div className="w-11 h-11 rounded-xl overflow-hidden border-2 border-white/10 bg-background-500 group-hover:border-primary-500/40 transition-all shadow-lg">
+                        <img
+                            src={displayUser.avatar || '/src/assets/images/cats/Default.png'}
+                            alt={displayUser.name}
+                            className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                        />
+                    </div>
+                    <div className={cn(
+                        "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-background-500",
+                        member.isWriting ? 'bg-primary-500 shadow-lg shadow-primary-500/50' : 'bg-emerald-500 shadow-lg shadow-emerald-500/50'
+                    )} />
+                </div>
+
+                <div className="min-w-0 flex-1">
+                    <p className="text-sm font-bold text-white truncate group-hover:text-primary-400 transition-colors">
+                        {displayUser.name}
+                    </p>
+                    <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider">
+                        {member.isWriting ? (
+                            <span className="flex gap-0.5 items-center">
+                                <span className="w-1 h-1 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                <span className="w-1 h-1 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                                <span className="w-1 h-1 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                                <span className="ml-1 text-primary-400">Writing</span>
+                            </span>
+                        ) : (
+                            <span className="text-emerald-400">Online</span>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Owner Actions */}
+            {isOwner && member.userId !== currentUserId && (
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onKick(member.userId, displayUser.name); }}
+                        className="p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all active:scale-95"
+                        title="Kick user"
+                    >
+                        <IconUserMinus size={16} />
+                    </button>
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onBan(member.userId, displayUser.name); }}
+                        className="p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all active:scale-95"
+                        title="Ban user"
+                    >
+                        <IconBan size={16} />
+                    </button>
+                </div>
+            )}
+        </motion.div>
+    );
+};
+
+interface AvatarItemProps {
+    userId: string;
+    index: number;
+    isWriting?: boolean;
+}
+
+const AvatarItem: React.FC<AvatarItemProps> = ({ userId, index, isWriting }) => {
+    const { user } = useUserResolver(userId);
+
+    if (!user) return null;
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="relative"
+        >
+            <div className="w-10 h-10 rounded-full border-2 border-background-500 overflow-hidden bg-background-500 shadow-lg group-hover:border-primary-500/50 transition-all">
+                <img
+                    src={user.avatar || '/src/assets/images/cats/Default.png'}
+                    alt={user.name}
+                    className="w-full h-full object-cover"
+                />
+            </div>
+            <div className={cn(
+                "absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-background-500",
+                isWriting ? 'bg-primary-500' : 'bg-emerald-500'
+            )} />
         </motion.div>
     );
 };

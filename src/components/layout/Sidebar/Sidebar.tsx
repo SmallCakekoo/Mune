@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {
   };
 
   // Default avatar path
-  const defaultAvatar = user?.avatar || '/src/assets/images/cats/Cat (9).png';
+  const defaultAvatar = user?.avatar || '/src/assets/images/cats/Default.png';
 
   return (
     <>
@@ -197,7 +197,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {
                 isCollapsed ? 'w-10 h-10' : 'w-12 h-12'
               )}
               onError={(e) => {
-                e.currentTarget.src = '/src/assets/images/cats/Cat (9).png';
+                e.currentTarget.src = '/src/assets/images/cats/Default.png';
               }}
             />
             {!isCollapsed && (

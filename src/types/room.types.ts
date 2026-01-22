@@ -26,9 +26,9 @@ export interface Note {
 
 export interface RoomPresence {
     userId: string;
-    user: User;
     isWriting?: boolean;
     lastActive: Date | string;
+    user?: User; // Optional cache, should not be the source of truth for names
 }
 
 export interface Room {
@@ -38,12 +38,14 @@ export interface Room {
     privacy: RoomPrivacy;
     avatar?: string;
     password?: string;
+    ownerId: string; // Direct ID reference
     owner: {
         id: string;
         name: string;
         email?: string;
         avatar?: string;
     };
+    memberIds: string[]; // Direct ID references
     members: {
         id: string;
         name: string;
