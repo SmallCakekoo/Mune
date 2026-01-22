@@ -15,6 +15,8 @@ import { cn } from '../../utils/cn';
 import toast from 'react-hot-toast';
 import * as roomService from '../../services/room.service';
 import * as noteService from '../../services/room-notes.service';
+import * as presenceService from '../../services/presence.service';
+
 
 const RoomPage: React.FC = () => {
     const { roomId } = useParams<{ roomId: string }>();
@@ -69,9 +71,11 @@ const RoomPage: React.FC = () => {
                         avatar: m.avatar,
                         email: m.email || ''
                     },
-                    lastActive: new Date()
+                    lastActive: new Date(),
+                    isWriting: false
                 }));
                 setActiveMembers(presenceMembers);
+
             } catch (err) {
                 console.error('Error fetching room data:', err);
                 setError('Failed to load room data');
@@ -91,6 +95,33 @@ const RoomPage: React.FC = () => {
         });
         return () => unsubscribe();
     }, [roomId]);
+
+    // Real-time Presence Subscription
+    useEffect(() => {
+        if (!roomId || !currentUser) return;
+
+        // Join room presence
+        presenceService.joinRoom(roomId, currentUser);
+
+        // Subscribe to presence changes
+        const unsubscribe = presenceService.subscribeToPresence(roomId, (presenceMembers) => {
+            setActiveMembers(presenceMembers);
+        });
+
+        // Cleanup on unmount
+        const handleUnload = () => {
+            presenceService.leaveRoom(roomId, currentUser.id);
+        };
+
+        window.addEventListener('beforeunload', handleUnload);
+
+        return () => {
+            unsubscribe();
+            presenceService.leaveRoom(roomId, currentUser.id);
+            window.removeEventListener('beforeunload', handleUnload);
+        };
+    }, [roomId, currentUser]);
+
 
     const handleAddNote = useCallback(async (type: 'text' | 'todo' | 'image', x: number, y: number, content?: string | TodoItem[] | File, width?: number, height?: number) => {
         if (!roomId || !currentUser) return;
@@ -231,6 +262,12 @@ const RoomPage: React.FC = () => {
         }
     }, [roomId, notes]);
 
+    const handleTyping = useCallback((isWriting: boolean) => {
+        if (!roomId || !currentUser) return;
+        presenceService.updateTypingStatus(roomId, currentUser.id, isWriting);
+    }, [roomId, currentUser]);
+
+
     if (isLoading) {
         return (
             <div className="h-screen w-screen bg-background-500 flex items-center justify-center">
@@ -291,7 +328,9 @@ const RoomPage: React.FC = () => {
                         onDuplicateNote={handleDuplicateNote}
                         onClearCanvas={handleClearCanvas}
                         onScaleChange={setScale}
+                        onTyping={handleTyping}
                     />
+
 
                     <div className="absolute right-6 top-6 z-50 flex flex-col gap-4 pointer-events-none">
                         <div className="pointer-events-auto">

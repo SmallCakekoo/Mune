@@ -7,6 +7,8 @@ import ProfileHeader from '../../components/profile/ProfileHeader/ProfileHeader'
 import FavoriteSongCard from '../../components/profile/FavoriteSongCard/FavoriteSongCard';
 import RoomGrid from '../../components/profile/RoomGrid/RoomGrid';
 import { useAuth } from '../../hooks/useAuth';
+import { useSidebar } from '../../hooks/useSidebar';
+import { cn } from '../../utils/cn';
 import type { User } from '../../types/user.types';
 import type { Room } from '../../types/room.types';
 import { Loader } from '../../components/common/Loader/Loader';
@@ -19,6 +21,7 @@ import * as roomService from '../../services/room.service';
 const UserProfile: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { user: currentUser } = useAuth();
+    const { isCollapsed } = useSidebar();
     const navigate = useNavigate();
 
     const [user, setUser] = useState<User | null>(null);
@@ -125,7 +128,10 @@ const UserProfile: React.FC = () => {
 
             <Sidebar />
 
-            <main className="ml-0 md:ml-[80px] lg:ml-[280px] min-h-screen relative z-10 transition-all duration-300">
+            <main className={cn(
+                "min-h-screen relative z-10 transition-all duration-300",
+                isCollapsed ? "ml-0 md:ml-[80px]" : "ml-0 md:ml-[280px]"
+            )}>
                 <div className="container mx-auto px-6 py-8 pt-24 md:pt-12">
                     {/* Profile Header */}
                     <motion.div

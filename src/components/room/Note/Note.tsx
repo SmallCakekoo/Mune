@@ -20,7 +20,9 @@ interface NoteCardProps {
     onUpdate: (updates: Partial<Note>) => void
     onDelete: () => void
     onDuplicate: () => void
+    onTyping?: (isTyping: boolean) => void
 }
+
 
 const NoteCard: React.FC<NoteCardProps> = ({
     note,
@@ -28,7 +30,9 @@ const NoteCard: React.FC<NoteCardProps> = ({
     onUpdate,
     onDelete,
     onDuplicate,
+    onTyping,
 }) => {
+
     const [isEditing, setIsEditing] = useState(false)
     const [isResizing, setIsResizing] = useState(false)
     const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
@@ -284,13 +288,20 @@ const NoteCard: React.FC<NoteCardProps> = ({
                     <textarea
                         value={localTitle}
                         onChange={handleTitleChange}
-                        onFocus={() => setIsEditing(true)}
-                        onBlur={() => setIsEditing(false)}
+                        onFocus={() => {
+                            setIsEditing(true)
+                            onTyping?.(true)
+                        }}
+                        onBlur={() => {
+                            setIsEditing(false)
+                            onTyping?.(false)
+                        }}
                         onPointerDown={stop}
                         className="font-bold resize-none bg-transparent outline-none mb-3 w-full text-black placeholder:text-black/40"
                         rows={1}
                         placeholder="Title"
                     />
+
                     {!isEditing && (
                         <IconEdit
                             size={14}
@@ -305,12 +316,19 @@ const NoteCard: React.FC<NoteCardProps> = ({
                 <textarea
                     value={localContent as string}
                     onChange={handleContentChange}
-                    onFocus={() => setIsEditing(true)}
-                    onBlur={() => setIsEditing(false)}
+                    onFocus={() => {
+                        setIsEditing(true)
+                        onTyping?.(true)
+                    }}
+                    onBlur={() => {
+                        setIsEditing(false)
+                        onTyping?.(false)
+                    }}
                     onPointerDown={stop}
                     className="flex-1 resize-none bg-transparent outline-none text-black placeholder:text-black/30"
                     placeholder="Write something…"
                 />
+
             )}
 
             {note.type === 'todo' && (
@@ -333,14 +351,21 @@ const NoteCard: React.FC<NoteCardProps> = ({
                                         ),
                                     })
                                 }
-                                onFocus={() => setIsEditing(true)}
-                                onBlur={() => setIsEditing(false)}
+                                onFocus={() => {
+                                    setIsEditing(true)
+                                    onTyping?.(true)
+                                }}
+                                onBlur={() => {
+                                    setIsEditing(false)
+                                    onTyping?.(false)
+                                }}
                                 onPointerDown={stop}
                                 className={cn(
                                     "bg-transparent outline-none w-full text-black",
                                     todo.completed && "line-through opacity-50"
                                 )}
                             />
+
                         </div>
                     ))}
                     <button onClick={addTodo} onMouseDown={stop} className="text-xs text-black/40 hover:text-black/60 font-medium pt-1">

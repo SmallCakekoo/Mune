@@ -227,15 +227,21 @@ export const getUserPublicRooms = async (userId: string): Promise<Room[]> => {
   const q = query(
     roomsRef,
     where('ownerId', '==', userId),
-    where('privacy', '==', 'public'),
-    orderBy('updatedAt', 'desc')
+    where('privacy', '==', 'public')
   );
   
   const snapshot = await getDocs(q);
   const roomPromises = snapshot.docs.map((doc) => getRoomById(doc.id));
   const rooms = await Promise.all(roomPromises);
   
-  return rooms.filter((room): room is Room => room !== null);
+  const validRooms = rooms.filter((room): room is Room => room !== null);
+
+  // Client-side sort by updatedAt desc
+  return validRooms.sort((a, b) => {
+    const timeA = a.updatedAt instanceof Date ? a.updatedAt.getTime() : 0;
+    const timeB = b.updatedAt instanceof Date ? b.updatedAt.getTime() : 0;
+    return timeB - timeA;
+  });
 };
 
 /**

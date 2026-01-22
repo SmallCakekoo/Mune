@@ -22,7 +22,9 @@ interface CanvasProps {
     onDuplicateNote: (id: string) => void
     onClearCanvas: () => void
     onScaleChange: (scale: number) => void
+    onTyping?: (isTyping: boolean) => void
 }
+
 
 const Canvas: React.FC<CanvasProps> = ({
     notes,
@@ -33,7 +35,9 @@ const Canvas: React.FC<CanvasProps> = ({
     onDuplicateNote,
     onClearCanvas,
     onScaleChange,
+    onTyping,
 }) => {
+
     const [contextMenu, setContextMenu] = useState<{
         x: number
         y: number
@@ -117,7 +121,9 @@ const Canvas: React.FC<CanvasProps> = ({
                                 onUpdate={(u) => onUpdateNote(note.id, u)}
                                 onDelete={() => onDeleteNote(note.id)}
                                 onDuplicate={() => onDuplicateNote(note.id)}
+                                onTyping={onTyping}
                             />
+
                         ))}
                     </div>
                 </TransformComponent>
