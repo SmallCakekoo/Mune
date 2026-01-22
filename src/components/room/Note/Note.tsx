@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue, useDragControls, useTransform, useSpring } from 'framer-motion'
 import {
     IconEdit,
     IconCheck,
@@ -38,9 +38,23 @@ const NoteCard: React.FC<NoteCardProps> = ({
     const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
     const [showColorPicker, setShowColorPicker] = useState(false)
 
-    // Local state for immediate typing feedback
+    // Local state for immediate typing/resizing feedback
     const [localTitle, setLocalTitle] = useState(note.title)
     const [localContent, setLocalContent] = useState(note.content)
+    const [localWidth, setLocalWidth] = useState(note.width ?? 280)
+    const [localHeight, setLocalHeight] = useState(note.height ?? 180)
+
+    // Framer Motion controls
+    const dragControls = useDragControls()
+    const dragX = useMotionValue(0)
+    const dragY = useMotionValue(0)
+
+    // Dynamic paper physics: rotate based on drag direction/speed
+    const rotateRaw = useTransform(dragX, [-100, 100], [-10, 10])
+    const rotate = useSpring(rotateRaw, { stiffness: 400, damping: 30 })
+    const scaleWhileDrag = useSpring(1, { stiffness: 400, damping: 30 })
+
+    const [isDragging, setIsDragging] = useState(false)
 
     // Robust per-instance debounce using useRef
     const debounceTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -65,13 +79,16 @@ const NoteCard: React.FC<NoteCardProps> = ({
         };
     }, []);
 
-    // Update local state when remote data changes (unless editing)
+    // Update local state when remote data changes (unless editing or resizing)
     useEffect(() => {
-        if (!isEditing) {
-            setLocalTitle(note.title)
-            setLocalContent(note.content)
-        }
-    }, [note.title, note.content, isEditing])
+        if (isEditing || isResizing) return;
+
+        // Only update if the remote data has actually changed
+        setLocalTitle(note.title)
+        setLocalContent(note.content)
+        setLocalWidth(note.width ?? 280)
+        setLocalHeight(note.height ?? 180)
+    }, [note.title, note.content, note.width, note.height, isEditing, isResizing])
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const val = e.target.value
@@ -116,19 +133,46 @@ const NoteCard: React.FC<NoteCardProps> = ({
         stop(e)
         setIsResizing(true)
 
+        const startX = e.clientX
         const startY = e.clientY
+        const startWidth = note.width ?? 280
         const startHeight = note.height ?? 180
+        const isImage = note.type === 'image'
 
         const move = (ev: MouseEvent) => {
-            onUpdate({
-                height: Math.max(140, Math.min(600, startHeight + (ev.clientY - startY) / scale)),
-            })
+            if (isImage) {
+                const deltaX = (ev.clientX - startX) / scale
+                const deltaY = (ev.clientY - startY) / scale
+                const delta = Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : deltaY
+                setLocalWidth(Math.max(100, Math.min(1200, startWidth + delta)))
+            } else {
+                setLocalHeight(Math.max(140, Math.min(600, startHeight + (ev.clientY - startY) / scale)))
+            }
         }
 
-        const up = () => {
-            setIsResizing(false)
+        const up = (ev: MouseEvent) => {
             window.removeEventListener('mousemove', move)
             window.removeEventListener('mouseup', up)
+
+            const finalDeltaX = (ev.clientX - startX) / scale
+            const finalDeltaY = (ev.clientY - startY) / scale
+            const finalDelta = Math.abs(finalDeltaX) > Math.abs(finalDeltaY) ? finalDeltaX : finalDeltaY
+
+            const finalWidth = isImage ? Math.max(100, Math.min(1200, startWidth + finalDelta)) : startWidth
+            const finalHeight = !isImage ? Math.max(140, Math.min(600, startHeight + (ev.clientY - startY) / scale)) : startHeight
+
+            // Final sync to DB
+            onUpdate({
+                width: finalWidth,
+                height: isImage ? undefined : finalHeight,
+                x: note.x,
+                y: note.y
+            })
+
+            // Lock the component in "resizing" state for 200ms to allow parent state to catch up
+            setTimeout(() => {
+                setIsResizing(false)
+            }, 200)
         }
 
         window.addEventListener('mousemove', move)
@@ -140,30 +184,54 @@ const NoteCard: React.FC<NoteCardProps> = ({
     return (
         <motion.div
             drag={!isEditing && !isResizing}
+            dragControls={dragControls}
+            dragListener={false}
             dragMomentum={false}
-            dragListener={!isEditing && !isResizing}
+            dragElastic={0}
+            onDragStart={() => {
+                setIsDragging(true)
+                scaleWhileDrag.set(1.05)
+            }}
+            onDrag={(_, info) => {
+                dragX.set(info.offset.x / scale)
+                dragY.set(info.offset.y / scale)
+            }}
             onDragEnd={(_, info) => {
-                // Fix double movement by dividing by scale
                 onUpdate({
                     x: note.x + info.offset.x / scale,
                     y: note.y + info.offset.y / scale
                 })
+                dragX.set(0)
+                dragY.set(0)
+                setIsDragging(false)
+                scaleWhileDrag.set(1)
             }}
-            onPointerDown={stop}
+            onPointerDown={(e) => {
+                if (!isEditing && !isResizing) {
+                    dragControls.start(e)
+                }
+                stop(e)
+            }}
             onMouseDown={stop}
             onTouchStart={stop}
             className={cn(
-                'absolute rounded-2xl border shadow-xl flex flex-col select-none',
+                'absolute rounded-2xl border flex flex-col select-none transition-shadow',
                 note.type === 'image'
                     ? 'border-transparent bg-transparent'
                     : 'border-white/10 p-4 bg-white',
-                !isEditing && !isResizing && 'cursor-grab active:cursor-grabbing'
+                !isEditing && !isResizing && 'cursor-grab active:cursor-grabbing',
+                (isDragging || isResizing) ? 'z-50 shadow-2xl' : 'z-10 shadow-xl'
             )}
             style={{
                 left: note.x,
                 top: note.y,
-                width: note.width ?? 280,
-                height: note.height ?? 'auto',
+                x: dragX,
+                y: dragY,
+                rotate,
+                scale: scaleWhileDrag,
+                transformOrigin: '0 0', // Reinforce top-left origin
+                width: localWidth,
+                height: note.type === 'image' ? 'auto' : localHeight,
                 backgroundColor: note.type === 'image' ? 'transparent' : note.color,
             }}
             onContextMenu={(e) => {
@@ -382,10 +450,19 @@ const NoteCard: React.FC<NoteCardProps> = ({
             )}
 
             {/* ---------------- RESIZE HANDLE ---------------- */}
-            <div
-                onMouseDown={handleResizeStart}
-                className="absolute bottom-1 left-1/2 -translate-x-1/2 w-10 h-1.5 rounded-full bg-black/10 hover:bg-black/20 transition-colors cursor-ns-resize"
-            />
+            {note.type === 'image' ? (
+                <div
+                    onMouseDown={handleResizeStart}
+                    className="absolute bottom-0 right-0 w-8 h-8 flex items-center justify-center cursor-nwse-resize group/resize"
+                >
+                    <div className="w-2.5 h-2.5 rounded-full bg-white/20 group-hover/resize:bg-white/50 transition-colors shadow-sm" />
+                </div>
+            ) : (
+                <div
+                    onMouseDown={handleResizeStart}
+                    className="absolute bottom-1 left-1/2 -translate-x-1/2 w-10 h-1.5 rounded-full bg-black/10 hover:bg-black/20 transition-colors cursor-ns-resize"
+                />
+            )}
         </motion.div>
     )
 }

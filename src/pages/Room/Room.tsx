@@ -35,6 +35,7 @@ const RoomPage: React.FC = () => {
     const [roomDescription, setRoomDescription] = useState('');
     const [roomPrivacy, setRoomPrivacy] = useState('public');
     const [roomPassword, setRoomPassword] = useState('');
+    const [roomAvatar, setRoomAvatar] = useState('');
     const [roomOwnerId, setRoomOwnerId] = useState('');
 
     // Fetch Room Metadata
@@ -55,6 +56,7 @@ const RoomPage: React.FC = () => {
                 setRoomDescription(room.description || '');
                 setRoomPrivacy(room.privacy || 'public');
                 setRoomPassword(room.password || '');
+                setRoomAvatar(room.avatar || '');
                 setRoomOwnerId(room.owner.id);
 
                 // Track recent visit
@@ -145,8 +147,9 @@ const RoomPage: React.FC = () => {
         setNotes(prev => [...prev, newNote]);
 
         try {
+            let realId: string;
             if (type === 'image' && content instanceof File) {
-                await noteService.createImageNote(roomId, content, {
+                realId = await noteService.createImageNote(roomId, content, {
                     title: newNote.title,
                     x: newNote.x,
                     y: newNote.y,
@@ -156,7 +159,7 @@ const RoomPage: React.FC = () => {
                     authorId: newNote.authorId
                 });
             } else {
-                await noteService.createNote(roomId, {
+                realId = await noteService.createNote(roomId, {
                     type,
                     title: newNote.title,
                     content: newNote.content as string | TodoItem[],
@@ -168,6 +171,8 @@ const RoomPage: React.FC = () => {
                     authorId: currentUser.id
                 });
             }
+            // Update the temporary ID with the real one
+            setNotes(prev => prev.map(n => n.id === id ? { ...n, id: realId } : n));
         } catch (err) {
             console.error('Error adding note:', err);
             toast.error('Failed to add note');
@@ -181,6 +186,7 @@ const RoomPage: React.FC = () => {
         // Optimistic update
         setNotes(prev => prev.map(n => n.id === id ? { ...n, ...updates } : n));
         try {
+            if (id.toString().startsWith('temp-')) return;
             await noteService.updateNote(roomId, id, updates);
         } catch (err) {
             console.error('Error updating note:', err);
@@ -189,6 +195,7 @@ const RoomPage: React.FC = () => {
     }, [roomId]);
 
     const handleDuplicateNote = useCallback(async (id: string) => {
+        if (id.toString().startsWith('temp-')) return;
         const noteToDuplicate = notes.find(n => n.id === id);
         if (noteToDuplicate && roomId && currentUser) {
             try {
@@ -209,6 +216,10 @@ const RoomPage: React.FC = () => {
 
     const handleDeleteNote = useCallback(async (id: string) => {
         if (!roomId) return;
+        if (id.toString().startsWith('temp-')) {
+            setNotes(prev => prev.filter(n => n.id !== id));
+            return;
+        }
         try {
             await noteService.deleteNote(roomId, id);
         } catch (err) {
@@ -231,6 +242,7 @@ const RoomPage: React.FC = () => {
             if (updates.description !== undefined) setRoomDescription(updates.description);
             if (updates.privacy !== undefined) setRoomPrivacy(updates.privacy);
             if (finalUpdates.password !== undefined) setRoomPassword(finalUpdates.password);
+            if (updates.avatar !== undefined) setRoomAvatar(updates.avatar);
 
             toast.success('Room settings saved');
         } catch (err) {
@@ -396,10 +408,12 @@ const RoomPage: React.FC = () => {
                 isOpen={isSettingsOpen}
                 onClose={() => setIsSettingsOpen(false)}
                 room={{
+                    id: roomId,
                     name: roomName,
                     description: roomDescription,
                     privacy: roomPrivacy,
-                    password: roomPassword
+                    password: roomPassword,
+                    avatar: roomAvatar
                 }}
                 isOwner={currentUser?.id === roomOwnerId}
                 onUpdateRoom={handleUpdateRoom}

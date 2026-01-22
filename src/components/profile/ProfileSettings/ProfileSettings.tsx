@@ -35,13 +35,27 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            await onUpdate(formData);
+            let updatedFormData = { ...formData };
+
+            // If there's a new avatar file, upload it first
+            if (avatarFile) {
+                const { uploadProfilePicture } = await import('../../../services/storage/storageService');
+                const publicUrl = await uploadProfilePicture(user.id, avatarFile);
+                updatedFormData.avatar = publicUrl;
+                setFormData(updatedFormData);
+                setAvatarFile(null); // Clear file after upload
+            }
+
+            await onUpdate(updatedFormData);
             toast.success('Profile updated successfully!');
-        } catch {
+        } catch (error) {
+            console.error('Error updating profile:', error);
             toast.error('Failed to update profile');
         } finally {
             setIsSubmitting(false);
@@ -67,12 +81,16 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setFormData({ ...formData, avatar: reader.result as string });
-                toast.success('Photo preview updated! Save to confirm.');
-            };
-            reader.readAsDataURL(file);
+            // Check file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                toast.error('File size too large. Maximum size is 5MB.');
+                return;
+            }
+
+            setAvatarFile(file);
+            const previewUrl = URL.createObjectURL(file);
+            setFormData({ ...formData, avatar: previewUrl });
+            toast.success('Photo preview updated! Save to confirm.');
         }
     };
 

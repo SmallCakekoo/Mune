@@ -166,7 +166,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background-500 text-white">
+    <div className="min-h-screen bg-background-500 text-neutral-5">
       {/* Background Elements */}
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary-500/10 via-background-500 to-background-500 z-0" />
       <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 z-0 mix-blend-overlay" />
@@ -194,7 +194,7 @@ const Home: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <h1 className="text-4xl font-bold text-white mb-2">
+            <h1 className="text-4xl font-bold text-neutral-5 mb-2">
               Welcome back, {user?.name?.split(' ')[0] || 'User'}
             </h1>
             <p className="text-lg text-neutral-5">
@@ -215,7 +215,7 @@ const Home: React.FC = () => {
                   placeholder="Search rooms..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full sm:w-96 pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all"
+                  className="w-full sm:w-96 pl-12 pr-4 py-3 rounded-xl bg-white/5 dark:bg-white/5 border border-neutral-200 dark:border-white/10 text-neutral-5 placeholder-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all dark:text-white"
                 />
               </div>
             </div>
@@ -230,7 +230,7 @@ const Home: React.FC = () => {
           {/* Recent Rooms Section */}
           {!searchQuery && recentRooms.length > 0 && (
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-white mb-6">Recently Visited</h2>
+              <h2 className="text-2xl font-bold text-neutral-5 mb-6">Recently Visited</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {recentRooms.map((room, index) => (
                   <motion.div
@@ -255,7 +255,7 @@ const Home: React.FC = () => {
 
           {/* All Rooms Section */}
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6">
+            <h2 className="text-2xl font-bold text-neutral-5 mb-6">
               {searchQuery ? 'Search Results' : 'Your Rooms'}
             </h2>
 

@@ -3,6 +3,8 @@ import { IconTrash, IconSettings, IconShield, IconEye, IconEyeOff, IconLock } fr
 import { Button } from '../../common/Button/Button';
 import Modal from '../../common/Modal/Modal';
 import { cn } from '../../../utils/cn';
+import toast from 'react-hot-toast';
+
 
 interface RoomSettingsOverlayProps {
     isOpen: boolean;
@@ -12,6 +14,8 @@ interface RoomSettingsOverlayProps {
         description?: string;
         privacy?: string;
         password?: string;
+        avatar?: string;
+        id?: string;
     };
     isOwner: boolean;
     onUpdateRoom: (updates: any) => Promise<void>;
@@ -31,6 +35,8 @@ const RoomSettingsOverlay: React.FC<RoomSettingsOverlayProps> = ({
     const [isPublic, setIsPublic] = useState(room.privacy === 'public');
     const [password, setPassword] = useState(room.password || '');
     const [showPassword, setShowPassword] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
+
 
     // Update local state when room changes
     useEffect(() => {
@@ -38,21 +44,32 @@ const RoomSettingsOverlay: React.FC<RoomSettingsOverlayProps> = ({
         setDescription(room.description || '');
         setIsPublic(room.privacy === 'public');
         setPassword(room.password || '');
+        setPassword(room.password || '');
     }, [room]);
 
+
     const handleSave = async () => {
-        const updates: any = {
-            name,
-            description,
-            privacy: isPublic ? 'public' : 'private'
-        };
+        setIsUploading(true);
+        try {
+            const updates: any = {
+                name,
+                description,
+                privacy: isPublic ? 'public' : 'private'
+            };
 
-        if (!isPublic && isOwner) {
-            updates.password = password;
+            if (!isPublic && isOwner) {
+                updates.password = password;
+            }
+
+
+            await onUpdateRoom(updates);
+            onClose();
+        } catch (error) {
+            console.error('Error saving room settings:', error);
+            toast.error('Failed to save settings');
+        } finally {
+            setIsUploading(false);
         }
-
-        await onUpdateRoom(updates);
-        onClose();
     };
     return (
         <Modal
@@ -93,6 +110,7 @@ const RoomSettingsOverlay: React.FC<RoomSettingsOverlayProps> = ({
                             />
                         </div>
                     </div>
+
                 </section>
 
                 {/* Privacy & Permissions */}
@@ -182,8 +200,8 @@ const RoomSettingsOverlay: React.FC<RoomSettingsOverlayProps> = ({
 
                 {/* Actions */}
                 <div className="pt-6 border-t border-white/10 flex justify-end gap-3">
-                    <Button variant="ghost" onClick={onClose} className="px-6">Cancel</Button>
-                    <Button onClick={handleSave} className="px-8 shadow-lg shadow-primary-500/20">
+                    <Button variant="ghost" onClick={onClose} className="px-6" disabled={isUploading}>Cancel</Button>
+                    <Button onClick={handleSave} className="px-8 shadow-lg shadow-primary-500/20" isLoading={isUploading}>
                         Save Changes
                     </Button>
                 </div>

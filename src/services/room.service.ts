@@ -28,6 +28,7 @@ export interface CreateRoomData {
   description?: string;
   privacy: RoomPrivacy;
   password?: string;
+  avatar?: string;
 }
 
 /**
@@ -49,6 +50,7 @@ export const createRoom = async (
     description: roomData.description || '',
     privacy: roomData.privacy,
     password: roomData.password ? await hashPassword(roomData.password) : null,
+    avatar: roomData.avatar || null,
     ownerId,
     songCount: 0,
     memberCount: 1,
@@ -120,6 +122,7 @@ export const getRoomById = async (roomId: string): Promise<Room | null> => {
     description: data.description,
     privacy: data.privacy,
     password: data.password,
+    avatar: data.avatar,
     owner: {
       id: data.ownerId,
       name: ownerData?.name || 'Unknown',

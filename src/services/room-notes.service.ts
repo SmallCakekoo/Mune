@@ -31,6 +31,19 @@ export interface CreateNoteData {
 }
 
 /**
+ * Clean object of undefined values for Firestore
+ */
+const cleanObject = (obj: any) => {
+  const result: any = {};
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] !== undefined) {
+      result[key] = obj[key];
+    }
+  });
+  return result;
+};
+
+/**
  * Create a new note in a room
  */
 export const createNote = async (
@@ -40,11 +53,11 @@ export const createNote = async (
   const notesRef = collection(db, 'rooms', roomId, 'notes');
   const newNoteRef = doc(notesRef);
   
-  const note = {
+  const note = cleanObject({
     ...noteData,
     createdAt: serverTimestamp(),
     lastModified: serverTimestamp(),
-  };
+  });
   
   await setDoc(newNoteRef, note);
   
@@ -60,10 +73,10 @@ export const updateNote = async (
   data: Partial<Omit<Note, 'id' | 'createdAt' | 'authorId'>>
 ): Promise<void> => {
   const noteRef = doc(db, 'rooms', roomId, 'notes', noteId);
-  await updateDoc(noteRef, {
+  await updateDoc(noteRef, cleanObject({
     ...data,
     lastModified: serverTimestamp(),
-  });
+  }));
 };
 
 /**

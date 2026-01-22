@@ -28,14 +28,14 @@ const Hero = () => {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.2, duration: 0.5 }}
-                        className="inline-block mb-6 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm"
+                        className="inline-block mb-6 px-4 py-1.5 rounded-full bg-white/5 dark:bg-white/5 border border-neutral-200 dark:border-white/10 backdrop-blur-sm"
                     >
-                        <span className="text-primary-300 text-sm font-medium">✨ The all-in-one creative workspace</span>
+                        <span className="text-primary-600 dark:text-primary-300 text-sm font-medium">✨ The all-in-one creative workspace</span>
                     </motion.div>
 
-                    <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight tracking-tight">
+                    <h1 className="text-5xl md:text-7xl font-bold text-neutral-5 mb-6 leading-tight tracking-tight">
                         Where Collaboration <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-300 to-secondary-cyan-300">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-500 dark:from-primary-300 dark:to-secondary-cyan-300">
                             Meets Creativity
                         </span>
                     </h1>
@@ -59,7 +59,7 @@ const Hero = () => {
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="bg-white/5 hover:bg-white/10 text-white border border-white/10 px-8 py-4 rounded-xl font-semibold text-lg transition-all backdrop-blur-sm flex items-center gap-2"
+                            className="bg-neutral-100 dark:bg-white/5 hover:bg-neutral-200 dark:hover:bg-white/10 text-neutral-5 border border-neutral-200 dark:border-white/10 px-8 py-4 rounded-xl font-semibold text-lg transition-all backdrop-blur-sm flex items-center gap-2"
                         >
                             <IconPlayerPlay size={20} />
                             Watch Demo
@@ -73,10 +73,10 @@ const Hero = () => {
                         initial={{ opacity: 0, rotateX: 20, y: 100 }}
                         animate={{ opacity: 1, rotateX: 10, y: 0 }}
                         transition={{ delay: 0.4, duration: 0.8 }}
-                        className="relative w-full h-full bg-background-400/50 rounded-2xl border border-white/10 backdrop-blur-xl shadow-2xl overflow-hidden p-6"
+                        className="relative w-full h-full bg-background-400/50 rounded-2xl border border-neutral-200 dark:border-white/10 backdrop-blur-xl shadow-2xl overflow-hidden p-6"
                     >
                         {/* Mock UI Elements */}
-                        <div className="flex items-center gap-4 mb-8 border-b border-white/5 pb-4">
+                        <div className="flex items-center gap-4 mb-8 border-b border-neutral-200 dark:border-white/5 pb-4">
                             <div className="flex gap-2">
                                 <div className="w-3 h-3 rounded-full bg-error-400" />
                                 <div className="w-3 h-3 rounded-full bg-warning-400" />

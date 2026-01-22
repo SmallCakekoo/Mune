@@ -120,7 +120,7 @@ export const uploadRoomImage = async (
     
     // Upload to Supabase
     const { data, error } = await supabase.storage
-      .from(STORAGE_BUCKETS.ROOM_IMAGES)
+      .from(STORAGE_BUCKETS.PROFILE_PICTURES)
       .upload(filePath, file, {
         cacheControl: '3600',
         upsert: false,
@@ -135,7 +135,7 @@ export const uploadRoomImage = async (
     
     // Get public URL
     const { data: urlData } = supabase.storage
-      .from(STORAGE_BUCKETS.ROOM_IMAGES)
+      .from(STORAGE_BUCKETS.PROFILE_PICTURES)
       .getPublicUrl(data.path);
     
     if (!urlData?.publicUrl) {

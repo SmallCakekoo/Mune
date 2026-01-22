@@ -36,6 +36,7 @@ export interface Room {
     name: string;
     description?: string;
     privacy: RoomPrivacy;
+    avatar?: string;
     password?: string;
     owner: {
         id: string;

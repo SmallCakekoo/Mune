@@ -67,7 +67,7 @@ const SignupForm = () => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1, duration: 0.5 }}
-                    className="text-3xl sm:text-4xl font-bold text-white mb-2 font-display"
+                    className="text-3xl sm:text-4xl font-bold text-neutral-5 mb-2 font-display"
                 >
                     Create Account
                 </motion.h2>
@@ -204,7 +204,7 @@ const SignupForm = () => {
                     fullWidth
                     size="lg"
                     isLoading={isSubmitting}
-                    className="mt-6 bg-white text-background-500 hover:bg-neutral-5 shadow-lg hover:shadow-xl transition-all duration-300 h-12 font-semibold"
+                    className="mt-6 bg-primary-500 text-white hover:bg-primary-400 shadow-lg hover:shadow-xl transition-all duration-300 h-12 font-semibold"
                 >
                     {isSubmitting ? 'Creating account...' : 'Sign Up'}
                 </Button>
@@ -251,12 +251,12 @@ const SignupForm = () => {
                     <SocialLoginButton
                         provider="github"
                         onClick={signInWithGithub}
-                        className="bg-white/5 hover:bg-white/10 border border-white/10 text-white hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                        className="bg-neutral-100 dark:bg-white/5 hover:bg-neutral-200 dark:hover:bg-white/10 border border-neutral-200 dark:border-white/10 text-neutral-5 dark:text-white hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                     />
                     <SocialLoginButton
                         provider="google"
                         onClick={signInWithGoogle}
-                        className="bg-white/5 hover:bg-white/10 border border-white/10 text-white hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                        className="bg-neutral-100 dark:bg-white/5 hover:bg-neutral-200 dark:hover:bg-white/10 border border-neutral-200 dark:border-white/10 text-neutral-5 dark:text-white hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                     />
                 </div>
             </motion.div>
