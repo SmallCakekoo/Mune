@@ -103,7 +103,7 @@ const ActiveUsers: React.FC<ActiveUsersProps> = ({ members, isOwner, currentUser
                                         <div className="relative flex-shrink-0">
                                             <div className="w-11 h-11 rounded-xl overflow-hidden border-2 border-white/10 bg-background-500 group-hover:border-primary-500/40 transition-all shadow-lg">
                                                 <img
-                                                    src={member.user.avatar}
+                                                    src={member.user.avatar || '/src/assets/images/cats/Cat (1).png'}
                                                     alt={member.user.name}
                                                     className="w-full h-full object-cover transition-transform group-hover:scale-110"
                                                 />
@@ -185,7 +185,7 @@ const ActiveUsers: React.FC<ActiveUsersProps> = ({ members, isOwner, currentUser
                                     >
                                         <div className="w-10 h-10 rounded-full border-2 border-background-500 overflow-hidden bg-background-500 shadow-lg group-hover:border-primary-500/50 transition-all">
                                             <img
-                                                src={m.user.avatar}
+                                                src={m.user.avatar || '/src/assets/images/cats/Cat (1).png'}
                                                 alt={m.user.name}
                                                 className="w-full h-full object-cover"
                                             />

@@ -95,7 +95,7 @@ const Profile: React.FC = () => {
 
     const handleEnterRoom = (room: Room) => {
         toast.success(`Entering ${room.name}...`);
-        navigate(`/room/${room.id}`);
+        navigate(`/rooms/${room.id}`);
     };
 
     const handleUpdateRoom = async (data: { name: string; description?: string; privacy: RoomPrivacy; password?: string }) => {

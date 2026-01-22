@@ -65,7 +65,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
     if (onEnter) {
       onEnter(room);
     } else {
-      navigate(`/room/${room.id}`);
+      navigate(`/rooms/${room.id}`);
     }
   };
 
@@ -127,20 +127,28 @@ const RoomCard: React.FC<RoomCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4, transition: { duration: 0.15 } }}
       className={cn(
-        'relative rounded-2xl p-6 border border-white/10',
+        'relative rounded-2xl p-6 border border-neutral-200 dark:border-white/10',
         'bg-background-400/50 backdrop-blur-xl',
         'hover:border-primary-500/30 transition-all',
         'group'
       )}
     >
-      {/* Background Gradient */}
-      <div
-        className={cn(
-          'absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl',
-          gradient
-        )}
-        onClick={handleEnter}
-      />
+      {/* Background Room Avatar or Gradient */}
+      {room.avatar ? (
+        <div
+          className="absolute inset-0 z-0 opacity-20 group-hover:opacity-40 transition-opacity bg-cover bg-center rounded-2xl"
+          style={{ backgroundImage: `url(${room.avatar})` }}
+          onClick={handleEnter}
+        />
+      ) : (
+        <div
+          className={cn(
+            'absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl',
+            gradient
+          )}
+          onClick={handleEnter}
+        />
+      )}
 
       {/* Content */}
       <div className="relative z-10">
@@ -153,7 +161,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
               ) : (
                 <IconWorld size={16} className="text-neutral-5 flex-shrink-0" />
               )}
-              <h3 className="text-lg font-bold text-white truncate">
+              <h3 className="text-lg font-bold text-neutral-5 mb-0.5 truncate">
                 {room.name}
               </h3>
             </div>
@@ -171,7 +179,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                 e.stopPropagation();
                 setIsMenuOpen(!isMenuOpen);
               }}
-              className="p-2 rounded-lg text-neutral-5 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              className="p-2 rounded-lg text-neutral-5 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
               aria-label="Room options"
             >
               <IconDots size={20} />
@@ -184,11 +192,11 @@ const RoomCard: React.FC<RoomCardProps> = ({
                   initial={{ opacity: 0, scale: 0.95, y: -10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                  className="absolute right-0 top-full mt-2 w-48 bg-background-400 border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden"
+                  className="absolute right-0 top-full mt-2 w-48 bg-background-400 border border-neutral-200 dark:border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden"
                 >
                   <button
                     onClick={handleViewDetails}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-left text-neutral-5 hover:text-white hover:bg-white/10 transition-colors"
+                    className="w-full flex items-center gap-3 px-4 py-3 text-left text-neutral-5 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors"
                   >
                     <IconEye size={18} />
                     <span>View details</span>
@@ -196,7 +204,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                   {isOwner && (
                     <button
                       onClick={handleEdit}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-left text-neutral-5 hover:text-white hover:bg-white/10 transition-colors"
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left text-neutral-5 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors"
                     >
                       <IconEdit size={18} />
                       <span>Edit</span>
@@ -215,7 +223,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                       onClick={(e) => { e.stopPropagation(); setIsMenuOpen(false); option.onClick(room); }}
                       className={cn(
                         "w-full flex items-center gap-3 px-4 py-3 text-left transition-colors",
-                        option.variant === 'danger' ? "text-error-400 hover:text-error-300 hover:bg-error-500/10" : "text-neutral-5 hover:text-white hover:bg-white/10"
+                        option.variant === 'danger' ? "text-error-400 hover:text-error-300 hover:bg-error-500/10" : "text-neutral-5 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10"
                       )}
                     >
                       {option.icon}
@@ -274,7 +282,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                     </button>
                   ))}
                   {room.members.length > 5 && (
-                    <div className="w-8 h-8 rounded-full border-2 border-background-400 bg-primary-500/20 flex items-center justify-center text-xs font-semibold text-white relative z-0 -ml-2">
+                    <div className="w-8 h-8 rounded-full border-2 border-background-400 bg-primary-500/20 flex items-center justify-center text-xs font-semibold text-neutral-5 dark:text-white relative z-0 -ml-2">
                       +{room.members.length - 5}
                     </div>
                   )}

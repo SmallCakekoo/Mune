@@ -29,8 +29,6 @@ interface SidebarItem {
 
 interface SidebarProps {
   onCreateRoom?: () => void;
-  // userAvatar prop is no longer needed as we get it from context, but keeping it optional for backward compat if needed
-  userAvatar?: string;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {

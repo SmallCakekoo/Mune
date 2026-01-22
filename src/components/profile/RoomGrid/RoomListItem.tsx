@@ -41,7 +41,7 @@ const RoomListItem: React.FC<RoomListItemProps> = ({
 
     const handleEnter = () => {
         if (onEnter) onEnter(room);
-        else navigate(`/room/${room.id}`);
+        else navigate(`/rooms/${room.id}`);
     };
 
     return (

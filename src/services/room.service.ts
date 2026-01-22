@@ -4,6 +4,7 @@ import {
   getDoc,
   getDocs,
   updateDoc,
+  setDoc,
   query,
   where,
   orderBy,
@@ -15,7 +16,9 @@ import {
 import { db } from '../lib/firebase';
 import type { Room, RoomPrivacy } from '../types/room.types';
 import { timestampToDate } from '../types/firestore.types';
-import { hashPassword } from '../utils/encryption';
+import { hashPassword as utilHashPassword } from '../utils/encryption';
+
+export const hashPassword = utilHashPassword;
 
 /**
  * Room creation data
@@ -25,6 +28,7 @@ export interface CreateRoomData {
   description?: string;
   privacy: RoomPrivacy;
   password?: string;
+  avatar?: string;
 }
 
 /**
@@ -46,6 +50,7 @@ export const createRoom = async (
     description: roomData.description || '',
     privacy: roomData.privacy,
     password: roomData.password ? await hashPassword(roomData.password) : null,
+    avatar: roomData.avatar || null,
     ownerId,
     songCount: 0,
     memberCount: 1,
@@ -117,6 +122,7 @@ export const getRoomById = async (roomId: string): Promise<Room | null> => {
     description: data.description,
     privacy: data.privacy,
     password: data.password,
+    avatar: data.avatar,
     owner: {
       id: data.ownerId,
       name: ownerData?.name || 'Unknown',
@@ -181,6 +187,19 @@ export const deleteRoom = async (roomId: string): Promise<void> => {
 };
 
 /**
+ * Track a recent room visit
+ */
+export const trackRecentVisit = async (userId: string, roomId: string): Promise<void> => {
+  if (!userId || !roomId) return;
+  
+  const recentRef = doc(db, 'users', userId, 'recents', roomId);
+  await setDoc(recentRef, {
+    roomId,
+    visitedAt: serverTimestamp(),
+  }, { merge: true });
+};
+
+/**
  * Get rooms where user is a member
  */
 export const getRoomsForUser = async (userId: string): Promise<Room[]> => {
@@ -211,15 +230,21 @@ export const getUserPublicRooms = async (userId: string): Promise<Room[]> => {
   const q = query(
     roomsRef,
     where('ownerId', '==', userId),
-    where('privacy', '==', 'public'),
-    orderBy('updatedAt', 'desc')
+    where('privacy', '==', 'public')
   );
   
   const snapshot = await getDocs(q);
   const roomPromises = snapshot.docs.map((doc) => getRoomById(doc.id));
   const rooms = await Promise.all(roomPromises);
   
-  return rooms.filter((room): room is Room => room !== null);
+  const validRooms = rooms.filter((room): room is Room => room !== null);
+
+  // Client-side sort by updatedAt desc
+  return validRooms.sort((a, b) => {
+    const timeA = a.updatedAt instanceof Date ? a.updatedAt.getTime() : 0;
+    const timeB = b.updatedAt instanceof Date ? b.updatedAt.getTime() : 0;
+    return timeB - timeA;
+  });
 };
 
 /**
@@ -309,6 +334,35 @@ export const subscribeToUserRooms = (
     },
     (error) => {
       console.error('Error subscribing to user rooms:', error);
+      callback([]);
+    }
+  );
+};
+
+/**
+ * Subscribe to user's recent rooms (real-time)
+ */
+export const subscribeToRecentRooms = (
+  userId: string,
+  callback: (rooms: Room[]) => void
+): Unsubscribe => {
+  const recentsRef = collection(db, 'users', userId, 'recents');
+  const q = query(recentsRef, orderBy('visitedAt', 'desc'));
+
+  return onSnapshot(
+    q,
+    async (snapshot) => {
+      const roomIds = snapshot.docs.map(doc => doc.data().roomId);
+      
+      // Fetch room details for each ID
+      const roomPromises = roomIds.map(id => getRoomById(id));
+      const rooms = await Promise.all(roomPromises);
+      
+      // Filter out nulls and take the top 6 (or whatever limit you want)
+      callback(rooms.filter((room): room is Room => room !== null).slice(0, 6));
+    },
+    (error) => {
+      console.error('Error subscribing to recent rooms:', error);
       callback([]);
     }
   );

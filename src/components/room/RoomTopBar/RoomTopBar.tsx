@@ -12,7 +12,7 @@ const RoomTopBar: React.FC<RoomTopBarProps> = ({ roomName, onNameChange, onOpenS
     const navigate = useNavigate();
 
     return (
-        <header className="h-16 bg-background-500/80 backdrop-blur-md flex items-center justify-between px-6 z-[100] relative">
+        <header className="h-16 bg-transparent backdrop-blur-md flex items-center justify-between px-6 z-[100] relative">
             <div className="w-10" /> {/* Spacer */}
 
             <div className="flex items-center gap-3">

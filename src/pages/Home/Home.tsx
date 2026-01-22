@@ -22,6 +22,7 @@ const Home: React.FC = () => {
   const { user, isLoading } = useAuth();
   const { isCollapsed } = useSidebar();
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [recentRooms, setRecentRooms] = useState<Room[]>([]);
   const [isLoadingRooms, setIsLoadingRooms] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -40,6 +41,17 @@ const Home: React.FC = () => {
     const unsubscribe = roomService.subscribeToUserRooms(user.id, (fetchedRooms) => {
       setRooms(fetchedRooms);
       setIsLoadingRooms(false);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // Fetch recent rooms
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubscribe = roomService.subscribeToRecentRooms(user.id, (fetchedRecents) => {
+      setRecentRooms(fetchedRecents);
     });
 
     return () => unsubscribe();
@@ -150,11 +162,11 @@ const Home: React.FC = () => {
   // Handle enter room
   const handleEnterRoom = (room: Room) => {
     toast.success(`Entering ${room.name}...`);
-    navigate(`/room/${room.id}`);
+    navigate(`/rooms/${room.id}`);
   };
 
   return (
-    <div className="min-h-screen bg-background-500 text-white">
+    <div className="min-h-screen bg-background-500 text-neutral-5">
       {/* Background Elements */}
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary-500/10 via-background-500 to-background-500 z-0" />
       <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 z-0 mix-blend-overlay" />
@@ -182,7 +194,7 @@ const Home: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <h1 className="text-4xl font-bold text-white mb-2">
+            <h1 className="text-4xl font-bold text-neutral-5 mb-2">
               Welcome back, {user?.name?.split(' ')[0] || 'User'}
             </h1>
             <p className="text-lg text-neutral-5">
@@ -203,7 +215,7 @@ const Home: React.FC = () => {
                   placeholder="Search rooms..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full sm:w-96 pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all"
+                  className="w-full sm:w-96 pl-12 pr-4 py-3 rounded-xl bg-white/5 dark:bg-white/5 border border-neutral-200 dark:border-white/10 text-neutral-5 placeholder-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all dark:text-white"
                 />
               </div>
             </div>
@@ -215,9 +227,37 @@ const Home: React.FC = () => {
             </div>
           </div>
 
-          {/* Rooms Section */}
+          {/* Recent Rooms Section */}
+          {!searchQuery && recentRooms.length > 0 && (
+            <div className="mb-12">
+              <h2 className="text-2xl font-bold text-neutral-5 mb-6">Recently Visited</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {recentRooms.map((room, index) => (
+                  <motion.div
+                    key={`recent-${room.id}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <RoomCard
+                      room={room}
+                      currentUserId={user?.id || ''}
+                      onViewDetails={handleViewDetails}
+                      onEdit={handleEdit}
+                      onRemove={handleRemove}
+                      onEnter={handleEnterRoom}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* All Rooms Section */}
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6">Your Rooms</h2>
+            <h2 className="text-2xl font-bold text-neutral-5 mb-6">
+              {searchQuery ? 'Search Results' : 'Your Rooms'}
+            </h2>
 
             {isLoadingRooms ? (
               <div className="flex justify-center py-12">

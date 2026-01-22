@@ -59,7 +59,6 @@ const Settings: React.FC = () => {
             <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 z-0 mix-blend-overlay" />
 
             <Sidebar
-                userAvatar={user.avatar}
                 onCreateRoom={() => setIsCreateModalOpen(true)}
             />
 

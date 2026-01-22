@@ -17,7 +17,7 @@ const Header = ({ showNavLinks = true }: HeaderProps) => {
 
     return (
         <motion.header
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-background-500/80 backdrop-blur-md shadow-[0_1px_0_0_rgba(255,255,255,0.05)] py-4' : 'bg-transparent py-6'
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-background-500/80 backdrop-blur-md shadow-[0_1px_0_0_var(--color-neutral-200)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.05)] py-4' : 'bg-transparent py-6'
                 }`}
             initial={{ y: -100 }}
             animate={{ y: 0 }}

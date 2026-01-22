@@ -119,7 +119,7 @@ const NotFound = () => {
         if (audio) {
             // eslint-disable-next-line react-hooks/immutability
             audio.currentTime = 0;
-             
+
             audio.volume = 0.5;
             audio.play();
 
@@ -145,7 +145,7 @@ const NotFound = () => {
     };
 
     return (
-        <div className="min-h-screen bg-background-500 text-white font-sans flex items-center justify-center relative overflow-hidden">
+        <div className="min-h-screen bg-background-500 text-neutral-5 font-sans flex items-center justify-center relative overflow-hidden">
             {/* Animated Background */}
             <div className="absolute inset-0 opacity-20">
                 <div className="absolute top-0 left-0 w-96 h-96 bg-primary-500 rounded-full blur-[150px]" />
@@ -195,7 +195,7 @@ const NotFound = () => {
                     onClick={toggleMute}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="bg-background-400/50 hover:bg-background-400 backdrop-blur-md text-white p-4 rounded-full transition-all border border-white/10"
+                    className="bg-background-400/50 hover:bg-background-400 backdrop-blur-md text-neutral-5 dark:text-white p-4 rounded-full transition-all border border-neutral-200 dark:border-white/10"
                 >
                     {isMuted ? <IconVolumeOff size={24} /> : <IconVolume size={24} />}
                 </motion.button>
@@ -223,7 +223,7 @@ const NotFound = () => {
                                 scale: clickedDigit === index ? 1.15 : 1,
                             }}
                             transition={{ duration: 0.2 }}
-                            className="text-[10rem] md:text-[14rem] font-bold leading-none font-display text-white cursor-pointer select-none"
+                            className="text-[10rem] md:text-[14rem] font-bold leading-none font-display text-neutral-5 dark:text-white cursor-pointer select-none"
                         >
                             {digit}
                         </motion.button>
@@ -235,7 +235,7 @@ const NotFound = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.5 }}
                 >
-                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                    <h2 className="text-3xl md:text-4xl font-bold text-neutral-5 mb-4">
                         Page Not Found
                     </h2>
                     <p className="text-neutral-5 text-lg mb-8">

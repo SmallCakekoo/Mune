@@ -96,7 +96,7 @@ const Search: React.FC = () => {
 
     const handleRoomAccess = (room: Room) => {
         toast.success(`Entering ${room.name}...`);
-        navigate(`/room/${room.id}`);
+        navigate(`/rooms/${room.id}`);
     };
 
     const handleEnterRoom = (room: Room) => {
@@ -154,7 +154,6 @@ const Search: React.FC = () => {
 
             <Sidebar
                 onCreateRoom={() => setIsCreateModalOpen(true)}
-                userAvatar={user?.avatar || undefined}
             />
 
             <main className={cn(
