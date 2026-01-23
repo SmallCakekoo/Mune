@@ -59,7 +59,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                                 "text-neutral-5 hover:text-primary-400",
                                 "focus:outline-none focus:text-primary-400",
                                 "transition-all duration-200",
-                                "p-1.5 rounded-lg hover:bg-neutral-5/10",
+                                "p-1.5 rounded-lg hover:bg-neutral-5/10 cursor-pointer",
                                 "active:scale-95"
                             )}
                             tabIndex={-1}

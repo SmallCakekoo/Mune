@@ -13,9 +13,10 @@ interface ProfileHeaderProps {
     user: User;
     onSettingsClick?: () => void;
     isOwnProfile?: boolean;
+    roomCount?: number;
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, onSettingsClick, isOwnProfile = true }) => {
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, onSettingsClick, isOwnProfile = true, roomCount = 0 }) => {
 
     return (
         <div className="relative overflow-hidden rounded-3xl bg-primary-600 p-8 shadow-2xl">
@@ -43,7 +44,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, onSettingsClick, is
                 {/* User Info */}
                 <div className="flex-1 text-center md:text-left">
                     <div className="flex items-center justify-center md:justify-start gap-4 mb-1">
-                        <h1 className="text-4xl font-bold text-white tracking-tight">
+                        <h1 className="text-4xl font-bold !text-white tracking-tight">
                             {user.name}
                         </h1>
                         {isOwnProfile && onSettingsClick && (
@@ -97,7 +98,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, onSettingsClick, is
                         whileHover={{ y: -5 }}
                         className="bg-white/10 backdrop-blur-md rounded-2xl p-4 min-w-[140px] text-center border border-white/10 shadow-lg"
                     >
-                        <p className="text-2xl font-bold text-white">¡{user.stats?.roomsCreated || 0}!</p>
+                        <p className="text-2xl font-bold text-white">¡{roomCount}!</p>
                         <p className="text-xs text-primary-100 uppercase tracking-wider font-bold mt-1">Rooms Created</p>
                     </motion.div>
                     <motion.div

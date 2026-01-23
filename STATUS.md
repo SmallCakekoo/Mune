@@ -25,66 +25,66 @@ El sistema de temas ya soporta los modos `light`, `dark` y `system`, pero falta 
 #### 🐛 Problemas Específicos del Modo Claro Detectados
 
 ##### 🎨 **Logo y Marca**
-- [ ] **Logo blanco en fondo blanco** - Aplicar filtro inverso o cambiar color según tema
+- [x] **Logo blanco en fondo blanco** - Aplicar filtro inverso o cambiar color según tema
 
 ##### 📄 **Landing Page**
-- [ ] **"Music Together"** - No funciona ni en modo oscuro ni claro (falta implementación)
-- [ ] **Colores de íconos** - Bajo contraste y visibilidad
-- [ ] **"Start Creating" - Números** - Casi invisibles (círculo gris claro sobre fondo claro)
-- [ ] **Sección "Get Started Free"** - Texto blanco/gris claro en fondo blanco
+- [x] **"Music Together"** - No funciona ni en modo oscuro ni claro (falta implementación)
+- [x] **Colores de íconos** - Bajo contraste y visibilidad
+- [x] **"Start Creating" - Números** - Casi invisibles (círculo gris claro sobre fondo claro)
+- [x] **Sección "Get Started Free"** - Texto blanco/gris claro en fondo blanco
 
 ##### 🔐 **Autenticación (Login/Register/Forgot Password)**
-- [ ] **Botones GitHub y Google** - Fondo blanco + texto blanco + logo blanco (invisible)
-- [ ] **Logo de aplicación** - Blanco en fondo blanco
-- [ ] **Checkbox "Términos y condiciones"** - No visible
-- [ ] **Texto checkbox hover** - Se vuelve blanco al hacer hover (debería ser negro)
-- [ ] **Botón "Enviar enlace" (Forgot Password)** - Blanco con letra blanca
+- [x] **Botones GitHub y Google** - Fondo blanco + texto blanco + logo blanco (invisible)
+- [x] **Logo de aplicación** - Blanco en fondo blanco
+- [x] **Checkbox "Términos y condiciones"** - No visible
+- [x] **Texto checkbox hover** - Se vuelve blanco al hacer hover (debería ser negro)
+- [x] **Botón "Enviar enlace" (Forgot Password)** - Blanco con letra blanca
   - Solo se ve en hover (se vuelve negro con letra blanca)
   - El estado normal debería ser visible
 
 ##### 🏠 **Home Page**
-- [ ] **Fondo vs Barra de búsqueda** - Ambos gris claro, no se distinguen
-- [ ] **Cards de salas** - No contrastan con el fondo gris claro
+- [x] **Fondo vs Barra de búsqueda** - Ambos gris claro, no se distinguen
+- [x] **Cards de salas** - No contrastan con el fondo gris claro
   - Falta contorno suave o sombra para diferenciarlas
-- [ ] **Modal "Crear Nueva Sala"** - Cuando está seleccionado público/privado:
+- [x] **Modal "Crear Nueva Sala"** - Cuando está seleccionado público/privado:
   - Texto blanco + logo blanco (no se ve)
-- [ ] **Todo List (Lista de tareas)**:
+- [x] **Todo List (Lista de tareas)**:
   - Texto se escribe en blanco sobre fondo blanco (casi invisible)
   - Solo se ve negro cuando se marca como completada
-- [ ] **Barra de búsqueda** - El texto al escribir aparece en blanco (debería ser negro)
+- [x] **Barra de búsqueda** - El texto al escribir aparece en blanco (debería ser negro)
 
 ##### 🧭 **Barra de Navegación**
-- [ ] **Íconos** - Blancos en fondo blanco (no visibles)
-- [ ] **Página activa** - Ícono aparece blanco
+- [x] **Íconos** - Blancos en fondo blanco (no visibles)
+- [x] **Página activa** - Ícono aparece blanco
   - Debería ser del color del tema seleccionado (morado, azul, cyan, verde, rojo)
 
 ##### 🎵 **Room/Sala**
-- [ ] **Reproductor de Música**:
+- [x] **Reproductor de Música**:
   - Íconos blancos en fondo blanco
   - Nombres de canciones en búsqueda: texto blanco
-- [ ] **Panel de Miembros**:
+- [x] **Panel de Miembros**:
   - Número total de miembros (colapsado): blanco sobre blanco (invisible)
   - Nombre de usuario (expandido): blanco (debería ser negro o color del tema)
   - En hover se resalta en azul correctamente ✅
 
 ##### 🔍 **Explorar/Buscar Salas**
-- [ ] **Cards de salas** - Mismo problema que Home (no se diferencian del fondo)
-- [ ] **Barra de búsqueda** - Texto blanco al escribir (debería ser negro)
+- [x] **Cards de salas** - Mismo problema que Home (no se diferencian del fondo)
+- [x] **Barra de búsqueda** - Texto blanco al escribir (debería ser negro)
 
 ##### 👤 **Perfil de Usuario**
-- [ ] **Nombre de usuario grande** - En negro
+- [x] **Nombre de usuario grande** - En negro
   - Debería ser blanco para mejor contraste con el banner de fondo
 
 ##### ⚙️ **Configuraciones**
-- [ ] **Texto "Tu tema de preferencia está automáticamente guardado en el local storage"**
+- [x] **Texto "Tu tema de preferencia está automáticamente guardado en el local storage"**
   - Baja visibilidad/contraste
-- [ ] **Tracks - Nombre del artista** - Blanco (debería ser negro)
-- [ ] **Modal Selección de Canción**:
+- [x] **Tracks - Nombre del artista** - Blanco (debería ser negro)
+- [x] **Modal Selección de Canción**:
   - Sin cursor pointer para indicar seleccionable
   - Nombre de canción en blanco sobre fondo blanco
   - Sin contenedor/borde para delimitar cada opción
   - Checkbox casi invisible (blanco hasta que se selecciona)
-- [ ] **Barra de búsqueda de música** - Texto blanco al escribir
+- [x] **Barra de búsqueda de música** - Texto blanco al escribir
 
 ---
 

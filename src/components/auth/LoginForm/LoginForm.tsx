@@ -163,12 +163,12 @@ const LoginForm = () => {
                     <SocialLoginButton
                         provider="github"
                         onClick={signInWithGithub}
-                        className="bg-neutral-100 dark:bg-white/5 hover:bg-neutral-200 dark:hover:bg-white/10 border border-neutral-200 dark:border-white/10 text-neutral-5 dark:text-white hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                        className="bg-primary-500 hover:bg-primary-400 border-transparent text-white hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                     />
                     <SocialLoginButton
                         provider="google"
                         onClick={signInWithGoogle}
-                        className="bg-neutral-100 dark:bg-white/5 hover:bg-neutral-200 dark:hover:bg-white/10 border border-neutral-200 dark:border-white/10 text-neutral-5 dark:text-white hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                        className="bg-primary-500 hover:bg-primary-400 border-transparent text-white hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                     />
                 </div>
             </motion.div>

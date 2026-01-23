@@ -14,14 +14,14 @@ const steps = [
         title: "Invite Your Team",
         description: "Share your name room and start collaborating in real-time instantly.",
         icon: <IconUsers size={40} className="text-white" />,
-        color: "bg-secondary-cyan-500"
+        color: "bg-primary-500"
     },
     {
         id: 3,
         title: "Start Creating",
         description: "Brainstorm, plan, and build together with powerful tools.",
         icon: <IconRocket size={40} className="text-white" />,
-        color: "bg-tertiary-500"
+        color: "bg-primary-500"
     }
 ];
 
@@ -38,8 +38,8 @@ const HowItWorks = () => {
                     viewport={{ once: true }}
                     className="text-center mb-20"
                 >
-                    <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Get Started in Seconds</h2>
-                    <p className="text-white">Simple, fast, and built for flow.</p>
+                    <h2 className="text-3xl md:text-5xl font-bold text-neutral-5 mb-4">Get Started in Seconds</h2>
+                    <p className="text-neutral-5">Simple, fast, and built for flow.</p>
                 </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -59,12 +59,12 @@ const HowItWorks = () => {
                                 <div className={`absolute inset-0 ${step.color} blur-xl opacity-40`} />
 
                                 {/* Number badge */}
-                                <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-background-300 border border-white/10 flex items-center justify-center z-20 font-bold text-white">
+                                <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-white dark:bg-background-300 border border-neutral-200 dark:border-white/10 flex items-center justify-center z-20 font-bold text-neutral-5">
                                     {step.id}
                                 </div>
                             </div>
 
-                            <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3>
+                            <h3 className="text-xl font-bold text-neutral-5 mb-3">{step.title}</h3>
                             <p className="text-neutral-5/80 leading-relaxed max-w-xs mx-auto">
                                 {step.description}
                             </p>

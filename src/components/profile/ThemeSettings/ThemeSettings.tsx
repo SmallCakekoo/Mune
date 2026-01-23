@@ -108,7 +108,7 @@ const ThemeSettings: React.FC = () => {
             </section>
 
             <div className="mt-8 p-4 rounded-xl bg-orange-500/10 border border-orange-500/20">
-                <p className="text-sm text-orange-200 italic">
+                <p className="text-sm text-orange-700 dark:text-orange-500 italic">
                     Tip: Your theme preference is automatically saved to your browser's local storage.
                 </p>
             </div>

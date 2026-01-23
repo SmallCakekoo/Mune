@@ -4,13 +4,16 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { IconHome, IconSearch, IconPlus } from '@tabler/icons-react';
 import { cn } from '../../../utils/cn';
 import { useAuth } from '../../../hooks/useAuth';
+import { useTheme } from '../../../hooks/useTheme';
 
-const MuneLogo = new URL('../../../assets/images/MuneCollapsed.svg', import.meta.url).href;
+const MuneLogoWhite = new URL('../../../assets/images/MuneCollapsed.svg', import.meta.url).href;
+const MuneLogoBlack = new URL('../../../assets/images/MuneCollapsedBlack.svg', import.meta.url).href;
 
 const RoomSidebar: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user } = useAuth();
+    const { isDarkMode } = useTheme();
 
     const items = [
         { icon: IconHome, label: 'Home', path: '/home' },
@@ -23,7 +26,7 @@ const RoomSidebar: React.FC = () => {
             <div className="flex flex-col items-center gap-8 w-full">
                 {/* Logo */}
                 <div className="mb-4">
-                    <img src={MuneLogo} alt="Mune" className="w-8 h-8 opacity-80 hover:opacity-100 transition-opacity cursor-pointer" onClick={() => navigate('/home')} />
+                    <img src={isDarkMode ? MuneLogoWhite : MuneLogoBlack} alt="Mune" className="w-8 h-8 opacity-80 hover:opacity-100 transition-opacity cursor-pointer" onClick={() => navigate('/home')} />
                 </div>
 
                 {items.map((item, index) => (

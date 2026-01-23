@@ -1,10 +1,13 @@
 import { Outlet, Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../hooks/useTheme';
 import { motion } from 'framer-motion';
-import MuneLogo from '../../assets/images/MuneCollapsed.svg';
+import MuneLogoWhite from '../../assets/images/MuneCollapsed.svg';
+import MuneLogoBlack from '../../assets/images/MuneCollapsedBlack.svg';
 
 const AuthLayout = () => {
     const { isAuthenticated, isLoading } = useAuth();
+    const { isDarkMode } = useTheme();
 
     if (isLoading) {
         return null; // Or a loading spinner
@@ -73,9 +76,9 @@ const AuthLayout = () => {
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.5 }}
-                            src={MuneLogo}
+                            src={isDarkMode ? MuneLogoWhite : MuneLogoBlack}
                             alt="Mune Logo"
-                            className="h-10 w-auto brightness-0 invert"
+                            className="h-10 w-auto"
                         />
                     </Link>
                 </div>

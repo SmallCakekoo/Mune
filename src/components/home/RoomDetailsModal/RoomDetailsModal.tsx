@@ -84,7 +84,7 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
             ) : (
               <IconWorld size={24} className="text-primary-400" />
             )}
-            <h3 className="text-2xl font-bold text-white">{room.name}</h3>
+            <h3 className="text-2xl font-bold text-neutral-5">{room.name}</h3>
             <span
               className={cn(
                 'px-3 py-1 rounded-full text-xs font-semibold',
@@ -102,7 +102,7 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
         </div>
 
         {/* Owner */}
-        <div className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10">
+        <div className="flex items-center gap-4 p-4 rounded-xl bg-neutral-50 dark:bg-white/5 border border-neutral-300 dark:border-white/10">
           <img
             src={getOwnerAvatar()}
             alt={room.owner.name}
@@ -116,7 +116,7 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
               <IconUser size={16} />
               <span>Owner</span>
             </div>
-            <p className="text-white font-semibold">{room.owner.name}</p>
+            <p className="text-neutral-5 font-semibold">{room.owner.name}</p>
             {room.owner.email && (
               <p className="text-xs text-neutral-5">{room.owner.email}</p>
             )}
@@ -125,22 +125,22 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+          <div className="p-4 rounded-xl bg-neutral-50 dark:bg-white/5 border border-neutral-300 dark:border-white/10">
             <div className="flex items-center gap-2 text-neutral-5 mb-2">
               <IconMusic size={18} />
               <span className="text-sm">Songs</span>
             </div>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-2xl font-bold text-neutral-5">
               {room.songCount || 0}
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+          <div className="p-4 rounded-xl bg-neutral-50 dark:bg-white/5 border border-neutral-300 dark:border-white/10">
             <div className="flex items-center gap-2 text-neutral-5 mb-2">
               <IconUsers size={18} />
               <span className="text-sm">Online</span>
             </div>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-2xl font-bold text-neutral-5">
               {onlineMembers.length}
             </p>
           </div>
@@ -148,21 +148,21 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
 
         {/* Dates */}
         <div className="space-y-3">
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-neutral-50 dark:bg-white/5 border border-neutral-300 dark:border-white/10">
             <IconCalendar size={18} className="text-neutral-5" />
             <div>
               <p className="text-sm text-neutral-5">Created</p>
-              <p className="text-white font-medium">
+              <p className="text-neutral-5 font-medium">
                 {formatDate(room.createdAt)}
               </p>
             </div>
           </div>
           {room.lastActivity && (
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-neutral-50 dark:bg-white/5 border border-neutral-300 dark:border-white/10">
               <IconCalendar size={18} className="text-neutral-5" />
               <div>
                 <p className="text-sm text-neutral-5">Last Activity</p>
-                <p className="text-white font-medium">
+                <p className="text-neutral-5 font-medium">
                   {formatLastActivity()}
                 </p>
               </div>
@@ -189,10 +189,10 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
                       onClose();
                       navigate(`/user/${presence.userId}`);
                     }}
-                    className="w-full flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary-500/30 transition-all group"
+                    className="w-full flex items-center justify-between p-3 rounded-2xl bg-neutral-50 dark:bg-white/5 border border-neutral-300 dark:border-white/10 hover:bg-neutral-100 dark:hover:bg-white/10 hover:border-primary-500/30 transition-all group"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10">
+                      <div className="w-10 h-10 rounded-xl overflow-hidden border border-neutral-200 dark:border-white/10">
                         <img
                           src={avatar}
                           alt={name}
@@ -200,8 +200,8 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
                         />
                       </div>
                       <div className="text-left">
-                        <p className="text-white font-bold text-sm">{name}</p>
-                        <p className="text-emerald-400 text-xs">Online</p>
+                        <p className="text-neutral-5 font-bold text-sm">{name}</p>
+                        <p className="text-emerald-500 dark:text-emerald-400 text-xs">Online</p>
                       </div>
                     </div>
                     <IconChevronRight size={18} className="text-neutral-5 group-hover:text-primary-400 group-hover:translate-x-1 transition-all" />
@@ -214,7 +214,7 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({
 
         {/* Actions */}
         {onEnter && (
-          <div className="pt-4 border-t border-white/10">
+          <div className="pt-4 border-t border-neutral-200 dark:border-white/10">
             <Button
               onClick={() => {
                 onEnter(room);

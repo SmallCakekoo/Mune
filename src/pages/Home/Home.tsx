@@ -243,7 +243,7 @@ const Home: React.FC = () => {
                   placeholder="Search rooms..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full sm:w-96 pl-12 pr-4 py-3 rounded-xl bg-white/5 dark:bg-white/5 border border-neutral-200 dark:border-white/10 text-neutral-5 placeholder-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all dark:text-white"
+                  className="w-full sm:w-96 pl-12 pr-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 text-neutral-5 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-primary-500/50 focus:bg-white dark:focus:bg-white/10 transition-all shadow-md dark:shadow-none"
                 />
               </div>
             </div>
@@ -295,7 +295,7 @@ const Home: React.FC = () => {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-center py-16 px-6 rounded-2xl bg-white/5 border border-white/10"
+                className="text-center py-16 px-6 rounded-2xl bg-white dark:bg-white/5 border border-neutral-200 dark:border-white/10 shadow-lg dark:shadow-none"
               >
                 <p className="text-neutral-5 text-lg mb-4">
                   {searchQuery

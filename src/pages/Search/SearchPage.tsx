@@ -153,7 +153,7 @@ const Search: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-background-500 text-white selection:bg-primary-500/30">
+        <div className="min-h-screen bg-background-500 text-neutral-5 selection:bg-primary-500/30">
             {/* Background Elements */}
             <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary-500/10 via-background-500 to-background-500 z-0" />
             <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 z-0 mix-blend-overlay" />
@@ -181,14 +181,14 @@ const Search: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="mb-8"
                     >
-                        <h1 className="text-4xl font-bold text-white mb-2">Explore Rooms</h1>
+                        <h1 className="text-4xl font-bold text-neutral-5 mb-2">Explore Rooms</h1>
                         <p className="text-lg text-neutral-5">
                             Discover public and private spaces to share music and ideas.
                         </p>
                     </motion.div>
 
                     {/* Search and Filters Section */}
-                    <div className="bg-background-400/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8 shadow-2xl">
+                    <div className="bg-background-400/50 backdrop-blur-xl border border-neutral-200 dark:border-white/10 rounded-2xl p-6 mb-8 shadow-2xl dark:shadow-none">
                         <div className="flex flex-col gap-6">
                             {/* Search Input */}
                             <div className="relative">
@@ -201,12 +201,12 @@ const Search: React.FC = () => {
                                     placeholder="Search by room name or description..."
                                     value={searchQuery}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all text-lg"
+                                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-white dark:bg-white/5 border border-neutral-200 dark:border-white/10 text-neutral-5 placeholder-neutral-5/50 focus:outline-none focus:border-primary-500/50 focus:bg-white dark:focus:bg-white/10 transition-all text-lg"
                                 />
                                 {searchQuery && (
                                     <button
                                         onClick={() => setSearchQuery('')}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-5 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors"
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-5 hover:text-primary-500 p-1 rounded-full hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors"
                                     >
                                         <IconX size={18} />
                                     </button>
@@ -230,7 +230,7 @@ const Search: React.FC = () => {
                                                     "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border",
                                                     privacyFilter === f.id
                                                         ? "bg-primary-500 border-primary-400 text-white shadow-lg shadow-primary-500/20"
-                                                        : "bg-white/5 border-white/10 text-neutral-5 hover:text-white hover:bg-white/10"
+                                                        : "bg-white dark:bg-white/5 border-neutral-200 dark:border-white/10 text-neutral-5 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10"
                                                 )}
                                             >
                                                 {f.icon}
@@ -240,7 +240,7 @@ const Search: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="h-10 w-[1px] bg-white/10 hidden sm:block" />
+                                <div className="h-10 w-[1px] bg-neutral-200 dark:bg-white/10 hidden sm:block" />
 
                                 <div className="flex flex-col gap-2">
                                     <span className="text-xs font-semibold text-neutral-5 uppercase tracking-wider">Status</span>
@@ -257,7 +257,7 @@ const Search: React.FC = () => {
                                                     "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border",
                                                     joinedFilter === f.id
                                                         ? "bg-secondary-cyan-500 border-secondary-cyan-400 text-white shadow-lg shadow-secondary-cyan-500/20"
-                                                        : "bg-white/5 border-white/10 text-neutral-5 hover:text-white hover:bg-white/10"
+                                                        : "bg-white dark:bg-white/5 border-neutral-200 dark:border-white/10 text-neutral-5 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10"
                                                 )}
                                             >
                                                 {f.icon}
@@ -267,7 +267,7 @@ const Search: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="h-10 w-[1px] bg-white/10 hidden sm:block" />
+                                <div className="h-10 w-[1px] bg-neutral-200 dark:bg-white/10 hidden sm:block" />
 
                                 <div className="flex flex-col gap-2">
                                     <span className="text-xs font-semibold text-neutral-5 uppercase tracking-wider">Ownership</span>
@@ -277,7 +277,7 @@ const Search: React.FC = () => {
                                             "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border",
                                             ownedFilter
                                                 ? "bg-primary-600 border-primary-500 text-white shadow-lg shadow-primary-600/20"
-                                                : "bg-white/5 border-white/10 text-neutral-5 hover:text-white hover:bg-white/10"
+                                                : "bg-white dark:bg-white/5 border-neutral-200 dark:border-white/10 text-neutral-5 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10"
                                         )}
                                     >
                                         <IconUser size={16} />

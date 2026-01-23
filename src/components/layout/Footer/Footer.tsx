@@ -1,14 +1,17 @@
 import { IconBrandTwitter, IconBrandGithub, IconBrandDiscord } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
-import MuneLogo from '../../../assets/images/MuneExpanded.svg';
+import { useTheme } from '../../../hooks/useTheme';
+import MuneLogoWhite from '../../../assets/images/MuneExpanded.svg';
+import MuneLogoBlack from '../../../assets/images/MuneExpandedBlack.svg';
 
 const Footer = () => {
+    const { isDarkMode } = useTheme();
     return (
         <footer className="bg-background-500 border-t border-white/5 dark:border-white/5 pt-20 pb-10">
             <div className="container mx-auto px-6">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
                     <div className="col-span-1 md:col-span-1">
-                        <img src={MuneLogo} alt="Mune" className="h-8 w-auto mb-6" />
+                        <img src={isDarkMode ? MuneLogoWhite : MuneLogoBlack} alt="Mune" className="h-8 w-auto mb-6" />
                         <p className="text-neutral-5/80 text-sm leading-relaxed">
                             The digital playground that blends Figma's canvas, Notion's organization, and shared music experiences.
                         </p>

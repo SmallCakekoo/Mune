@@ -195,7 +195,7 @@ const NotFound = () => {
                     onClick={toggleMute}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="bg-background-400/50 hover:bg-background-400 backdrop-blur-md text-neutral-5 dark:text-white p-4 rounded-full transition-all border border-neutral-200 dark:border-white/10"
+                    className="bg-background-400/50 hover:bg-background-400 backdrop-blur-md text-neutral-5 p-4 rounded-full transition-all border border-neutral-5/10"
                 >
                     {isMuted ? <IconVolumeOff size={24} /> : <IconVolume size={24} />}
                 </motion.button>
@@ -218,12 +218,12 @@ const NotFound = () => {
                             whileTap={{ scale: 0.95 }}
                             animate={{
                                 textShadow: clickedDigit === index
-                                    ? '0 0 50px rgba(255, 255, 255, 1)'
-                                    : '0 0 30px rgba(255, 255, 255, 0.3)',
+                                    ? (document.documentElement.classList.contains('dark') ? '0 0 50px rgba(255, 255, 255, 0.5)' : '0 0 50px rgba(58, 139, 255, 0.3)')
+                                    : (document.documentElement.classList.contains('dark') ? '0 0 30px rgba(255, 255, 255, 0.1)' : '0 0 30px rgba(58, 139, 255, 0.1)'),
                                 scale: clickedDigit === index ? 1.15 : 1,
                             }}
                             transition={{ duration: 0.2 }}
-                            className="text-[10rem] md:text-[14rem] font-bold leading-none font-display text-neutral-5 dark:text-white cursor-pointer select-none"
+                            className="text-[10rem] md:text-[14rem] font-bold leading-none font-display text-neutral-5 cursor-pointer select-none"
                         >
                             {digit}
                         </motion.button>

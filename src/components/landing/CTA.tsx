@@ -15,7 +15,7 @@ const CTA = () => {
                     transition={{ duration: 0.8 }}
                     className="max-w-3xl mx-auto"
                 >
-                    <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
+                    <h2 className="text-4xl md:text-6xl font-bold text-neutral-5 mb-6">
                         Ready to Transform Your Workflow?
                     </h2>
                     <p className="text-xl text-neutral-5 mb-10">
@@ -27,10 +27,10 @@ const CTA = () => {
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="bg-white text-background-500 px-10 py-4 rounded-full font-bold text-xl transition-all shadow-[0_0_40px_rgba(255,255,255,0.3)] flex items-center gap-2"
+                                className="bg-primary-500 text-white px-10 py-4 rounded-full font-bold text-xl transition-all shadow-[0_0_40px_rgba(58,139,255,0.3)] flex items-center gap-2"
                             >
                                 Get Started Free
-                                <IconArrowRight className="text-background-500" />
+                                <IconArrowRight className="text-white" />
                             </motion.button>
                         </Link>
                         <p className="text-neutral-5/60 text-sm">No credit card required</p>

@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
-import MuneLogo from '../../../assets/images/MuneExpanded.svg';
+import { useTheme } from '../../../hooks/useTheme';
+import MuneLogoWhite from '../../../assets/images/MuneExpanded.svg';
+import MuneLogoBlack from '../../../assets/images/MuneExpandedBlack.svg';
 
 interface HeaderProps {
     showNavLinks?: boolean;
@@ -10,6 +12,7 @@ interface HeaderProps {
 const Header = ({ showNavLinks = true }: HeaderProps) => {
     const [isScrolled, setIsScrolled] = useState(false);
     const { scrollY } = useScroll();
+    const { isDarkMode } = useTheme();
 
     useMotionValueEvent(scrollY, "change", (latest) => {
         setIsScrolled(latest > 50);
@@ -25,7 +28,7 @@ const Header = ({ showNavLinks = true }: HeaderProps) => {
         >
             <div className="container mx-auto px-6 flex items-center justify-between relative">
                 <Link to="/" className="flex items-center gap-2">
-                    <img src={MuneLogo} alt="Mune" className="h-8 w-auto" />
+                    <img src={isDarkMode ? MuneLogoWhite : MuneLogoBlack} alt="Mune" className="h-8 w-auto" />
                 </Link>
 
                 {showNavLinks && (

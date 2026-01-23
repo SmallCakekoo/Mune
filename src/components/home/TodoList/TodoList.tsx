@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IconChecklist, IconX, IconPlus, IconTrash } from '@tabler/icons-react';
+import { Checkbox } from '../../common/Checkbox/Checkbox';
 import { cn } from '../../../utils/cn';
 import { useAuth } from '../../../hooks/useAuth';
 import * as taskService from '../../../services/task.service';
@@ -151,7 +152,7 @@ const TodoList: React.FC<TodoListProps> = ({ isOpen, onToggle }) => {
               className={cn(
                 'fixed right-0 top-0 bottom-0 z-50',
                 'w-full sm:w-96 max-w-[90vw]',
-                'bg-background-400 border-l border-white/10',
+                'bg-white dark:bg-background-400 border-l border-neutral-200 dark:border-white/10',
                 'backdrop-blur-xl shadow-2xl',
                 'flex flex-col'
               )}
@@ -163,7 +164,7 @@ const TodoList: React.FC<TodoListProps> = ({ isOpen, onToggle }) => {
                     <div className="p-2 rounded-lg bg-primary-500/20">
                       <IconChecklist size={24} className="text-primary-400" />
                     </div>
-                    <h2 className="text-2xl font-bold text-white">My Tasks</h2>
+                    <h2 className="text-2xl font-bold text-neutral-5">My Tasks</h2>
                   </div>
                 </div>
               </div>
@@ -184,43 +185,23 @@ const TodoList: React.FC<TodoListProps> = ({ isOpen, onToggle }) => {
                       transition={{ delay: index * 0.05 }}
                       className={cn(
                         'flex items-center gap-3 p-3 rounded-xl',
-                        'bg-white/5 border border-white/10',
-                        'hover:bg-white/10 transition-colors'
+                        'bg-neutral-50 dark:bg-white/5 border border-neutral-300 dark:border-white/10 shadow-sm',
+                        'hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors'
                       )}
                     >
-                      <button
-                        onClick={() => handleToggleTodo(todo.id, todo.completed)}
-                        className={cn(
-                          'w-5 h-5 rounded border-2 flex-shrink-0',
-                          'transition-all duration-200',
-                          todo.completed
-                            ? 'bg-primary-500 border-primary-500 flex items-center justify-center'
-                            : 'border-white/30 hover:border-primary-500/50'
-                        )}
-                        aria-label={todo.completed ? 'Mark as not completed' : 'Mark as completed'}
-                      >
-                        {todo.completed && (
-                          <motion.svg
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="w-3 h-3 text-white"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="3"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path d="M5 13l4 4L19 7" />
-                          </motion.svg>
-                        )}
-                      </button>
+                      <div className="flex-shrink-0">
+                        <Checkbox
+                          checked={todo.completed}
+                          onChange={() => handleToggleTodo(todo.id, todo.completed)}
+                          className="mt-0.5"
+                        />
+                      </div>
                       <span
                         className={cn(
                           'flex-1 text-sm',
                           todo.completed
-                            ? 'text-neutral-5 line-through'
-                            : 'text-white'
+                            ? 'text-neutral-5/50 line-through'
+                            : 'text-neutral-5'
                         )}
                       >
                         {todo.text}
@@ -248,7 +229,7 @@ const TodoList: React.FC<TodoListProps> = ({ isOpen, onToggle }) => {
               </div>
 
               {/* Add Todo Input */}
-              <div className="p-6 border-t border-white/10">
+              <div className="p-6 border-t border-neutral-200 dark:border-white/10">
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -256,7 +237,7 @@ const TodoList: React.FC<TodoListProps> = ({ isOpen, onToggle }) => {
                     onChange={(e) => setNewTodo(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Add your task here..."
-                    className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all"
+                    className="flex-1 px-4 py-2.5 rounded-xl bg-neutral-50 dark:bg-white/5 border-2 border-neutral-300 dark:border-white/10 text-neutral-5 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-primary-500 focus:bg-white dark:focus:bg-white/10 transition-all shadow-md"
                   />
                   <button
                     onClick={handleAddTodo}

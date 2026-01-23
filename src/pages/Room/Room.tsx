@@ -290,7 +290,7 @@ const RoomPage: React.FC = () => {
 
     if (error) {
         return (
-            <div className="h-screen w-screen bg-background-500 flex flex-col items-center justify-center gap-4 text-white p-6">
+            <div className="h-screen w-screen bg-background-500 flex flex-col items-center justify-center gap-4 text-neutral-5 p-6">
                 <h1 className="text-4xl font-bold text-error-400">Oops!</h1>
                 <p className="text-xl text-neutral-5 text-center max-w-md">{error}</p>
                 <button
@@ -304,7 +304,7 @@ const RoomPage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-background-500 text-white selection:bg-primary-500/30 overflow-hidden">
+        <div className="min-h-screen bg-background-500 text-neutral-5 selection:bg-primary-500/30 overflow-hidden">
             {/* Background Elements */}
             <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary-500/10 via-background-500 to-background-500 z-0" />
             <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 z-0 mix-blend-overlay" />
