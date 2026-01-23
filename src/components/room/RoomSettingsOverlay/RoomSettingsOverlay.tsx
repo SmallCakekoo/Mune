@@ -95,7 +95,7 @@ const RoomSettingsOverlay: React.FC<RoomSettingsOverlayProps> = ({
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all font-medium"
+                                className="w-full bg-neutral-50 dark:bg-white/5 border border-neutral-400 dark:border-white/10 rounded-xl px-4 py-3 text-neutral-5 placeholder-neutral-5/60 focus:outline-none focus:border-primary-500/50 focus:bg-white dark:focus:bg-white/10 transition-all font-medium shadow-sm"
                                 placeholder="Enter room name"
                             />
                         </div>
@@ -106,7 +106,7 @@ const RoomSettingsOverlay: React.FC<RoomSettingsOverlayProps> = ({
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 placeholder="What's this room about?"
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all h-24 font-medium resize-none"
+                                className="w-full bg-neutral-50 dark:bg-white/5 border border-neutral-400 dark:border-white/10 rounded-xl px-4 py-3 text-neutral-5 placeholder-neutral-5/60 focus:outline-none focus:border-primary-500/50 focus:bg-white dark:focus:bg-white/10 transition-all h-24 font-medium resize-none shadow-sm"
                             />
                         </div>
                     </div>
@@ -123,7 +123,7 @@ const RoomSettingsOverlay: React.FC<RoomSettingsOverlayProps> = ({
                     </div>
 
                     <div
-                        className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between hover:bg-white/10 transition-colors cursor-pointer"
+                        className="bg-neutral-50 dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-2xl p-4 flex items-center justify-between hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
                         onClick={() => setIsPublic(!isPublic)}
                     >
                         <div className="flex items-center gap-3">
@@ -131,13 +131,13 @@ const RoomSettingsOverlay: React.FC<RoomSettingsOverlayProps> = ({
                                 <IconShield size={20} />
                             </div>
                             <div>
-                                <p className="text-sm font-bold text-white">Public Visibility</p>
+                                <p className="text-sm font-bold text-neutral-5">Public Visibility</p>
                                 <p className="text-xs text-neutral-5">{isPublic ? 'Anyone with the link can view and join' : 'Only members with password can join'}</p>
                             </div>
                         </div>
                         <div className={cn(
                             "w-12 h-6 rounded-full relative transition-all duration-300 shadow-lg",
-                            isPublic ? "bg-primary-500 shadow-primary-500/20" : "bg-white/10"
+                            isPublic ? "bg-primary-500 shadow-primary-500/20" : "bg-neutral-300 dark:bg-white/10"
                         )}>
                             <div className={cn(
                                 "absolute top-1 bottom-1 w-4 h-4 bg-white rounded-full transition-all duration-300",
@@ -157,13 +157,13 @@ const RoomSettingsOverlay: React.FC<RoomSettingsOverlayProps> = ({
                                     type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-4 pr-12 py-3 text-white placeholder-neutral-5 focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all font-medium"
+                                    className="w-full bg-neutral-50 dark:bg-white/5 border border-neutral-400 dark:border-white/10 rounded-xl pl-4 pr-12 py-3 text-neutral-5 placeholder-neutral-5/60 focus:outline-none focus:border-primary-500/50 focus:bg-white dark:focus:bg-white/10 transition-all font-medium shadow-sm"
                                     placeholder="Enter new password"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-5 hover:text-white transition-colors"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-5 hover:text-neutral-900 dark:hover:text-white transition-colors"
                                 >
                                     {showPassword ? <IconEyeOff size={20} /> : <IconEye size={20} />}
                                 </button>
@@ -176,7 +176,7 @@ const RoomSettingsOverlay: React.FC<RoomSettingsOverlayProps> = ({
                 </section>
 
                 {/* Danger Zone */}
-                <section className="pt-6 border-t border-white/10 space-y-4">
+                <section className="pt-6 border-t border-neutral-200 dark:border-white/10 space-y-4">
                     <h3 className="text-sm font-bold uppercase tracking-wider text-error-400">Danger Zone</h3>
 
                     <button
@@ -199,7 +199,7 @@ const RoomSettingsOverlay: React.FC<RoomSettingsOverlayProps> = ({
                 </section>
 
                 {/* Actions */}
-                <div className="pt-6 border-t border-white/10 flex justify-end gap-3">
+                <div className="pt-6 border-t border-neutral-200 dark:border-white/10 flex justify-end gap-3">
                     <Button variant="ghost" onClick={onClose} className="px-6" disabled={isUploading}>Cancel</Button>
                     <Button onClick={handleSave} className="px-8 shadow-lg shadow-primary-500/20" isLoading={isUploading}>
                         Save Changes

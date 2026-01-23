@@ -107,12 +107,12 @@ const UserProfile: React.FC = () => {
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-background-500 text-white flex flex-col items-center justify-center p-6 text-center">
+            <div className="min-h-screen bg-background-500 text-neutral-5 flex flex-col items-center justify-center p-6 text-center">
                 <h2 className="text-3xl font-bold mb-4">User Not Found</h2>
-                <p className="text-white mb-8">The user you're looking for doesn't exist or has been moved.</p>
+                <p className="text-neutral-5 mb-8">The user you're looking for doesn't exist or has been moved.</p>
                 <button
                     onClick={() => navigate('/home')}
-                    className="px-6 py-3 bg-primary-500 rounded-xl font-bold hover:bg-primary-400 transition-colors"
+                    className="px-6 py-3 bg-primary-500 text-white rounded-xl font-bold hover:bg-primary-400 transition-colors"
                 >
                     Back to Home
                 </button>
@@ -142,6 +142,7 @@ const UserProfile: React.FC = () => {
                         <ProfileHeader
                             user={user}
                             isOwnProfile={false}
+                            roomCount={rooms.length}
                         />
                     </motion.div>
 

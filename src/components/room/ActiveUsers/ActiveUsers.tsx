@@ -84,7 +84,7 @@ const ActiveUsers: React.FC<ActiveUsersProps> = ({ members, isOwner, currentUser
                                     <IconUsers size={20} className="text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-white">
+                                    <h3 className="text-sm font-bold text-neutral-5">
                                         Members
                                     </h3>
                                     <span className="text-xs font-semibold text-primary-400">{members.length} Online</span>
@@ -92,7 +92,7 @@ const ActiveUsers: React.FC<ActiveUsersProps> = ({ members, isOwner, currentUser
                             </div>
                             <button
                                 onClick={() => setIsExpanded(false)}
-                                className="p-2 rounded-xl hover:bg-white/10 text-white/70 hover:text-white transition-all active:scale-95"
+                                className="p-2 rounded-xl hover:bg-white/10 text-neutral-5/70 hover:text-neutral-5 transition-all active:scale-95"
                             >
                                 <IconChevronUp size={20} />
                             </button>
@@ -143,15 +143,15 @@ const ActiveUsers: React.FC<ActiveUsersProps> = ({ members, isOwner, currentUser
                                 ))}
                                 {members.length > 4 && (
                                     <div className="w-10 h-10 rounded-full border-2 border-background-500 bg-gradient-to-br from-primary-500/20 to-primary-600/20 backdrop-blur flex items-center justify-center shadow-lg">
-                                        <span className="text-xs font-bold text-white">+{members.length - 4}</span>
+                                        <span className="text-xs font-bold text-neutral-5">+{members.length - 4}</span>
                                     </div>
                                 )}
                             </div>
 
                             {/* Count Badge */}
                             <div className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5 w-full justify-center">
-                                <span className="text-xs font-bold text-white">{uniqueMembers.length}</span>
-                                <IconChevronDown size={14} className="text-white/70 group-hover:text-white transition-colors" />
+                                <span className="text-xs font-bold text-neutral-5">{uniqueMembers.length}</span>
+                                <IconChevronDown size={14} className="text-neutral-5/70 group-hover:text-neutral-5 transition-colors" />
                             </div>
                         </div>
                     </motion.div>
@@ -208,7 +208,7 @@ const MemberItem: React.FC<MemberItemProps> = ({ member, index, isOwner, current
                 </div>
 
                 <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold text-white truncate group-hover:text-primary-400 transition-colors">
+                    <p className="text-sm font-bold text-neutral-5 truncate group-hover:text-primary-400 transition-colors">
                         {displayUser.name}
                     </p>
                     <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider">
@@ -231,7 +231,7 @@ const MemberItem: React.FC<MemberItemProps> = ({ member, index, isOwner, current
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
                     <button
                         onClick={(e) => { e.stopPropagation(); onKick(member.userId, displayUser.name); }}
-                        className="p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all active:scale-95"
+                        className="p-2 rounded-lg text-neutral-5/60 hover:text-neutral-5 hover:bg-white/10 transition-all active:scale-95"
                         title="Kick user"
                     >
                         <IconUserMinus size={16} />

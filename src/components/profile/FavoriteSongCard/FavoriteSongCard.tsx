@@ -26,7 +26,7 @@ const FavoriteSongCard: React.FC<FavoriteSongCardProps> = ({ song }) => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             whileHover={{ scale: 1.02 }}
-            className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm p-3 flex items-center gap-4 transition-all hover:bg-white/10 hover:border-primary-500/30 shadow-lg"
+            className="group relative overflow-hidden rounded-2xl bg-white dark:bg-white/5 border border-neutral-200 dark:border-white/10 backdrop-blur-sm p-3 flex items-center gap-4 transition-all hover:bg-neutral-50 dark:hover:bg-white/10 hover:border-primary-500/30 shadow-lg"
         >
             {/* Background Gradient Glow */}
             <div className="absolute -inset-1 bg-gradient-to-r from-primary-500/20 to-secondary-cyan-500/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -49,10 +49,10 @@ const FavoriteSongCard: React.FC<FavoriteSongCardProps> = ({ song }) => {
                 <span className="inline-block text-[9px] font-bold uppercase tracking-[0.2em] text-primary-400 mb-1">
                     Track
                 </span>
-                <h3 className="text-lg font-bold text-white truncate mb-0.5">
+                <h3 className="text-lg font-bold text-neutral-5 truncate mb-0.5">
                     {song.title}
                 </h3>
-                <p className="text-white/80 text-xs font-medium truncate">
+                <p className="text-neutral-5/60 text-xs font-medium truncate">
                     {song.artist}
                 </p>
 

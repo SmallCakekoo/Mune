@@ -13,6 +13,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return (saved as Appearance) || 'system';
     });
 
+    const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+
     useEffect(() => {
         localStorage.setItem('mune-theme', theme);
         document.documentElement.setAttribute('data-theme', theme);
@@ -28,6 +30,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             }
             document.documentElement.setAttribute('data-appearance', resolvedMode);
             document.documentElement.style.colorScheme = resolvedMode;
+            setIsDarkMode(resolvedMode === 'dark');
+
+            // Also toggle 'dark' class for Tailwind if needed, although we are using data-appearance
+            if (resolvedMode === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
         };
 
         applyAppearance(appearance);
@@ -41,7 +51,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }, [appearance]);
 
     return (
-        <ThemeContext.Provider value={{ theme, setTheme, appearance, setAppearance }}>
+        <ThemeContext.Provider value={{ theme, setTheme, appearance, setAppearance, isDarkMode }}>
             {children}
         </ThemeContext.Provider>
     );

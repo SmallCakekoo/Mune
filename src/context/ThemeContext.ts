@@ -8,6 +8,7 @@ export interface ThemeContextType {
     setTheme: (theme: Theme) => void;
     appearance: Appearance;
     setAppearance: (appearance: Appearance) => void;
+    isDarkMode: boolean;
 }
 
 export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);

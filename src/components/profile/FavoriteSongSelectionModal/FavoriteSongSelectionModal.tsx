@@ -78,24 +78,24 @@ const FavoriteSongSelectionModal: React.FC<FavoriteSongSelectionModalProps> = ({
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="relative w-full max-w-2xl bg-background-400 border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+                        className="relative w-full max-w-2xl bg-background-400 border border-neutral-200 dark:border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
                     >
                         {/* Header */}
-                        <div className="p-6 border-b border-white/10 flex items-center justify-between">
+                        <div className="p-6 border-b border-neutral-200 dark:border-white/10 flex items-center justify-between">
                             <div>
-                                <h2 className="text-2xl font-bold text-white">Select Favorite Tracks</h2>
-                                <p className="text-white/60 text-sm">Choose up to 3 songs to showcase on your profile</p>
+                                <h2 className="text-2xl font-bold text-neutral-5">Select Favorite Tracks</h2>
+                                <p className="text-neutral-5/60 text-sm">Choose up to 3 songs to showcase on your profile</p>
                             </div>
                             <button
                                 onClick={onClose}
-                                className="p-2 rounded-xl hover:bg-white/5 text-white hover:text-white transition-colors"
+                                className="p-2 rounded-xl hover:bg-neutral-100 dark:hover:bg-white/5 text-neutral-5 hover:text-neutral-900 dark:hover:text-white transition-colors"
                             >
                                 <IconX size={24} />
                             </button>
                         </div>
 
                         {/* Current Selection */}
-                        <div className="p-6 bg-white/5 border-b border-white/10">
+                        <div className="p-6 bg-neutral-50 dark:bg-white/5 border-b border-neutral-200 dark:border-white/10">
                             <div className="flex items-center justify-between mb-4">
                                 <span className="text-xs font-bold uppercase tracking-wider text-primary-400">
                                     Current Selection ({selectedSongs.length}/3)
@@ -109,7 +109,7 @@ const FavoriteSongSelectionModal: React.FC<FavoriteSongSelectionModalProps> = ({
                                             "relative w-20 h-20 rounded-xl border-2 border-dashed flex items-center justify-center overflow-hidden transition-all",
                                             selectedSongs[index]
                                                 ? "border-primary-500/50 bg-primary-500/10"
-                                                : "border-white/10 bg-white/5"
+                                                : "border-neutral-200 dark:border-white/10 bg-white dark:bg-white/5"
                                         )}
                                     >
                                         {selectedSongs[index] ? (
@@ -143,7 +143,7 @@ const FavoriteSongSelectionModal: React.FC<FavoriteSongSelectionModalProps> = ({
                                     placeholder="Search for a song or artist..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-neutral-5 focus:outline-none focus:border-primary-500/50 transition-all"
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-neutral-200 dark:border-white/10 text-neutral-5 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-primary-500/50 transition-all"
                                 />
                             </div>
                             <Button
@@ -152,7 +152,7 @@ const FavoriteSongSelectionModal: React.FC<FavoriteSongSelectionModalProps> = ({
                                     const shuffled = [...AVAILABLE_SONGS].sort(() => 0.5 - Math.random());
                                     setSelectedSongs(shuffled.slice(0, 3));
                                 }}
-                                className="border-white/10 hover:bg-white/5 whitespace-nowrap"
+                                className="border-neutral-200 dark:border-white/10 hover:bg-neutral-100 dark:hover:bg-white/5 whitespace-nowrap"
                             >
                                 Shuffle
                             </Button>
@@ -181,23 +181,23 @@ const FavoriteSongSelectionModal: React.FC<FavoriteSongSelectionModalProps> = ({
                                                 "w-full flex items-center gap-4 p-3 rounded-2xl border transition-all text-left group relative overflow-hidden",
                                                 isSelected
                                                     ? "bg-primary-500/10 border-primary-500/50"
-                                                    : cn("bg-white/5 border-transparent hover:border-white/20 disabled:opacity-50 disabled:cursor-not-allowed", glowClass)
+                                                    : cn("bg-neutral-50 dark:bg-white/5 border-neutral-300 dark:border-transparent hover:border-primary-500/30 dark:hover:border-white/20 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed", glowClass)
                                             )}
                                         >
                                             <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 border border-white/10 relative z-10">
                                                 <img src={song.albumCover} className="w-full h-full object-cover" alt="" />
                                             </div>
                                             <div className="flex-1 min-w-0 relative z-10">
-                                                <p className="text-white font-bold truncate">{song.title}</p>
-                                                <p className="text-white/60 text-sm truncate">{song.artist}</p>
+                                                <p className="text-neutral-5 font-bold truncate">{song.title}</p>
+                                                <p className="text-neutral-5/60 text-sm truncate">{song.artist}</p>
                                             </div>
                                             <div className={cn(
                                                 "w-6 h-6 rounded-full border flex items-center justify-center transition-all",
                                                 isSelected
                                                     ? "bg-primary-500 border-primary-500 text-white"
-                                                    : "border-white/20 text-transparent"
+                                                    : "border-primary-500/50 dark:border-primary-400/50 text-neutral-400/50 dark:text-white/20"
                                             )}>
-                                                {isSelected ? <IconCheck size={14} /> : <IconPlus size={14} className="group-hover:text-white/50" />}
+                                                {isSelected ? <IconCheck size={14} /> : <IconPlus size={14} className="group-hover:text-primary-500 dark:group-hover:text-white transition-colors" />}
                                             </div>
                                         </button>
                                     );

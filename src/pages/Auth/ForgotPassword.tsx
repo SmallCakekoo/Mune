@@ -100,7 +100,7 @@ const ForgotPassword = () => {
                         <Button
                             fullWidth
                             size="lg"
-                            className="bg-white text-background-500 hover:bg-neutral-5 shadow-lg hover:shadow-xl transition-all duration-300 h-12 font-semibold"
+                            className="bg-primary-500 text-white hover:bg-primary-400 shadow-lg hover:shadow-xl transition-all duration-300 h-12 font-semibold"
                         >
                             Back to Login
                         </Button>
@@ -179,7 +179,7 @@ const ForgotPassword = () => {
                     fullWidth
                     size="lg"
                     isLoading={isSubmitting}
-                    className="mt-6 bg-white text-background-500 hover:bg-neutral-5 shadow-lg hover:shadow-xl transition-all duration-300 h-12 font-semibold"
+                    className="mt-6 bg-primary-500 text-white hover:bg-primary-400 shadow-lg hover:shadow-xl transition-all duration-300 h-12 font-semibold"
                 >
                     {isSubmitting ? 'Sending...' : 'Send Reset Link'}
                 </Button>
@@ -190,13 +190,13 @@ const ForgotPassword = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
-                className="mt-8 p-4 bg-white/5 rounded-xl border border-white/10"
+                className="mt-8 p-4 bg-primary-500/10 rounded-xl border border-primary-500/20"
             >
                 <div className="flex items-start gap-3">
-                    <Mail className="w-4 h-4 text-primary-400 mt-0.5 flex-shrink-0" />
+                    <Mail className="w-4 h-4 text-primary-500 mt-0.5 flex-shrink-0" />
                     <div>
-                        <p className="text-sm font-semibold text-white mb-1">Need Help?</p>
-                        <p className="text-sm text-neutral-5/70 leading-relaxed">
+                        <p className="text-sm font-semibold text-neutral-900 mb-1">Need Help?</p>
+                        <p className="text-sm text-neutral-600 leading-relaxed">
                             If you continue having trouble accessing your account, please contact our support team.
                         </p>
                     </div>

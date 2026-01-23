@@ -136,14 +136,16 @@ const RoomCard: React.FC<RoomCardProps> = ({
   const gradient = gradients[gradientIndex];
 
   return (
+
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4, transition: { duration: 0.15 } }}
       className={cn(
-        'relative rounded-2xl p-6 border border-neutral-200 dark:border-white/10',
-        'bg-background-400/50 backdrop-blur-xl',
+        'relative rounded-2xl p-6 border border-neutral-300 dark:border-white/10',
+        'bg-white dark:bg-background-400/50 backdrop-blur-xl',
         'hover:border-primary-500/30 transition-all',
+        'shadow-lg dark:shadow-none',
         'group'
       )}
     >
@@ -193,7 +195,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                 e.stopPropagation();
                 setIsMenuOpen(!isMenuOpen);
               }}
-              className="p-2 rounded-lg text-neutral-5 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
+              className="p-2 rounded-lg text-neutral-5 hover:text-primary-500 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
               aria-label="Room options"
             >
               <IconDots size={20} />
@@ -206,11 +208,11 @@ const RoomCard: React.FC<RoomCardProps> = ({
                   initial={{ opacity: 0, scale: 0.95, y: -10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                  className="absolute right-0 top-full mt-2 w-48 bg-background-400 border border-neutral-200 dark:border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden"
+                  className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-background-400 border border-neutral-200 dark:border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden"
                 >
                   <button
                     onClick={handleViewDetails}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-left text-neutral-5 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors"
+                    className="w-full flex items-center gap-3 px-4 py-3 text-left text-neutral-5 hover:text-primary-500 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors"
                   >
                     <IconEye size={18} />
                     <span>View details</span>
@@ -218,7 +220,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                   {isOwner && (
                     <button
                       onClick={handleEdit}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-left text-neutral-5 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors"
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left text-neutral-5 hover:text-primary-500 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors"
                     >
                       <IconEdit size={18} />
                       <span>Edit</span>
@@ -239,7 +241,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                       onClick={(e) => { e.stopPropagation(); setIsMenuOpen(false); option.onClick(room); }}
                       className={cn(
                         "w-full flex items-center gap-3 px-4 py-3 text-left transition-colors",
-                        option.variant === 'danger' ? "text-error-400 hover:text-error-300 hover:bg-error-500/10" : "text-neutral-5 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10"
+                        option.variant === 'danger' ? "text-error-400 hover:text-error-300 hover:bg-error-500/10" : "text-neutral-5 hover:text-primary-500 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10"
                       )}
                     >
                       {option.icon}

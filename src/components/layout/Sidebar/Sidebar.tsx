@@ -14,9 +14,11 @@ import { useSidebar } from '../../../hooks/useSidebar';
 import { cn } from '../../../utils/cn';
 // Import SVGs as React components or URLs
 // const MuneLogoCollapsed = new URL('../../../assets/images/MuneCollapsed.svg', import.meta.url).href;
-const MuneLogoExpanded = new URL('../../../assets/images/MuneExpanded.svg', import.meta.url).href;
+const MuneLogoExpandedWhite = new URL('../../../assets/images/MuneExpanded.svg', import.meta.url).href;
+const MuneLogoExpandedBlack = new URL('../../../assets/images/MuneExpandedBlack.svg', import.meta.url).href;
 
 import { useAuth } from '../../../hooks/useAuth';
+import { useTheme } from '../../../hooks/useTheme';
 
 interface SidebarItem {
   id: string;
@@ -33,6 +35,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {
   const { user } = useAuth();
+  const { isDarkMode } = useTheme();
   const { isCollapsed, setIsCollapsed, toggleSidebar } = useSidebar();
   const navigate = useNavigate();
   const location = useLocation();
@@ -106,7 +109,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {
         transition={{ duration: 0.3, ease: 'easeInOut' }}
         className={cn(
           'fixed left-0 top-0 h-screen bg-background-400/80 backdrop-blur-xl',
-          'border-r border-white/10 z-40',
+          'border-r border-neutral-200 dark:border-white/10 z-40',
           'flex flex-col',
           // Mobile: hide when collapsed, Desktop: always visible
           isCollapsed ? '-translate-x-full md:translate-x-0' : 'translate-x-0'
@@ -114,7 +117,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {
       >
         {/* Header */}
         <div className={cn(
-          "p-4 flex items-center border-b border-white/10 min-h-[73px]",
+          "p-4 flex items-center border-b border-neutral-200 dark:border-white/10 min-h-[73px]",
           isCollapsed ? "justify-center" : "justify-between"
         )}>
           <AnimatePresence mode="wait">
@@ -127,7 +130,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {
                 className="h-8 flex items-center"
               >
                 <img
-                  src={MuneLogoExpanded}
+                  src={isDarkMode ? MuneLogoExpandedWhite : MuneLogoExpandedBlack}
                   alt="Mune"
                   className="h-8"
                   onError={(e) => {
@@ -140,7 +143,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {
 
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-lg text-neutral-5 hover:text-white hover:bg-white/10 transition-colors"
+            className="p-2 rounded-lg text-neutral-5 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors"
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isCollapsed ? <IconMenu2 size={20} /> : <IconX size={20} />}
@@ -157,11 +160,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {
               whileTap={{ scale: 0.98 }}
               className={cn(
                 'w-full flex items-center rounded-xl cursor-pointer',
-                'text-neutral-5 hover:text-white transition-colors',
-                'hover:bg-white/10',
+                'text-neutral-5 hover:text-primary-500 transition-colors',
+                'hover:bg-neutral-100 dark:hover:bg-white/10',
                 isCollapsed ? 'justify-center px-0 py-3' : 'gap-3 px-4 py-3',
                 item.isActive &&
-                'bg-primary-500/20 text-white border border-primary-500/30'
+                'bg-primary-500/20 text-primary-500 border border-primary-500/30'
               )}
               title={isCollapsed ? item.label : undefined}
             >
@@ -180,11 +183,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {
         </nav>
 
         {/* User Profile */}
-        <div className="p-4 border-t border-white/10">
+        <div className="p-4 border-t border-neutral-200 dark:border-white/10">
           <div
             className={cn(
               'flex items-center p-2 rounded-xl',
-              'hover:bg-white/10 transition-colors cursor-pointer',
+              'hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors cursor-pointer',
               isCollapsed ? 'justify-center' : 'gap-3'
             )}
             onClick={() => navigate('/profile')}
@@ -206,7 +209,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateRoom }) => {
                 animate={{ opacity: 1 }}
                 className="flex-1 min-w-0"
               >
-                <p className="text-sm font-medium text-white truncate">
+                <p className="text-sm font-medium text-neutral-5 truncate">
                   {user?.name || 'User'}
                 </p>
                 <p className="text-xs text-neutral-5 truncate">View Profile</p>

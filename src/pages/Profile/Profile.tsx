@@ -199,7 +199,7 @@ const Profile: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-background-500 text-white">
+        <div className="min-h-screen bg-background-500 text-neutral-5">
             {/* Background Elements */}
             <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary-500/10 via-background-500 to-background-500 z-0" />
             <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 z-0 mix-blend-overlay" />
@@ -222,6 +222,7 @@ const Profile: React.FC = () => {
                         <ProfileHeader
                             user={user}
                             onSettingsClick={() => navigate('/settings')}
+                            roomCount={rooms.filter(r => r.owner.id === user.id).length}
                         />
                         <div className="mt-8"></div>
                     </motion.div>
@@ -229,7 +230,7 @@ const Profile: React.FC = () => {
                     {/* Favorite Songs Section */}
                     <div className="mb-12">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                            <h2 className="text-2xl font-bold text-neutral-5 flex items-center gap-2">
                                 <IconMusic className="text-primary-400" size={24} />
                                 Favorite Tracks
                             </h2>
@@ -237,7 +238,7 @@ const Profile: React.FC = () => {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => setIsFavModalOpen(true)}
-                                className="border-white/10 hover:bg-white/5"
+                                className="border-neutral-200 dark:border-white/10 hover:bg-neutral-100 dark:hover:bg-white/5"
                             >
                                 <IconEdit size={16} />
                                 Edit Favorites
@@ -251,8 +252,8 @@ const Profile: React.FC = () => {
                                 ))}
                             </div>
                         ) : (
-                            <div className="p-8 rounded-2xl bg-white/5 border border-white/10 border-dashed text-center">
-                                <p className="text-white italic">No favorite tracks selected yet.</p>
+                            <div className="p-8 rounded-2xl bg-white dark:bg-white/5 border border-neutral-200 dark:border-white/10 border-dashed text-center shadow-lg dark:shadow-none">
+                                <p className="text-neutral-5 italic">No favorite tracks selected yet.</p>
                                 <Button
                                     variant="ghost"
                                     size="sm"
@@ -268,7 +269,7 @@ const Profile: React.FC = () => {
                     {/* Collections Header */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                         <div>
-                            <h2 className="text-2xl font-bold text-white">Your Collections</h2>
+                            <h2 className="text-2xl font-bold text-neutral-5">Your Collections</h2>
                             <p className="text-sm text-neutral-5">Organize and manage your favorite rooms</p>
                         </div>
                         <div className="flex gap-3">
@@ -285,13 +286,13 @@ const Profile: React.FC = () => {
                                         onChange={(e) => setNewCategoryName(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleAddCategory()}
                                         placeholder="Name..."
-                                        className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:border-primary-500"
+                                        className="px-3 py-1.5 bg-white dark:bg-white/5 border border-neutral-200 dark:border-white/10 rounded-xl text-sm focus:outline-none focus:border-primary-500"
                                     />
                                     <Button size="sm" onClick={handleAddCategory}>Add</Button>
                                     <Button size="sm" variant="ghost" onClick={() => setIsAddingCategory(false)}>✕</Button>
                                 </div>
                             ) : (
-                                <Button size="sm" variant="outline" onClick={() => setIsAddingCategory(true)} className="border-white/10">
+                                <Button size="sm" variant="outline" onClick={() => setIsAddingCategory(true)} className="border-neutral-200 dark:border-white/10">
                                     <IconPlus size={18} />
                                     Category
                                 </Button>
@@ -314,15 +315,15 @@ const Profile: React.FC = () => {
                                                     value={editCategoryName}
                                                     onChange={(e) => setEditCategoryName(e.target.value)}
                                                     onKeyDown={(e) => e.key === 'Enter' && handleUpdateCategory()}
-                                                    className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-lg font-bold"
+                                                    className="px-3 py-1 bg-white dark:bg-white/5 border border-neutral-200 dark:border-white/10 rounded-lg text-lg font-bold"
                                                 />
                                                 <Button size="sm" onClick={handleUpdateCategory}>Save</Button>
                                             </div>
                                         ) : (
                                             <>
-                                                <h3 className="text-xl font-bold text-white">{cat.name}</h3>
+                                                <h3 className="text-xl font-bold text-neutral-5">{cat.name}</h3>
                                                 <div className="flex items-center gap-1 opacity-0 group-hover/cat:opacity-100 transition-opacity">
-                                                    <button onClick={() => { setEditingCategoryId(cat.id); setEditCategoryName(cat.name); }} className="p-1 text-neutral-5 hover:text-white"><IconEdit size={14} /></button>
+                                                    <button onClick={() => { setEditingCategoryId(cat.id); setEditCategoryName(cat.name); }} className="p-1 text-neutral-5 hover:text-primary-500"><IconEdit size={14} /></button>
                                                     <button onClick={() => {
                                                         setConfirmAction({
                                                             title: 'Delete Category',
@@ -357,7 +358,7 @@ const Profile: React.FC = () => {
 
                         {/* Uncategorized & Joined */}
                         <div className="space-y-4">
-                            <h3 className="text-xl font-bold text-white">Others</h3>
+                            <h3 className="text-xl font-bold text-neutral-5">Others</h3>
                             <RoomGrid
                                 rooms={[...uncategorizedRooms, ...joinedRooms]}
                                 currentUserId={user.id}

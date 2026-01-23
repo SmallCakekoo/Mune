@@ -18,7 +18,7 @@ const RoomTopBar: React.FC<RoomTopBarProps> = ({ roomName, onNameChange, onOpenS
             <div className="flex items-center gap-3">
                 <button
                     onClick={() => navigate('/home')}
-                    className="p-1 rounded-lg hover:bg-white/5 text-neutral-50 transition-all"
+                    className="p-1 rounded-lg hover:bg-neutral-100 dark:hover:bg-white/5 text-neutral-5 transition-all"
                 >
                     <IconChevronLeft size={20} />
                 </button>
@@ -28,7 +28,7 @@ const RoomTopBar: React.FC<RoomTopBarProps> = ({ roomName, onNameChange, onOpenS
                         type="text"
                         value={roomName}
                         onChange={(e) => onNameChange(e.target.value)}
-                        className="bg-transparent border-none text-base font-bold text-white focus:outline-none focus:ring-0 w-auto min-w-[100px] text-center"
+                        className="bg-transparent border-none text-base font-bold text-neutral-5 focus:outline-none focus:ring-0 w-auto min-w-[100px] text-center"
                         style={{ width: `${Math.max(roomName.length + 2, 10)}ch` }}
                     />
                 </div>
@@ -37,12 +37,12 @@ const RoomTopBar: React.FC<RoomTopBarProps> = ({ roomName, onNameChange, onOpenS
             <div className="flex items-center gap-3">
                 <button
                     onClick={onOpenSettings}
-                    className="p-2 rounded-xl text-neutral-50 hover:text-white transition-all"
+                    className="p-2 rounded-xl text-neutral-5 hover:text-primary-500 transition-all"
                 >
                     <IconSettings size={22} />
                 </button>
             </div>
-        </header>
+        </header >
     );
 };
 
